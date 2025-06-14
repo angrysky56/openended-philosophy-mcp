@@ -1,0 +1,82 @@
+{
+  "name": "openended-philosophy",
+  "version": "0.1.0",
+  "description": "An open-ended philosophical framework for contextual semantic analysis and fallibilistic inference",
+  "author": "angrysky56",
+  "license": "MIT",
+  
+  "server": {
+    "command": ["python", "-m", "openended_philosophy"],
+    "transport": "stdio",
+    "working_directory": "${cwd}",
+    "environment": {
+      "PYTHONPATH": "${cwd}",
+      "PHILOSOPHY_LOG_LEVEL": "INFO"
+    }
+  },
+  
+  "capabilities": {
+    "tools": {
+      "analyze_concept": {
+        "description": "Analyzes concepts through multiple interpretive lenses",
+        "parameters": {
+          "concept": "string",
+          "context": "string",
+          "perspectives": "array<string>?",
+          "confidence_threshold": "number?"
+        }
+      },
+      "explore_coherence": {
+        "description": "Maps provisional coherence patterns in conceptual space",
+        "parameters": {
+          "domain": "string",
+          "depth": "number?",
+          "allow_revision": "boolean?"
+        }
+      },
+      "contextualize_meaning": {
+        "description": "Derives contextual semantics through language game analysis",
+        "parameters": {
+          "expression": "string",
+          "language_game": "string",
+          "trace_genealogy": "boolean?"
+        }
+      },
+      "generate_insights": {
+        "description": "Produces fallibilistic insights with uncertainty quantification",
+        "parameters": {
+          "phenomenon": "string",
+          "perspectives": "array<string>?",
+          "depth": "number?",
+          "include_contradictions": "boolean?"
+        }
+      },
+      "test_philosophical_hypothesis": {
+        "description": "Tests philosophical hypotheses through coherence and pragmatic evaluation",
+        "parameters": {
+          "hypothesis": "string",
+          "test_domains": "array<string>?",
+          "criteria": "object?"
+        }
+      }
+    }
+  },
+  
+  "metadata": {
+    "framework": {
+      "theoretical_foundation": [
+        "epistemic_humility",
+        "contextual_semantics",
+        "dynamic_pluralism",
+        "pragmatic_orientation"
+      ],
+      "computational_substrate": {
+        "coherence_dynamics": "topological",
+        "inference_engine": "fallibilistic",
+        "semantic_processing": "wittgensteinian"
+      }
+    },
+    "epistemic_warranty": "All conclusions are provisional and subject to revision",
+    "philosophical_commitment": "Non-foundationalist open-ended inquiry"
+  }
+}

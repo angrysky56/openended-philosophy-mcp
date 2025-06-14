@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "openended-philosophy-mcp"
+version = "0.1.0"
+description = "An open-ended philosophical framework implemented as a Model Context Protocol server"
+authors = ["angrysky56"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+mcp = "^1.0.0"
+uvloop = "^0.20.0"
+pydantic = "^2.5.0"
+numpy = "^1.24.0"
+networkx = "^3.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.0.0"
+mypy = "^1.8.0"
+ruff = "^0.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "B", "I"]
