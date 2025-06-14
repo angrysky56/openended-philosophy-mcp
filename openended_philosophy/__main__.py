@@ -13,12 +13,12 @@ from pathlib import Path
 # Add parent directory to path for development
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from openended_philosophy.server import OpenEndedPhilosophyServer, main
+from openended_philosophy.server import main
 
 if __name__ == "__main__":
     """
     Execute the OpenEnded Philosophy MCP Server.
-    
+
     ### Execution Flow
     1. Initialize server instance
     2. Configure MCP handlers

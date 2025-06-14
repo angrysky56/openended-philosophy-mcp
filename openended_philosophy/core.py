@@ -33,7 +33,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Optional
 
 import networkx as nx
 import numpy as np
@@ -56,7 +56,7 @@ class SemanticPattern:
     - revision_count: Number of modifications
     """
     pattern_id: str
-    content: Dict[str, Any]
+    content: dict[str, Any]
     confidence: float = 0.5
     context_sensitivity: float = 0.8
     emergence_timestamp: datetime = field(default_factory=datetime.now)
@@ -93,7 +93,7 @@ class EmergentCoherenceNode:
 
     def __init__(
         self,
-        initial_pattern: Dict[str, Any],
+        initial_pattern: dict[str, Any],
         confidence: float = 0.5,
         context_sensitivity: float = 0.8
     ):
@@ -104,17 +104,17 @@ class EmergentCoherenceNode:
             confidence=confidence,
             context_sensitivity=context_sensitivity
         )
-        self.semantic_neighborhoods: Dict[str, List[Tuple[str, float]]] = {}
-        self.revision_history: List[Dict[str, Any]] = []
-        self.active_contexts: Set[str] = set()
+        self.semantic_neighborhoods: dict[str, list[tuple[str, float]]] = {}
+        self.revision_history: list[dict[str, Any]] = []
+        self.active_contexts: set[str] = set()
 
         logger.debug(f"Created coherence node: {self.pattern.pattern_id}")
 
     def contextualize_meaning(
         self,
         language_game: 'LanguageGameProcessor',
-        form_of_life: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        form_of_life: Optional[dict[str, Any]] = None
+    ) -> dict[str, Any]:
         """
         Derive contextual meaning through language game application.
 
@@ -150,7 +150,7 @@ class EmergentCoherenceNode:
 
     def adapt_to_feedback(
         self,
-        feedback: Dict[str, Any],
+        feedback: dict[str, Any],
         learning_rate: float = 0.1
     ) -> None:
         """Adapt pattern based on contextual feedback."""
@@ -187,7 +187,7 @@ class EmergentCoherenceNode:
         """Generate unique identifier for node."""
         return f"node_{uuid.uuid4().hex[:8]}"
 
-    def _extract_semantic_features(self) -> Dict[str, Any]:
+    def _extract_semantic_features(self) -> dict[str, Any]:
         """Extract semantic features for interpretation."""
         return {
             'core_content': self.pattern.content,
@@ -223,17 +223,17 @@ class DynamicPluralismFramework:
 
     def __init__(self, openness_coefficient: float = 0.9):
         """Initialize with structural humility parameter."""
-        self.interpretive_schemas: Dict[str, Dict[str, Any]] = {}
+        self.interpretive_schemas: dict[str, dict[str, Any]] = {}
         self.openness = openness_coefficient
         self.interaction_matrix = defaultdict(lambda: defaultdict(float))
-        self.emergent_insights: List[Dict[str, Any]] = []
-        self.dialogue_history: List[Dict[str, Any]] = []
+        self.emergent_insights: list[dict[str, Any]] = []
+        self.dialogue_history: list[dict[str, Any]] = []
 
         logger.info(f"Initialized DynamicPluralismFramework with openness={openness_coefficient}")
 
     def integrate_perspective(
         self,
-        schema: Dict[str, Any],
+        schema: dict[str, Any],
         weight: Optional[float] = None
     ) -> str:
         """
@@ -273,8 +273,8 @@ class DynamicPluralismFramework:
         self,
         schema1_id: str,
         schema2_id: str,
-        topic: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        topic: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Enable productive dialogue between interpretive schemas.
 
@@ -349,7 +349,7 @@ class DynamicPluralismFramework:
         """Generate unique schema identifier."""
         return f"schema_{uuid.uuid4().hex[:8]}"
 
-    def _apply_schema(self, schema: Dict[str, Any], topic: Dict[str, Any]) -> Dict[str, Any]:
+    def _apply_schema(self, schema: dict[str, Any], topic: dict[str, Any]) -> dict[str, Any]:
         """Apply interpretive schema to topic."""
         # Simplified application - would be more sophisticated
         return {
@@ -358,22 +358,22 @@ class DynamicPluralismFramework:
             'evaluation': schema.get('evaluate', lambda x: 0.5)(topic)
         }
 
-    def _find_agreements(self, interp1: Dict, interp2: Dict) -> List[str]:
+    def _find_agreements(self, interp1: dict, interp2: dict) -> list[str]:
         """Identify points of agreement between interpretations."""
         # Simplified - would use semantic similarity
         return ["shared_concept_1", "shared_concept_2"]
 
-    def _find_tensions(self, interp1: Dict, interp2: Dict) -> List[str]:
+    def _find_tensions(self, interp1: dict, interp2: dict) -> list[str]:
         """Identify tensions between interpretations."""
         return ["tension_point_1", "tension_point_2"]
 
     def _generate_emergent_insights(
         self,
-        interp1: Dict,
-        interp2: Dict,
-        agreements: List,
-        tensions: List
-    ) -> List[Dict[str, Any]]:
+        interp1: dict,
+        interp2: dict,
+        agreements: list,
+        tensions: list
+    ) -> list[dict[str, Any]]:
         """Generate insights from schema interaction."""
         insights = []
 
@@ -422,11 +422,11 @@ class LanguageGameProcessor:
     ```
     """
 
-    def __init__(self, game_type: str, grammatical_rules: Dict[str, Any]):
+    def __init__(self, game_type: str, grammatical_rules: dict[str, Any]):
         """Initialize with game type and rules."""
         self.game_type = game_type
         self.rules = grammatical_rules
-        self.usage_patterns: List[Dict[str, Any]] = []
+        self.usage_patterns: list[dict[str, Any]] = []
         self.meaning_stability: float = 0.0
         self.family_resemblances: nx.Graph = nx.Graph()
 
@@ -434,9 +434,9 @@ class LanguageGameProcessor:
 
     def interpret_pattern(
         self,
-        semantic_features: Dict[str, Any],
-        form_of_life: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        semantic_features: dict[str, Any],
+        form_of_life: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Interpret pattern within language game context.
 
@@ -467,15 +467,14 @@ class LanguageGameProcessor:
             )
         }
 
-    def assess_pattern_fit(self, pattern: Dict[str, Any]) -> float:
+    def assess_pattern_fit(self, pattern: dict[str, Any]) -> float:
         """Assess how well pattern fits within language game."""
         fit_scores = []
 
         # Check rule satisfaction
         for rule_name, rule_value in self.rules.items():
-            if rule_value and rule_name in pattern:
-                fit_scores.append(1.0)
-            elif not rule_value and rule_name not in pattern:
+            if (rule_value and rule_name in pattern) or \
+               (not rule_value and rule_name not in pattern):
                 fit_scores.append(1.0)
             else:
                 fit_scores.append(0.0)
@@ -532,7 +531,7 @@ class LanguageGameProcessor:
         else:
             return 0.05  # Slight boost for ordinary language
 
-    def _check_rule_compliance(self, features: Dict[str, Any]) -> float:
+    def _check_rule_compliance(self, features: dict[str, Any]) -> float:
         """Check compliance with grammatical rules."""
         compliant_rules = 0
         total_rules = len(self.rules)
@@ -545,7 +544,7 @@ class LanguageGameProcessor:
 
     def _satisfies_rule(
         self,
-        features: Dict[str, Any],
+        features: dict[str, Any],
         rule: str,
         requirement: Any
     ) -> bool:
@@ -555,7 +554,7 @@ class LanguageGameProcessor:
             return bool(features.get(rule)) == requirement
         return True
 
-    def _find_similar_uses(self, features: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _find_similar_uses(self, features: dict[str, Any]) -> list[dict[str, Any]]:
         """Find similar usage patterns."""
         similar = []
 
@@ -571,8 +570,8 @@ class LanguageGameProcessor:
 
     def _calculate_pattern_similarity(
         self,
-        features1: Dict[str, Any],
-        features2: Dict[str, Any]
+        features1: dict[str, Any],
+        features2: dict[str, Any]
     ) -> float:
         """Calculate similarity between patterns."""
         # Simplified similarity - would use more sophisticated metrics
@@ -586,18 +585,17 @@ class LanguageGameProcessor:
 
     def _apply_life_form_constraints(
         self,
-        features: Dict[str, Any],
-        form_of_life: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        features: dict[str, Any],
+        form_of_life: dict[str, Any]
+    ) -> dict[str, Any]:
         """Apply constraints from form of life."""
         constrained = features.copy()
 
         # Apply contextual constraints
         for constraint, value in form_of_life.items():
-            if constraint in constrained:
+            if constraint in constrained and isinstance(constrained[constraint], (int, float)):
                 # Modulate by form of life
-                if isinstance(constrained[constraint], (int, float)):
-                    constrained[constraint] *= value
+                constrained[constraint] *= value
 
         return constrained
 
@@ -610,7 +608,7 @@ class LanguageGameProcessor:
         precedent_factor = min(precedent_count / 10.0, 1.0)
         return (compliance + precedent_factor) / 2.0
 
-    def _derive_contextual_meaning(self, expression: str) -> Dict[str, Any]:
+    def _derive_contextual_meaning(self, expression: str) -> dict[str, Any]:
         """Derive meaning from context of use."""
         return {
             'primary_sense': f"{expression} in {self.game_type} context",
@@ -618,7 +616,7 @@ class LanguageGameProcessor:
             'typical_uses': self._get_typical_uses(expression)
         }
 
-    def _identify_usage_patterns(self, expression: str) -> List[Dict[str, Any]]:
+    def _identify_usage_patterns(self, expression: str) -> list[dict[str, Any]]:
         """Identify patterns of use."""
         return [
             {
@@ -633,12 +631,12 @@ class LanguageGameProcessor:
             }
         ]
 
-    def _map_family_resemblances(self, expression: str) -> List[str]:
+    def _map_family_resemblances(self, expression: str) -> list[str]:
         """Map related concepts through family resemblance."""
         # Would use graph traversal on family_resemblances network
         return ['related_concept_1', 'related_concept_2', 'related_concept_3']
 
-    def _define_success_conditions(self, expression: str) -> Dict[str, Any]:
+    def _define_success_conditions(self, expression: str) -> dict[str, Any]:
         """Define conditions for successful use."""
         return {
             'pragmatic_effect': 'achieves_understanding',
@@ -651,7 +649,7 @@ class LanguageGameProcessor:
         # Would analyze historical usage patterns
         return 0.75
 
-    def _trace_usage_history(self, expression: str) -> List[Dict[str, Any]]:
+    def _trace_usage_history(self, expression: str) -> list[dict[str, Any]]:
         """Trace historical evolution of usage."""
         return [
             {
@@ -666,7 +664,7 @@ class LanguageGameProcessor:
             }
         ]
 
-    def _get_contextual_connotations(self, expression: str) -> List[str]:
+    def _get_contextual_connotations(self, expression: str) -> list[str]:
         """Get connotations in this language game."""
         connotation_map = {
             'scientific_discourse': ['precision', 'objectivity', 'verification'],
@@ -676,7 +674,7 @@ class LanguageGameProcessor:
         }
         return connotation_map.get(self.game_type, ['general'])
 
-    def _get_typical_uses(self, expression: str) -> List[str]:
+    def _get_typical_uses(self, expression: str) -> list[str]:
         """Get typical uses in this context."""
         return [f"typical_use_in_{self.game_type}_1", f"typical_use_in_{self.game_type}_2"]
 
@@ -686,12 +684,12 @@ class LanguageGameProcessor:
 class SemanticAnalysis:
     """Results of semantic analysis within a language game."""
     expression: str
-    contextual_meaning: Dict[str, Any] = field(default_factory=dict)
-    usage_patterns: List[Dict[str, Any]] = field(default_factory=list)
-    related_concepts: List[str] = field(default_factory=list)
-    success_conditions: Dict[str, Any] = field(default_factory=dict)
+    contextual_meaning: dict[str, Any] = field(default_factory=dict)
+    usage_patterns: list[dict[str, Any]] = field(default_factory=list)
+    related_concepts: list[str] = field(default_factory=list)
+    success_conditions: dict[str, Any] = field(default_factory=dict)
     stability_score: float = 0.0
-    historical_uses: Optional[List[Dict[str, Any]]] = None
+    historical_uses: Optional[list[dict[str, Any]]] = None
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -699,10 +697,10 @@ class SemanticAnalysis:
 class CoherenceRegion:
     """Represents a region of stability in coherence landscape."""
     id: str
-    central_concepts: List[str]
+    central_concepts: list[str]
     stability_score: float
     connection_count: int
-    boundary_conditions: Dict[str, Any] = field(default_factory=dict)
+    boundary_conditions: dict[str, Any] = field(default_factory=dict)
 
     def calculate_semantic_density(self) -> float:
         """Calculate density of semantic connections."""
@@ -715,7 +713,7 @@ class CoherenceRegion:
 @dataclass
 class LandscapeState:
     """Current state of coherence landscape."""
-    coherence_regions: List[CoherenceRegion]
+    coherence_regions: list[CoherenceRegion]
     global_coherence: float
     fragmentation_score: float
     crystallization_degree: float
@@ -752,10 +750,10 @@ class CoherenceLandscape:
     def __init__(self, dimensionality: str = 'variable'):
         """Initialize coherence landscape."""
         self.dimensionality = dimensionality
-        self.coherence_regions: Dict[str, CoherenceRegion] = {}
-        self.phase_transitions: List[Dict[str, Any]] = []
-        self.attractors: List[Dict[str, Any]] = []
-        self.exploration_frontier: List[Dict[str, Any]] = []
+        self.coherence_regions: dict[str, CoherenceRegion] = {}
+        self.phase_transitions: list[dict[str, Any]] = []
+        self.attractors: list[dict[str, Any]] = []
+        self.exploration_frontier: list[dict[str, Any]] = []
         self.topology_graph = nx.Graph()
 
         logger.info(f"Initialized CoherenceLandscape with dimensionality={dimensionality}")
@@ -802,7 +800,7 @@ class CoherenceLandscape:
 
         return state
 
-    def evolve_landscape(self, new_experience: Dict[str, Any]) -> None:
+    def evolve_landscape(self, new_experience: dict[str, Any]) -> None:
         """
         Evolve landscape based on new experience.
 
@@ -853,7 +851,7 @@ class CoherenceLandscape:
         self,
         domain: str,
         level: int
-    ) -> List[CoherenceRegion]:
+    ) -> list[CoherenceRegion]:
         """Explore frontier at given depth level."""
         new_regions = []
 
@@ -894,7 +892,7 @@ class CoherenceLandscape:
 
         return new_regions
 
-    async def _explore_connections(self, node_id: str) -> List[Dict[str, Any]]:
+    async def _explore_connections(self, node_id: str) -> list[dict[str, Any]]:
         """Explore potential connections from node."""
         # Simulated connection exploration
         region = self.coherence_regions.get(node_id)
@@ -916,7 +914,7 @@ class CoherenceLandscape:
 
     def _update_topology(
         self,
-        new_regions: List[CoherenceRegion],
+        new_regions: list[CoherenceRegion],
         allow_revision: bool
     ) -> None:
         """Update topological structure."""
@@ -943,8 +941,8 @@ class CoherenceLandscape:
 
     async def _detect_emergent_patterns(
         self,
-        regions: List[CoherenceRegion]
-    ) -> List[Dict[str, Any]]:
+        regions: list[CoherenceRegion]
+    ) -> list[dict[str, Any]]:
         """Detect emergent patterns in landscape."""
         patterns = []
 
@@ -969,7 +967,7 @@ class CoherenceLandscape:
     def _calculate_landscape_state(
         self,
         domain: str,
-        explored_regions: List[CoherenceRegion]
+        explored_regions: list[CoherenceRegion]
     ) -> LandscapeState:
         """Calculate current landscape state."""
         # Get all domain regions
@@ -1002,7 +1000,7 @@ class CoherenceLandscape:
             crystallization_degree=crystallization_float
         )
 
-    def _calculate_perturbation(self, experience: Dict[str, Any]) -> Dict[str, Any]:
+    def _calculate_perturbation(self, experience: dict[str, Any]) -> dict[str, Any]:
         """Calculate perturbation from new experience."""
         return {
             'magnitude': experience.get('impact', 0.5),
@@ -1013,7 +1011,7 @@ class CoherenceLandscape:
     def _calculate_regional_impact(
         self,
         region: CoherenceRegion,
-        perturbation: Dict[str, Any]
+        perturbation: dict[str, Any]
     ) -> float:
         """Calculate impact of perturbation on region."""
         # Check conceptual overlap
@@ -1089,8 +1087,8 @@ class CoherenceLandscape:
 
     def _find_coherence_clusters(
         self,
-        regions: List[CoherenceRegion]
-    ) -> List[List[CoherenceRegion]]:
+        regions: list[CoherenceRegion]
+    ) -> list[list[CoherenceRegion]]:
         """Find clusters of coherent regions."""
         # Use graph clustering
         region_ids = [r.id for r in regions]
@@ -1103,7 +1101,7 @@ class CoherenceLandscape:
 
         return clusters
 
-    def _calculate_emergence_score(self, cluster: List[CoherenceRegion]) -> float:
+    def _calculate_emergence_score(self, cluster: list[CoherenceRegion]) -> float:
         """Calculate emergence score for cluster."""
         # Based on collective properties vs individual
         individual_stability = np.mean([r.stability_score for r in cluster])
@@ -1117,8 +1115,8 @@ class CoherenceLandscape:
 
     def _find_conceptual_bridges(
         self,
-        regions: List[CoherenceRegion]
-    ) -> List[Dict[str, Any]]:
+        regions: list[CoherenceRegion]
+    ) -> list[dict[str, Any]]:
         """Find regions that bridge different concepts."""
         bridges = []
 
@@ -1160,7 +1158,7 @@ class CoherenceLandscape:
     def _identify_unexplored_directions(
         self,
         region: CoherenceRegion
-    ) -> List[str]:
+    ) -> list[str]:
         """Identify unexplored conceptual directions."""
         # Placeholder - would analyze concept space
         return ['direction_1', 'direction_2', 'direction_3']
@@ -1172,10 +1170,10 @@ class FallibilisticInsight:
     """Insight with built-in uncertainty and revision conditions."""
     content: str
     confidence: float
-    evidence_summary: List[str]
-    identified_limitations: List[str]
-    revision_triggers: List[str]
-    expiration_conditions: Dict[str, Any]
+    evidence_summary: list[str]
+    identified_limitations: list[str]
+    revision_triggers: list[str]
+    expiration_conditions: dict[str, Any]
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1202,17 +1200,17 @@ class FallibilisticInference:
 
     def __init__(self):
         """Initialize fallibilistic inference engine."""
-        self.inference_history: List[Dict[str, Any]] = []
-        self.revision_log: List[Dict[str, Any]] = []
+        self.inference_history: list[dict[str, Any]] = []
+        self.revision_log: list[dict[str, Any]] = []
         self.uncertainty_model = self._initialize_uncertainty_model()
 
         logger.info("Initialized FallibilisticInference engine")
 
     async def derive_insights(
         self,
-        evidence_patterns: List[Dict[str, Any]],
+        evidence_patterns: list[dict[str, Any]],
         confidence_threshold: float = 0.7
-    ) -> List[FallibilisticInsight]:
+    ) -> list[FallibilisticInsight]:
         """
         Derive insights from evidence with uncertainty quantification.
 
@@ -1261,8 +1259,8 @@ class FallibilisticInference:
 
     def _synthesize_evidence_patterns(
         self,
-        patterns: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        patterns: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """Synthesize evidence patterns into potential insights."""
         synthesized = []
 
@@ -1294,8 +1292,8 @@ class FallibilisticInference:
 
     def _calculate_inference_confidence(
         self,
-        synthesis: Dict[str, Any],
-        evidence_patterns: List[Dict[str, Any]]
+        synthesis: dict[str, Any],
+        evidence_patterns: list[dict[str, Any]]
     ) -> float:
         """Calculate confidence with uncertainty propagation."""
         # Base confidence from coherence
@@ -1322,8 +1320,8 @@ class FallibilisticInference:
 
     def _identify_inference_limitations(
         self,
-        synthesis: Dict[str, Any]
-    ) -> List[str]:
+        synthesis: dict[str, Any]
+    ) -> list[str]:
         """Identify limitations of the inference."""
         limitations = []
 
@@ -1343,7 +1341,7 @@ class FallibilisticInference:
 
         return limitations
 
-    def _generate_revision_triggers(self, synthesis: Dict[str, Any]) -> List[str]:
+    def _generate_revision_triggers(self, synthesis: dict[str, Any]) -> list[str]:
         """Generate conditions that would trigger revision."""
         triggers = []
 
@@ -1365,8 +1363,8 @@ class FallibilisticInference:
 
     def _define_expiration_conditions(
         self,
-        synthesis: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        synthesis: dict[str, Any]
+    ) -> dict[str, Any]:
         """Define conditions under which insight expires."""
         return {
             'temporal': {
@@ -1383,7 +1381,7 @@ class FallibilisticInference:
             }
         }
 
-    def _initialize_uncertainty_model(self) -> Dict[str, Any]:
+    def _initialize_uncertainty_model(self) -> dict[str, Any]:
         """Initialize uncertainty quantification model."""
         return {
             'structural_base': 0.1,  # Inherent structural uncertainty
@@ -1394,8 +1392,8 @@ class FallibilisticInference:
 
     def _group_related_patterns(
         self,
-        patterns: List[Dict[str, Any]]
-    ) -> List[List[Dict[str, Any]]]:
+        patterns: list[dict[str, Any]]
+    ) -> list[list[dict[str, Any]]]:
         """Group patterns by relatedness."""
         # Simplified grouping - would use clustering in practice
         groups = []
@@ -1409,16 +1407,15 @@ class FallibilisticInference:
             used.add(i)
 
             for j, pattern2 in enumerate(patterns[i+1:], i+1):
-                if j not in used:
-                    if self._patterns_related(pattern1, pattern2):
-                        group.append(pattern2)
-                        used.add(j)
+                if j not in used and self._patterns_related(pattern1, pattern2):
+                    group.append(pattern2)
+                    used.add(j)
 
             groups.append(group)
 
         return groups
 
-    def _patterns_related(self, p1: Dict[str, Any], p2: Dict[str, Any]) -> bool:
+    def _patterns_related(self, p1: dict[str, Any], p2: dict[str, Any]) -> bool:
         """Check if two patterns are related."""
         # Simplified - check for common elements
         if 'concepts' in p1 and 'concepts' in p2:
@@ -1426,7 +1423,7 @@ class FallibilisticInference:
             return len(common) > 0
         return False
 
-    def _synthesize_group_content(self, group: List[Dict[str, Any]]) -> str:
+    def _synthesize_group_content(self, group: list[dict[str, Any]]) -> str:
         """Synthesize content from pattern group."""
         # Extract key themes
         all_concepts = []
@@ -1440,7 +1437,7 @@ class FallibilisticInference:
 
         return f"Synthesis involving {', '.join(c[0] for c in top_concepts)}"
 
-    def _calculate_group_coherence(self, group: List[Dict[str, Any]]) -> float:
+    def _calculate_group_coherence(self, group: list[dict[str, Any]]) -> float:
         """Calculate coherence within pattern group."""
         if len(group) <= 1:
             return 0.5
@@ -1454,7 +1451,7 @@ class FallibilisticInference:
 
         return float(np.mean(similarities)) if similarities else 0.5
 
-    def _pattern_similarity(self, p1: Dict[str, Any], p2: Dict[str, Any]) -> float:
+    def _pattern_similarity(self, p1: dict[str, Any], p2: dict[str, Any]) -> float:
         """Calculate similarity between patterns."""
         # Simplified similarity based on concept overlap
         concepts1 = set(p1.get('concepts', []))
@@ -1468,7 +1465,7 @@ class FallibilisticInference:
 
         return intersection / union if union > 0 else 0.0
 
-    def _assess_structural_uncertainty(self, synthesis: Dict[str, Any]) -> float:
+    def _assess_structural_uncertainty(self, synthesis: dict[str, Any]) -> float:
         """Assess structural uncertainty in inference."""
         base = self.uncertainty_model['structural_base']
 
@@ -1482,7 +1479,7 @@ class FallibilisticInference:
 
     def _assess_temporal_uncertainty(
         self,
-        patterns: List[Dict[str, Any]]
+        patterns: list[dict[str, Any]]
     ) -> float:
         """Assess temporal uncertainty based on evidence age."""
         # Simplified - assume all evidence is current
@@ -1496,7 +1493,7 @@ class FallibilisticInference:
     def _log_inference(
         self,
         insight: FallibilisticInsight,
-        evidence: List[Dict[str, Any]]
+        evidence: list[dict[str, Any]]
     ) -> None:
         """Log inference for future reference and learning."""
         self.inference_history.append({
@@ -1525,16 +1522,16 @@ class MetaLearningEngine:
 
     def __init__(self):
         """Initialize meta-learning engine."""
-        self.performance_history: List[Dict[str, Any]] = []
-        self.parameter_evolution: Dict[str, List[float]] = defaultdict(list)
+        self.performance_history: list[dict[str, Any]] = []
+        self.parameter_evolution: dict[str, list[float]] = defaultdict(list)
         self.learning_rate = 0.01
 
         logger.info("Initialized MetaLearningEngine")
 
     def observe_outcome(
         self,
-        prediction: Dict[str, Any],
-        actual_outcome: Dict[str, Any]
+        prediction: dict[str, Any],
+        actual_outcome: dict[str, Any]
     ) -> None:
         """Observe prediction outcome for learning."""
         # Calculate prediction quality
@@ -1554,8 +1551,8 @@ class MetaLearningEngine:
 
     def _assess_prediction_quality(
         self,
-        prediction: Dict[str, Any],
-        outcome: Dict[str, Any]
+        prediction: dict[str, Any],
+        outcome: dict[str, Any]
     ) -> float:
         """Assess quality of prediction vs outcome."""
         # Simplified assessment

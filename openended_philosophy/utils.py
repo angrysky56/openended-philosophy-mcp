@@ -12,7 +12,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import numpy as np
 
@@ -36,8 +36,8 @@ def setup_logging(name: str) -> logging.Logger:
 
     logger.setLevel(logging.DEBUG)
 
-    # Console handler with philosophical formatting
-    console_handler = logging.StreamHandler(sys.stdout)
+    # Console handler with philosophical formatting (stderr for MCP compatibility)
+    console_handler = logging.StreamHandler(sys.stderr)
     console_handler.setLevel(logging.INFO)
 
     # Detailed format for debugging epistemic processes
@@ -114,8 +114,8 @@ def calculate_epistemic_uncertainty(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def semantic_similarity(
-    concept1: Dict[str, Any],
-    concept2: Dict[str, Any],
+    concept1: dict[str, Any],
+    concept2: dict[str, Any],
     method: str = "jaccard"
 ) -> float:
     """
@@ -144,7 +144,7 @@ def semantic_similarity(
     else:
         raise ValueError(f"Unknown similarity method: {method}")
 
-def _jaccard_similarity(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
+def _jaccard_similarity(c1: dict[str, Any], c2: dict[str, Any]) -> float:
     """Calculate Jaccard similarity."""
     features1 = set(c1.get('features', []))
     features2 = set(c2.get('features', []))
@@ -157,7 +157,7 @@ def _jaccard_similarity(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
 
     return intersection / union if union > 0 else 0.0
 
-def _cosine_similarity(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
+def _cosine_similarity(c1: dict[str, Any], c2: dict[str, Any]) -> float:
     """Calculate cosine similarity."""
     # Create feature vectors
     all_features = sorted(set(c1.get('features', [])) | set(c2.get('features', [])))
@@ -174,7 +174,7 @@ def _cosine_similarity(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
 
     return dot_product / norm_product if norm_product > 0 else 0.0
 
-def _family_resemblance(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
+def _family_resemblance(c1: dict[str, Any], c2: dict[str, Any]) -> float:
     """
     Calculate Wittgensteinian family resemblance.
 
@@ -199,9 +199,9 @@ def _family_resemblance(c1: Dict[str, Any], c2: Dict[str, Any]) -> float:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def coherence_metrics(
-    propositions: List[Dict[str, Any]],
-    relations: List[Tuple[int, int, str]]
-) -> Dict[str, float]:
+    propositions: list[dict[str, Any]],
+    relations: list[tuple[int, int, str]]
+) -> dict[str, float]:
     """
     Calculate coherence metrics for a set of propositions.
 
@@ -281,10 +281,10 @@ def coherence_metrics(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def pragmatic_evaluation(
-    solution: Dict[str, Any],
-    problem_context: Dict[str, Any],
-    criteria: Optional[Dict[str, float]] = None
-) -> Dict[str, Any]:
+    solution: dict[str, Any],
+    problem_context: dict[str, Any],
+    criteria: dict[str, float] | None = None
+) -> dict[str, Any]:
     """
     Evaluate solution quality from pragmatist perspective.
 
@@ -342,7 +342,7 @@ def pragmatic_evaluation(
         'pragmatic_value': overall_score > 0.7
     }
 
-def _evaluate_efficacy(solution: Dict[str, Any], context: Dict[str, Any]) -> float:
+def _evaluate_efficacy(solution: dict[str, Any], context: dict[str, Any]) -> float:
     """Evaluate problem-solving efficacy."""
     # Check if solution addresses all problem requirements
     requirements = context.get('requirements', [])
@@ -356,7 +356,7 @@ def _evaluate_efficacy(solution: Dict[str, Any], context: Dict[str, Any]) -> flo
 
     return addressed / len(requirements)
 
-def _evaluate_adaptability(solution: Dict[str, Any], context: Dict[str, Any]) -> float:
+def _evaluate_adaptability(solution: dict[str, Any], context: dict[str, Any]) -> float:
     """Evaluate solution adaptability."""
     # Check flexibility indicators
     flexibility_score = 0.0
@@ -372,7 +372,7 @@ def _evaluate_adaptability(solution: Dict[str, Any], context: Dict[str, Any]) ->
 
     return flexibility_score
 
-def _evaluate_simplicity(solution: Dict[str, Any]) -> float:
+def _evaluate_simplicity(solution: dict[str, Any]) -> float:
     """Evaluate solution simplicity."""
     # Inverse of complexity
     complexity_indicators = [
@@ -390,7 +390,7 @@ def _evaluate_simplicity(solution: Dict[str, Any]) -> float:
     # Simple sigmoid to map complexity to simplicity score
     return 1.0 / (1.0 + 0.1 * complexity)
 
-def _evaluate_consequences(solution: Dict[str, Any], context: Dict[str, Any]) -> float:
+def _evaluate_consequences(solution: dict[str, Any], context: dict[str, Any]) -> float:
     """Evaluate solution consequences."""
     positive = len(solution.get('benefits', []))
     negative = len(solution.get('risks', []))
@@ -401,9 +401,9 @@ def _evaluate_consequences(solution: Dict[str, Any], context: Dict[str, Any]) ->
     return positive / (positive + negative)
 
 def _generate_pragmatic_recommendations(
-    scores: Dict[str, float],
-    solution: Dict[str, Any]
-) -> List[str]:
+    scores: dict[str, float],
+    solution: dict[str, Any]
+) -> list[str]:
     """Generate recommendations based on pragmatic evaluation."""
     recommendations = []
 
@@ -432,7 +432,7 @@ def _generate_pragmatic_recommendations(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def format_philosophical_output(
-    result: Dict[str, Any],
+    result: dict[str, Any],
     style: str = "academic"
 ) -> str:
     """
@@ -460,7 +460,7 @@ def format_philosophical_output(
     else:
         return json.dumps(result, indent=2)
 
-def _format_academic(result: Dict[str, Any]) -> str:
+def _format_academic(result: dict[str, Any]) -> str:
     """Format in academic philosophical style."""
     output = []
 
@@ -495,7 +495,7 @@ def _format_academic(result: Dict[str, Any]) -> str:
 
     return "\n".join(output)
 
-def _format_accessible(result: Dict[str, Any]) -> str:
+def _format_accessible(result: dict[str, Any]) -> str:
     """Format in accessible plain language."""
     output = []
 
@@ -524,7 +524,7 @@ def _format_accessible(result: Dict[str, Any]) -> str:
 
     return "\n".join(output)
 
-def _format_dialogue(result: Dict[str, Any]) -> str:
+def _format_dialogue(result: dict[str, Any]) -> str:
     """Format as Socratic dialogue."""
     output = []
 
@@ -552,7 +552,7 @@ def _format_dialogue(result: Dict[str, Any]) -> str:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def save_analysis_state(
-    analysis: Dict[str, Any],
+    analysis: dict[str, Any],
     filepath: Path,
     include_metadata: bool = True
 ) -> None:
@@ -579,7 +579,7 @@ def save_analysis_state(
     with open(filepath, 'w') as f:
         json.dump(state, f, indent=2)
 
-def load_analysis_state(filepath: Path) -> Dict[str, Any]:
+def load_analysis_state(filepath: Path) -> dict[str, Any]:
     """
     Load previously saved analysis state.
 
@@ -589,7 +589,7 @@ def load_analysis_state(filepath: Path) -> Dict[str, Any]:
     Returns:
         Analysis state dictionary
     """
-    with open(filepath, 'r') as f:
+    with open(filepath) as f:
         state = json.load(f)
 
     # Check version compatibility

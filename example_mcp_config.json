@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "openended-philosophy": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+        "run",
+        "openended-philosophy-server"
+      ],
+      "env": {
+        "PYTHONPATH": "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}

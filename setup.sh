@@ -1,146 +1,66 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Enhanced OpenEnded Philosophy MCP Server Setup
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# OpenEnded Philosophy MCP Server Setup Script
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-set -e  # Exit on error
+set -euo pipefail
 
+echo "🔬 Initializing OpenEnded Philosophy MCP Server"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "OpenEnded Philosophy MCP Server Setup"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
 
-# Check Python version
-echo "Checking Python version..."
-python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-required_version="3.8"
-
-if [[ $(echo -e "$python_version\n$required_version" | sort -V | head -n1) != "$required_version" ]]; then
-    echo "Error: Python $required_version or higher is required (found $python_version)"
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    echo "❌ uv package manager not found. Please install uv first:"
+    echo "   curl -LsSf https://astral.sh/uv/install.sh | sh"
     exit 1
 fi
-echo "✓ Python $python_version detected"
 
-# Create virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
-    echo ""
-    echo "Creating virtual environment..."
-    python3 -m venv venv
-    echo "✓ Virtual environment created"
-else
-    echo "✓ Virtual environment already exists"
-fi
+echo "✅ uv package manager detected"
+
+# Create virtual environment with uv
+echo "🔧 Creating virtual environment..."
+uv venv --python 3.9 --seed
 
 # Activate virtual environment
-echo ""
-echo "Activating virtual environment..."
-source venv/bin/activate
-echo "✓ Virtual environment activated"
-
-# Upgrade pip
-echo ""
-echo "Upgrading pip..."
-pip install --upgrade pip
-echo "✓ pip upgraded"
+echo "🔧 Activating virtual environment..."
+# shellcheck source=.venv/bin/activate
+source .venv/bin/activate
 
 # Install dependencies
-echo ""
-echo "Installing dependencies..."
-pip install -r requirements.txt
-echo "✓ Dependencies installed"
+echo "📦 Installing dependencies..."
+uv sync --dev
 
-# Create necessary directories
-echo ""
-echo "Creating directory structure..."
+# Create logs directory
+echo "📁 Creating logs directory..."
 mkdir -p logs
-mkdir -p examples
-mkdir -p tests
-mkdir -p data
-echo "✓ Directories created"
 
-# Run basic tests to verify installation
+# Set up development environment
+echo "🛠️  Setting up development environment..."
+uv run ruff format .
+uv run ruff check . --fix
+
+# Run basic tests
+echo "🧪 Running basic validation..."
+if uv run python -c "from openended_philosophy.server import OpenEndedPhilosophyServer; print('✅ Server imports successfully')"; then
+    echo "✅ Basic validation passed"
+else
+    echo "❌ Basic validation failed"
+    exit 1
+fi
+
 echo ""
-echo "Verifying installation..."
-python -c "
-from openended_philosophy import OpenEndedPhilosophyServer
-print('✓ Core imports successful')
-
-from openended_philosophy.core import (
-    EmergentCoherenceNode,
-    DynamicPluralismFramework,
-    LanguageGameProcessor,
-    CoherenceLandscape,
-    FallibilisticInference
-)
-print('✓ All core components accessible')
-
-import numpy as np
-import networkx as nx
-print('✓ Scientific dependencies loaded')
-"
-
-# Create a simple test script
+echo "🎉 Setup completed successfully!"
 echo ""
-echo "Creating test script..."
-cat > test_installation.py << 'EOF'
-#!/usr/bin/env python3
-"""Test script to verify installation."""
-
-import asyncio
-from openended_philosophy import (
-    EmergentCoherenceNode,
-    DynamicPluralismFramework,
-    calculate_epistemic_uncertainty
-)
-
-async def test_basic_functionality():
-    """Test basic framework functionality."""
-    print("\n### Testing Basic Functionality ###\n")
-    
-    # Test coherence node
-    node = EmergentCoherenceNode(
-        initial_pattern={"concept": "truth", "domain": "epistemology"},
-        confidence=0.7
-    )
-    print(f"✓ Created coherence node: {node.pattern.pattern_id}")
-    
-    # Test pluralism framework
-    framework = DynamicPluralismFramework(openness_coefficient=0.9)
-    schema_id = framework.integrate_perspective({
-        'name': 'pragmatist',
-        'concepts': ['utility', 'consequences', 'practice']
-    })
-    print(f"✓ Integrated perspective: {schema_id}")
-    
-    # Test uncertainty calculation
-    uncertainty = calculate_epistemic_uncertainty(
-        evidence_count=5,
-        coherence_score=0.8,
-        temporal_factor=1.0,
-        domain_complexity=0.5
-    )
-    print(f"✓ Calculated epistemic uncertainty: {uncertainty:.3f}")
-    
-    print("\n### All tests passed! ###")
-
-if __name__ == "__main__":
-    asyncio.run(test_basic_functionality())
-EOF
-
-python test_installation.py
-
-# Setup completion message
+echo "📋 Next steps:"
+echo "   1. Copy example_mcp_config.json to your Claude Desktop configuration"
+echo "   2. Update the path in the config to match your installation"
+echo "   3. Restart Claude Desktop"
+echo "   4. Test the philosophical analysis tools"
 echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Setup complete! 🎉"
+echo "🔍 Development commands:"
+echo "   • uv run openended-philosophy-server  # Start server directly"
+echo "   • uv run pytest                       # Run tests"
+echo "   • uv run ruff format .                # Format code"
+echo "   • uv run mypy openended_philosophy/   # Type checking"
 echo ""
-echo "To run the server:"
-echo "  1. Activate the virtual environment: source venv/bin/activate"
-echo "  2. Run the server: python -m openended_philosophy"
-echo ""
-echo "To use as an MCP tool:"
-echo "  1. Add the mcp_config.json to your MCP client configuration"
-echo "  2. The server will be available as 'openended-philosophy'"
-echo ""
-echo "For examples and documentation, see the README.md file."
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📖 For more information, see README.md"
