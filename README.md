@@ -1,5 +1,7 @@
 # OpenEnded Philosophy MCP Server
 
+Currently a basic version
+
 ## Theoretical Foundation
 
 **Core Philosophical Architecture**:
@@ -56,20 +58,79 @@ P(insight|evidence) = Confidence × (1 - Uncertainty_Propagation)
 ## Installation
 
 ```bash
-# Clone repository
-git clone [repository-url]
-cd openended-philosophy-mcp
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run server
-python -m openended_philosophy.server
+git clone https://github.com/angrysky56/openended-philosophy-mcp
 ```
+
+Via Claude Desktop or other MCP client config json-
+Adapt the paths to your own:
+
+```json
+{
+  "mcpServers": {
+    "openended-philosophy": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+        "run",
+        "openended-philosophy-server"
+      ],
+      "env": {
+        "PYTHONPATH": "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+### For Direct Usage (without MCP client)
+
+If you want to run the philosophy server directly using uv:
+
+#### Prerequisites
+
+1. Install uv if you haven't already:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. Restart your shell or run:
+   ```bash
+   source $HOME/.cargo/env
+   ```
+
+#### Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/angrysky56/openended-philosophy-mcp
+   cd openended-philosophy-mcp
+   ```
+
+2. Install dependencies with uv:
+   ```bash
+   uv sync
+   ```
+
+#### Running the Server
+
+1. Activate the virtual environment:
+   ```bash
+   source .venv/bin/activate
+   ```
+
+2. Run the MCP server:
+   ```bash
+   python -m openended_philosophy_mcp
+   ```
+
+The server will start and listen for MCP protocol messages on stdin/stdout. You can interact with it programmatically or integrate it with other MCP-compatible tools.
+
+#### Available Tools
+
+- `ask_philosophical_question`: Ask deep philosophical questions and receive thoughtful responses
+- `explore_philosophical_topic`: Explore philosophical topics in depth with guided discussion
 
 ## Usage via MCP
 
