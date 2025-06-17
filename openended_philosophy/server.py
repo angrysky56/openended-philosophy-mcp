@@ -540,7 +540,7 @@ class OpenEndedPhilosophyServer:
                     )
 
                     # Store insights in NARS memory
-                    for perspective, analysis in nars_analysis.get("perspective_analyses", {}).items():
+                    for _, analysis in nars_analysis.get("perspective_analyses", {}).items():
                         if isinstance(analysis, dict) and "findings" in analysis:
                             for finding in analysis["findings"]:
                                 self.nars_memory.add_belief(
