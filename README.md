@@ -1,6 +1,14 @@
-# OpenEnded Philosophy MCP Server
+# OpenEnded Philosophy MCP Server with NARS Integration
 
-Currently a basic version
+A sophisticated philosophical reasoning system that combines OpenEnded Philosophy with Non-Axiomatic Reasoning System (NARS) for enhanced epistemic analysis, truth maintenance, and multi-perspective synthesis.
+
+## Core Integration: Philosophy + NARS
+
+This server uniquely integrates:
+- **NARS/ONA**: Non-axiomatic reasoning with truth maintenance and belief revision
+- **Philosophical Pluralism**: Multi-perspective analysis without privileging any single view
+- **Epistemic Humility**: Built-in uncertainty quantification and revision conditions
+- **Coherence Dynamics**: Emergent conceptual landscapes with stability analysis
 
 ## Theoretical Foundation
 
@@ -55,11 +63,34 @@ P(insight|evidence) = Confidence × (1 - Uncertainty_Propagation)
 └─────────────────────────────────────────┘
 ```
 
+## NARS Integration Features
+
+### Non-Axiomatic Logic (NAL)
+- **Truth Values**: (frequency, confidence) pairs for nuanced belief representation
+- **Evidence-Based Reasoning**: Beliefs strengthen with converging evidence
+- **Temporal Reasoning**: Handle time-dependent truths and belief projection
+- **Inference Rules**: Deduction, induction, abduction, analogy, and revision
+
+### Enhanced Capabilities
+- **Truth Maintenance**: Automatic belief revision when contradictions arise
+- **Memory System**: Semantic embeddings + NARS attention buffer
+- **Reasoning Patterns**: Multiple inference types for comprehensive analysis
+- **Uncertainty Tracking**: Epistemic uncertainty propagation through inference chains
+
 ## Installation
 
 ```bash
 git clone https://github.com/angrysky56/openended-philosophy-mcp
+cd openended-philosophy-mcp
+./setup.sh
 ```
+
+The setup script will:
+1. Install Python dependencies via uv
+2. Download required NLTK data
+3. Check for ONA (OpenNARS for Applications)
+4. Provide configuration instructions
+=======
 
 Via Claude Desktop or other MCP client config json-
 Adapt the paths to your own:

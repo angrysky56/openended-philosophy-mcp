@@ -12,7 +12,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -600,5 +600,179 @@ def load_analysis_state(filepath: Path) -> dict[str, Any]:
     return state['analysis']
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def safe_json_dumps(obj: Any, **kwargs) -> str:
+    """
+    Safely serialize object to JSON with error handling.
+    
+    Handles non-serializable objects by converting them to string
+    representations and provides fallback for complex objects.
+    
+    Args:
+        obj: Object to serialize
+        **kwargs: Additional arguments for json.dumps
+        
+    Returns:
+        JSON string representation
+    """
+    def json_serializer(obj):
+        """Custom serializer for non-JSON-serializable objects."""
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        elif isinstance(obj, (set, frozenset)):
+            return list(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif hasattr(obj, '__dict__'):
+            return str(obj)
+        else:
+            return str(obj)
+    
+    try:
+        return json.dumps(obj, default=json_serializer, **kwargs)
+    except Exception as e:
+        # Fallback for complex objects
+        logger = logging.getLogger(__name__)
+        logger.warning(f"JSON serialization failed: {e}, using string representation")
+        return json.dumps({"content": str(obj), "serialization_note": "Complex object converted to string"}, **kwargs)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def validate_philosophical_input(
+    input_data: dict[str, Any],
+    required_fields: list[str],
+    optional_fields: list[str] | None = None
+) -> tuple[bool, list[str]]:
+    """
+    Validate input for philosophical analysis operations.
+    
+    Args:
+        input_data: Input data to validate
+        required_fields: List of required field names
+        optional_fields: List of optional field names
+        
+    Returns:
+        Tuple of (is_valid, error_messages)
+    """
+    errors = []
+    
+    # Check required fields
+    for field in required_fields:
+        if field not in input_data:
+            errors.append(f"Missing required field: {field}")
+        elif not input_data[field]:
+            errors.append(f"Required field '{field}' is empty")
+    
+    # Validate field types and constraints
+    if 'confidence_threshold' in input_data:
+        threshold = input_data['confidence_threshold']
+        if not isinstance(threshold, (int, float)) or not 0.0 <= threshold <= 1.0:
+            errors.append("confidence_threshold must be a number between 0.0 and 1.0")
+    
+    if 'depth' in input_data:
+        depth = input_data['depth']
+        if not isinstance(depth, int) or not 1 <= depth <= 5:
+            errors.append("depth must be an integer between 1 and 5")
+    
+    if 'perspectives' in input_data:
+        perspectives = input_data['perspectives']
+        if not isinstance(perspectives, list):
+            errors.append("perspectives must be a list")
+        elif any(not isinstance(p, str) for p in perspectives):
+            errors.append("all perspectives must be strings")
+    
+    return len(errors) == 0, errors
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def generate_philosophical_questions(
+    concept: str,
+    context: str,
+    analysis_results: dict[str, Any],
+    max_questions: int = 5
+) -> list[str]:
+    """
+    Generate follow-up philosophical questions based on analysis.
+    
+    Args:
+        concept: The analyzed concept
+        context: Context of analysis
+        analysis_results: Results of philosophical analysis
+        max_questions: Maximum number of questions to generate
+        
+    Returns:
+        List of generated questions
+    """
+    questions = []
+    
+    # Context-specific question templates
+    templates = {
+        'epistemology': [
+            f"How do we know that our understanding of {concept} is reliable?",
+            f"What evidence would change our view of {concept}?",
+            f"What are the limits of knowledge regarding {concept}?",
+            f"How does our perspective on {concept} affect what we can know about it?"
+        ],
+        'ethics': [
+            f"What are the moral implications of {concept}?",
+            f"How should {concept} guide our actions?",
+            f"What values are embedded in our understanding of {concept}?",
+            f"How might different cultural perspectives view {concept} differently?"
+        ],
+        'metaphysics': [
+            f"What is the fundamental nature of {concept}?",
+            f"How does {concept} relate to reality as a whole?",
+            f"What would existence be like without {concept}?",
+            f"Is {concept} essential or contingent?"
+        ],
+        'consciousness': [
+            f"How does {concept} relate to conscious experience?",
+            f"Can {concept} exist without awareness?",
+            f"What is it like to experience {concept}?",
+            f"How does {concept} emerge from or relate to physical processes?"
+        ],
+        'general': [
+            f"What assumptions underlie our understanding of {concept}?",
+            f"How might {concept} be understood differently in other contexts?",
+            f"What questions does {concept} raise that we haven't considered?",
+            f"How does {concept} connect to other important ideas?"
+        ]
+    }
+    
+    # Determine appropriate context
+    context_lower = context.lower()
+    if any(term in context_lower for term in ['knowledge', 'belief', 'truth', 'science']):
+        question_context = 'epistemology'
+    elif any(term in context_lower for term in ['ethics', 'moral', 'value', 'right', 'wrong']):
+        question_context = 'ethics'
+    elif any(term in context_lower for term in ['reality', 'existence', 'being', 'nature']):
+        question_context = 'metaphysics'
+    elif any(term in context_lower for term in ['consciousness', 'mind', 'experience', 'awareness']):
+        question_context = 'consciousness'
+    else:
+        question_context = 'general'
+    
+    # Add context-specific questions
+    questions.extend(templates[question_context][:max_questions // 2])
+    
+    # Add analysis-driven questions
+    if 'tensions' in analysis_results and analysis_results['tensions']:
+        questions.append(f"How might we resolve the tension: {analysis_results['tensions'][0]}?")
+    
+    if 'uncertainty_profile' in analysis_results:
+        uncertainty = analysis_results['uncertainty_profile'].get('epistemic_uncertainty', 0.0)
+        if uncertainty > 0.7:
+            questions.append(f"Given the high uncertainty, what would increase our confidence about {concept}?")
+    
+    # Add general philosophical questions
+    questions.extend(templates['general'][:max_questions - len(questions)])
+    
+    return questions[:max_questions]
 
 # End of utils.py

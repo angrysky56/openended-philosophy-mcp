@@ -29,11 +29,10 @@ Where:
 
 import logging
 import uuid
-from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 import networkx as nx
 import numpy as np
@@ -55,7 +54,8 @@ class SemanticPattern:
     - emergence_timestamp: When pattern was identified
     - revision_count: Number of modifications
     """
-    pattern_id: str
+    # pattern_id is now auto-generated and not an __init__ parameter.
+    pattern_id: str = field(default_factory=lambda: f"pattern_{uuid.uuid4().hex[:8]}", init=False)
     content: dict[str, Any]
     confidence: float = 0.5
     context_sensitivity: float = 0.8
@@ -95,15 +95,14 @@ class EmergentCoherenceNode:
         self,
         initial_pattern: dict[str, Any],
         confidence: float = 0.5,
-        context_sensitivity: float = 0.8
     ):
         """Initialize coherence node with provisional pattern."""
         self.pattern = SemanticPattern(
-            pattern_id=self._generate_id(),
             content=initial_pattern,
-            confidence=confidence,
-            context_sensitivity=context_sensitivity
+            confidence=confidence
+            # context_sensitivity will use its default value from SemanticPattern
         )
+        self.semantic_neighborhoods: dict[str, list[tuple[str, float]]] = {}
         self.semantic_neighborhoods: dict[str, list[tuple[str, float]]] = {}
         self.revision_history: list[dict[str, Any]] = []
         self.active_contexts: set[str] = set()
@@ -113,7 +112,7 @@ class EmergentCoherenceNode:
     def contextualize_meaning(
         self,
         language_game: 'LanguageGameProcessor',
-        form_of_life: Optional[dict[str, Any]] = None
+        form_of_life: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """
         Derive contextual meaning through language game application.
@@ -165,9 +164,9 @@ class EmergentCoherenceNode:
         for key, value in feedback.items():
             if key in self.pattern.content:
                 # Gradual update
-                if isinstance(value, (int, float)):
+                if isinstance(value, int | float):
                     old_val = self.pattern.content[key]
-                    if isinstance(old_val, (int, float)):
+                    if isinstance(old_val, int | float):
                         self.pattern.content[key] = (
                             old_val * (1 - learning_rate) + value * learning_rate
                         )
@@ -234,7 +233,7 @@ class DynamicPluralismFramework:
     def integrate_perspective(
         self,
         schema: dict[str, Any],
-        weight: Optional[float] = None
+        weight: float | None = None
     ) -> str:
         """
         Add interpretive lens without claiming exhaustive truth.
@@ -360,12 +359,79 @@ class DynamicPluralismFramework:
 
     def _find_agreements(self, interp1: dict, interp2: dict) -> list[str]:
         """Identify points of agreement between interpretations."""
-        # Simplified - would use semantic similarity
-        return ["shared_concept_1", "shared_concept_2"]
+        from .utils import semantic_similarity
+
+        agreements = []
+
+        # Compare key concepts
+        concepts1 = set(interp1.get('key_concepts', []))
+        concepts2 = set(interp2.get('key_concepts', []))
+        shared_concepts = concepts1 & concepts2
+
+        if shared_concepts:
+            agreements.extend([f"Both recognize {concept}" for concept in shared_concepts])
+
+        # Compare evaluation scores
+        eval1 = interp1.get('evaluation', 0.5)
+        eval2 = interp2.get('evaluation', 0.5)
+        if abs(eval1 - eval2) < 0.2:
+            agreements.append(f"Similar evaluative assessment (±{abs(eval1 - eval2):.2f})")
+
+        # Semantic similarity of interpretations
+        if 'interpretation' in interp1 and 'interpretation' in interp2:
+            # Extract keywords for comparison
+            words1 = set(interp1['interpretation'].lower().split())
+            words2 = set(interp2['interpretation'].lower().split())
+
+            concept_dict1 = {'features': list(words1)}
+            concept_dict2 = {'features': list(words2)}
+
+            similarity = semantic_similarity(concept_dict1, concept_dict2, method="jaccard")
+            if similarity > 0.3:
+                agreements.append(f"Substantial interpretive overlap (similarity: {similarity:.2f})")
+
+        return agreements if agreements else ["Minimal direct agreement identified"]
 
     def _find_tensions(self, interp1: dict, interp2: dict) -> list[str]:
         """Identify tensions between interpretations."""
-        return ["tension_point_1", "tension_point_2"]
+        tensions = []
+
+        # Compare key concepts for contradictions
+        concepts1 = set(interp1.get('key_concepts', []))
+        concepts2 = set(interp2.get('key_concepts', []))
+
+        # Look for conflicting evaluations
+        eval1 = interp1.get('evaluation', 0.5)
+        eval2 = interp2.get('evaluation', 0.5)
+        if abs(eval1 - eval2) > 0.4:
+            tensions.append(f"Evaluative disagreement ({eval1:.2f} vs {eval2:.2f})")
+
+        # Check for opposing conceptual emphasis
+        if concepts1 and concepts2:
+            unique1 = concepts1 - concepts2
+            unique2 = concepts2 - concepts1
+            if unique1 and unique2:
+                tensions.append(f"Divergent conceptual focus: {list(unique1)[:2]} vs {list(unique2)[:2]}")
+
+        # Analyze interpretation content for oppositions
+        if 'interpretation' in interp1 and 'interpretation' in interp2:
+            text1 = interp1['interpretation'].lower()
+            text2 = interp2['interpretation'].lower()
+
+            # Simple opposition detection
+            oppositions = [
+                ('objective', 'subjective'), ('universal', 'particular'),
+                ('reductive', 'emergent'), ('material', 'mental'),
+                ('deterministic', 'free'), ('individual', 'social')
+            ]
+
+            for term1, term2 in oppositions:
+                if term1 in text1 and term2 in text2:
+                    tensions.append(f"Conceptual opposition: {term1} vs {term2}")
+                elif term2 in text1 and term1 in text2:
+                    tensions.append(f"Conceptual opposition: {term2} vs {term1}")
+
+        return tensions if tensions else ["No significant tensions detected"]
 
     def _generate_emergent_insights(
         self,
@@ -375,25 +441,98 @@ class DynamicPluralismFramework:
         tensions: list
     ) -> list[dict[str, Any]]:
         """Generate insights from schema interaction."""
+        from .utils import calculate_epistemic_uncertainty
+
         insights = []
 
-        # Insight from agreements
+        # Convergence insights from agreements
         if agreements:
+            for agreement in agreements:
+                confidence = 0.8 if "substantial" in agreement.lower() else 0.6
+                insights.append({
+                    'type': 'convergence',
+                    'content': f"Interpretive convergence: {agreement}",
+                    'confidence': confidence,
+                    'supporting_evidence': [agreement],
+                    'epistemic_significance': 'Points toward robust conceptual features'
+                })
+
+        # Dialectical insights from productive tensions
+        if tensions:
+            for tension in tensions:
+                # Calculate dialectical potential
+                dialectical_strength = 0.7 if "opposition" in tension.lower() else 0.5
+
+                insights.append({
+                    'type': 'dialectical',
+                    'content': f"Productive tension: {tension}",
+                    'confidence': dialectical_strength,
+                    'supporting_evidence': [tension],
+                    'epistemic_significance': 'Reveals conceptual complexity requiring synthesis'
+                })
+
+        # Synthesis insights from interaction quality
+        interaction_quality = self._assess_interaction_quality(interp1, interp2, agreements, tensions)
+        if interaction_quality > 0.6:
             insights.append({
-                'type': 'convergence',
-                'content': f"Both perspectives recognize {agreements[0]}",
-                'confidence': 0.8
+                'type': 'synthetic',
+                'content': "High-quality interpretive interaction suggests fertile conceptual terrain",
+                'confidence': interaction_quality,
+                'supporting_evidence': [f"{len(agreements)} agreements, {len(tensions)} tensions"],
+                'epistemic_significance': 'Indicates concept amenable to multi-perspectival analysis'
             })
 
-        # Insight from productive tensions
-        if tensions:
+        # Meta-insight about perspective plurality
+        if len(insights) >= 2:
+            meta_confidence = min(0.9, sum(i['confidence'] for i in insights) / len(insights))
             insights.append({
-                'type': 'dialectical',
-                'content': f"Tension around {tensions[0]} reveals deeper complexity",
-                'confidence': 0.6
+                'type': 'meta_cognitive',
+                'content': 'Multi-perspectival analysis reveals irreducible complexity',
+                'confidence': meta_confidence,
+                'supporting_evidence': [f"Generated {len(insights)} distinct insight types"],
+                'epistemic_significance': 'Supports philosophical pluralism over reductive approaches'
             })
+
+        # Calculate epistemic uncertainty for insights
+        for insight in insights:
+            uncertainty = calculate_epistemic_uncertainty(
+                evidence_count=len(insight.get('supporting_evidence', [])),
+                coherence_score=insight['confidence'],
+                temporal_factor=1.0,
+                domain_complexity=0.7  # Philosophy is inherently complex
+            )
+            insight['epistemic_uncertainty'] = uncertainty
 
         return insights
+
+    def _assess_interaction_quality(
+        self,
+        interp1: dict,
+        interp2: dict,
+        agreements: list,
+        tensions: list
+    ) -> float:
+        """Assess quality of interaction between interpretations."""
+        # Base quality from agreement/tension ratio
+        total_interactions = len(agreements) + len(tensions)
+        if total_interactions == 0:
+            return 0.3  # Low quality if no meaningful interaction
+
+        agreement_ratio = len(agreements) / total_interactions
+
+        # Quality increases with more agreements, but some tension is productive
+        optimal_tension_ratio = 0.3  # 30% tension is often productive
+        tension_ratio = len(tensions) / total_interactions
+        tension_factor = 1.0 - abs(tension_ratio - optimal_tension_ratio)
+
+        # Consider confidence levels of interpretations
+        conf1 = interp1.get('confidence', 0.5) if isinstance(interp1, dict) else 0.5
+        conf2 = interp2.get('confidence', 0.5) if isinstance(interp2, dict) else 0.5
+        confidence_factor = (conf1 + conf2) / 2
+
+        # Combine factors
+        quality = (0.4 * agreement_ratio + 0.3 * tension_factor + 0.3 * confidence_factor)
+        return min(0.95, max(0.1, quality))
 
     def _update_interaction_matrix(self, new_schema_id: str) -> None:
         """Update interaction matrix with new schema."""
@@ -593,7 +732,7 @@ class LanguageGameProcessor:
 
         # Apply contextual constraints
         for constraint, value in form_of_life.items():
-            if constraint in constrained and isinstance(constrained[constraint], (int, float)):
+            if constraint in constrained and isinstance(constrained[constraint], int | float):
                 # Modulate by form of life
                 constrained[constraint] *= value
 
@@ -609,12 +748,234 @@ class LanguageGameProcessor:
         return (compliance + precedent_factor) / 2.0
 
     def _derive_contextual_meaning(self, expression: str) -> dict[str, Any]:
-        """Derive meaning from context of use."""
+        """
+        Derive contextual meaning through language game analysis.
+
+        Uses Wittgensteinian principles to derive meaning from use patterns
+        within the specific language game context.
+        """
+        # Analyze expression structure and components
+        expression_components = self._analyze_expression_structure(expression)
+
+        # Find relevant usage patterns in this game
+        relevant_patterns = [
+            pattern for pattern in self.usage_patterns
+            if self._expression_matches_pattern(expression, pattern)
+        ]
+
+        # Calculate context-dependent meaning
+        game_specific_meaning = self._extract_game_specific_meaning(
+            expression, expression_components
+        )
+
+        # Assess semantic stability in this context
+        stability_metrics = self._assess_contextual_stability(
+            expression, relevant_patterns
+        )
+
+        # Generate family resemblance mappings
+        resemblance_network = self._build_resemblance_network(
+            expression, expression_components
+        )
+
         return {
-            'primary_sense': f"{expression} in {self.game_type} context",
+            'primary_sense': game_specific_meaning,
             'connotations': self._get_contextual_connotations(expression),
-            'typical_uses': self._get_typical_uses(expression)
+            'typical_uses': self._get_typical_uses(expression),
+            'expression_components': expression_components,
+            'semantic_stability': stability_metrics,
+            'family_resemblances': resemblance_network,
+            'usage_confidence': len(relevant_patterns) / max(len(self.usage_patterns), 1),
+            'context_sensitivity': self._calculate_context_sensitivity(expression)
         }
+
+    def _analyze_expression_structure(self, expression: str) -> dict[str, Any]:
+        """Analyze the structural components of an expression."""
+        components = {
+            'length': len(expression.split()),
+            'complexity': len(set(expression.lower().split())),
+            'grammatical_markers': [],
+            'conceptual_density': 0.0
+        }
+
+        # Identify grammatical markers
+        question_words = ['what', 'how', 'why', 'when', 'where', 'who']
+        modal_verbs = ['should', 'could', 'would', 'might', 'must', 'ought']
+
+        expression_lower = expression.lower()
+
+        if any(word in expression_lower for word in question_words):
+            components['grammatical_markers'].append('interrogative')
+
+        if any(verb in expression_lower for verb in modal_verbs):
+            components['grammatical_markers'].append('modal')
+
+        if '!' in expression:
+            components['grammatical_markers'].append('exclamative')
+
+        # Calculate conceptual density (unique concepts / total words)
+        words = expression.split()
+        if words:
+            components['conceptual_density'] = len(set(words)) / len(words)
+
+        return components
+
+    def _expression_matches_pattern(
+        self,
+        expression: str,
+        pattern: dict[str, Any]
+    ) -> bool:
+        """Check if expression matches a usage pattern."""
+        pattern_type = pattern.get('pattern', '')
+
+        # Match based on pattern characteristics
+        if pattern_type == 'assertive':
+            return not any(marker in expression.lower()
+                         for marker in ['?', 'what', 'how', 'why'])
+        elif pattern_type == 'interrogative':
+            return '?' in expression or any(word in expression.lower()
+                                         for word in ['what', 'how', 'why'])
+        elif pattern_type == 'imperative':
+            # Simple heuristic for commands
+            return len(expression.split()) <= 5 and not expression.endswith('?')
+
+        return False
+
+    def _extract_game_specific_meaning(
+        self,
+        expression: str,
+        components: dict[str, Any]
+    ) -> str:
+        """Extract meaning specific to this language game."""
+        game_meanings = {
+            'scientific_discourse': f"Within scientific discourse, '{expression}' functions as an empirically grounded proposition subject to verification through observation and experimentation.",
+
+            'ethical_deliberation': f"In ethical deliberation, '{expression}' expresses a normative position that engages with questions of value, obligation, and moral reasoning.",
+
+            'aesthetic_judgment': f"From an aesthetic perspective, '{expression}' articulates a judgment of taste that claims subjective universality while remaining grounded in individual experience.",
+
+            'ordinary_language': f"In ordinary language use, '{expression}' serves a pragmatic function within everyday communicative practices and shared forms of life."
+        }
+
+        base_meaning = game_meanings.get(
+            self.game_type,
+            f"Within the context of {self.game_type}, '{expression}' participates in specific language practices and rule-following behaviors."
+        )
+
+        # Modify based on structural complexity
+        if components.get('conceptual_density', 0) > 0.8:
+            base_meaning += " The high conceptual density suggests specialized or technical usage."
+
+        if 'interrogative' in components.get('grammatical_markers', []):
+            base_meaning += " As an interrogative form, it seeks to elicit information or clarification."
+
+        return base_meaning
+
+    def _assess_contextual_stability(
+        self,
+        expression: str,
+        patterns: list[dict[str, Any]]
+    ) -> dict[str, float]:
+        """Assess semantic stability within context."""
+
+        # Calculate stability based on pattern consistency
+        pattern_consistency = len(patterns) / max(len(self.usage_patterns), 1)
+
+        # Temporal stability (simplified - would track over time)
+        temporal_stability = 0.8  # Assumed stable for current analysis
+
+        # Cross-context stability (how well it transfers)
+        context_transferability = 0.6  # Most expressions have moderate transfer
+
+        return {
+            'pattern_consistency': pattern_consistency,
+            'temporal_stability': temporal_stability,
+            'context_transferability': context_transferability,
+            'overall_stability': (pattern_consistency + temporal_stability + context_transferability) / 3
+        }
+
+    def _build_resemblance_network(
+        self,
+        expression: str,
+        components: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """Build family resemblance network for expression."""
+        network = []
+
+        # Find expressions with similar structural patterns
+        if components.get('grammatical_markers'):
+            for marker in components['grammatical_markers']:
+                network.append({
+                    'type': 'structural_resemblance',
+                    'relation': f"shares_{marker}_pattern",
+                    'strength': 0.7
+                })
+
+        # Find expressions with similar game usage
+        network.append({
+            'type': 'game_resemblance',
+            'relation': f"used_in_{self.game_type}",
+            'strength': 0.8
+        })
+
+        # Add conceptual resemblances based on content
+        words = expression.lower().split()
+        conceptual_categories = self._categorize_concepts(words)
+
+        for category in conceptual_categories:
+            network.append({
+                'type': 'conceptual_resemblance',
+                'relation': f"involves_{category}",
+                'strength': 0.6
+            })
+
+        return network
+
+    def _categorize_concepts(self, words: list[str]) -> list[str]:
+        """Categorize conceptual content of words."""
+        categories = []
+
+        # Philosophical categories
+        philosophical_terms = ['truth', 'knowledge', 'belief', 'existence', 'reality', 'mind', 'consciousness']
+        if any(term in words for term in philosophical_terms):
+            categories.append('philosophical')
+
+        # Scientific categories
+        scientific_terms = ['evidence', 'hypothesis', 'theory', 'data', 'experiment', 'observation']
+        if any(term in words for term in scientific_terms):
+            categories.append('scientific')
+
+        # Ethical categories
+        ethical_terms = ['good', 'bad', 'right', 'wrong', 'should', 'ought', 'moral', 'virtue']
+        if any(term in words for term in ethical_terms):
+            categories.append('ethical')
+
+        # Default category
+        if not categories:
+            categories.append('general')
+
+        return categories
+
+    def _calculate_context_sensitivity(self, expression: str) -> float:
+        """Calculate how sensitive expression is to contextual variation."""
+
+        # Expressions with philosophical terms are highly context-sensitive
+        philosophical_markers = ['truth', 'knowledge', 'consciousness', 'reality', 'meaning']
+
+        if any(marker in expression.lower() for marker in philosophical_markers):
+            return 0.9
+
+        # Questions are generally context-sensitive
+        if '?' in expression:
+            return 0.8
+
+        # Modal expressions are context-sensitive
+        modal_words = ['should', 'could', 'might', 'must']
+        if any(word in expression.lower() for word in modal_words):
+            return 0.7
+
+        # Default moderate sensitivity
+        return 0.6
 
     def _identify_usage_patterns(self, expression: str) -> list[dict[str, Any]]:
         """Identify patterns of use."""
@@ -689,7 +1050,7 @@ class SemanticAnalysis:
     related_concepts: list[str] = field(default_factory=list)
     success_conditions: dict[str, Any] = field(default_factory=dict)
     stability_score: float = 0.0
-    historical_uses: Optional[list[dict[str, Any]]] = None
+    historical_uses: list[dict[str, Any]] | None = None
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1261,34 +1622,854 @@ class FallibilisticInference:
         self,
         patterns: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Synthesize evidence patterns into potential insights."""
+        """
+        Synthesize evidence patterns into potential insights using coherence theory.
+
+        Implements Thagard's coherence maximization approach to pattern synthesis,
+        considering explanatory breadth, analogical fit, and constraint satisfaction.
+        """
+
+        if not patterns:
+            return []
+
         synthesized = []
 
-        # Group related patterns
-        pattern_groups = self._group_related_patterns(patterns)
+        # Group related patterns using real semantic similarity
+        pattern_groups = self._group_related_patterns_real(patterns)
 
         for group in pattern_groups:
             if len(group) >= 2:
-                # Multi-pattern synthesis
-                synthesis = {
-                    'content': self._synthesize_group_content(group),
-                    'evidence_summary': [p.get('summary', str(p)) for p in group],
+                # Multi-pattern synthesis with real coherence analysis
+                synthesis = self._create_coherent_synthesis_real(group)
+
+                # Calculate confidence based on actual coherence metrics
+                confidence = self._calculate_synthesis_confidence_real(synthesis, group)
+
+                # Add comprehensive meta-information
+                synthesis.update({
                     'pattern_count': len(group),
-                    'coherence_score': self._calculate_group_coherence(group)
-                }
-                synthesized.append(synthesis)
-            else:
-                # Single pattern
-                pattern = group[0]
-                synthesis = {
-                    'content': pattern.get('content', str(pattern)),
-                    'evidence_summary': [pattern.get('summary', str(pattern))],
-                    'pattern_count': 1,
-                    'coherence_score': pattern.get('confidence', 0.5)
-                }
+                    'synthesis_type': 'multi_pattern',
+                    'synthesis_confidence': confidence,
+                    'epistemic_status': self._assess_synthesis_epistemic_status(confidence),
+                    'supporting_patterns': [p.get('id', f'pattern_{i}') for i, p in enumerate(group)],
+                    'semantic_coherence': synthesis.get('coherence_score', 0.0),
+                    'explanatory_breadth': synthesis.get('explanatory_breadth', 0.0)
+                })
+
                 synthesized.append(synthesis)
 
-        return synthesized
+            else:
+                # Single pattern - create enhanced minimal synthesis
+                pattern = group[0]
+                synthesis = self._create_single_pattern_synthesis_real(pattern)
+                synthesized.append(synthesis)
+
+        # Apply real coherence filtering using utils functions
+        filtered_synthesis = self._filter_by_global_coherence_real(synthesized)
+
+        # Rank by actual explanatory value
+        ranked_synthesis = self._rank_by_explanatory_value_real(filtered_synthesis)
+
+        return ranked_synthesis
+
+    def _group_related_patterns_real(
+        self,
+        patterns: list[dict[str, Any]]
+    ) -> list[list[dict[str, Any]]]:
+        """Group patterns using real semantic similarity from utils."""
+        from .utils import semantic_similarity
+
+        if not patterns:
+            return []
+
+        groups = []
+        used_indices = set()
+
+        for i, pattern1 in enumerate(patterns):
+            if i in used_indices:
+                continue
+
+            current_group = [pattern1]
+            used_indices.add(i)
+
+            for j, pattern2 in enumerate(patterns[i+1:], i+1):
+                if j in used_indices:
+                    continue
+
+                # Extract features for similarity comparison
+                features1 = self._extract_pattern_features_real(pattern1)
+                features2 = self._extract_pattern_features_real(pattern2)
+
+                # Calculate semantic similarity using utils
+                similarity = semantic_similarity(features1, features2, method="jaccard")
+
+                # Use family resemblance for additional context
+                family_sim = semantic_similarity(features1, features2, method="wittgenstein")
+
+                # Combined similarity score
+                combined_similarity = (similarity * 0.6 + family_sim * 0.4)
+
+                # Adaptive threshold based on pattern characteristics
+                threshold = self._calculate_grouping_threshold_real(pattern1, pattern2)
+
+                if combined_similarity > threshold:
+                    current_group.append(pattern2)
+                    used_indices.add(j)
+
+            groups.append(current_group)
+
+        return groups
+
+    def _extract_pattern_features_real(self, pattern: dict[str, Any]) -> dict[str, Any]:
+        """Extract semantic features from pattern for real similarity analysis."""
+        features = {
+            'features': [],
+            'contexts': [],
+            'uses': [],
+            'relations': []
+        }
+
+        # Extract content-based features
+        content = pattern.get('content', '')
+        if isinstance(content, str) and content:
+            # Extract meaningful keywords
+            stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'this', 'that', 'these', 'those'}
+            words = [word.lower().strip('.,!?;:"()[]{}') for word in content.split()]
+            keywords = [w for w in words if len(w) > 2 and w not in stop_words]
+            features['features'] = keywords[:10]  # Top 10 keywords
+
+        # Extract explicit concepts
+        if 'concepts' in pattern:
+            concepts = pattern['concepts']
+            if isinstance(concepts, list):
+                features['features'].extend(concepts)
+
+        # Extract contextual information
+        if 'context' in pattern:
+            features['contexts'] = [pattern['context']]
+
+        if 'domain' in pattern:
+            features['contexts'].append(pattern['domain'])
+
+        # Extract confidence as a feature category
+        confidence = pattern.get('confidence', 0.5)
+        if confidence > 0.7:
+            features['uses'].append('high_confidence')
+        elif confidence < 0.3:
+            features['uses'].append('low_confidence')
+        else:
+            features['uses'].append('moderate_confidence')
+
+        return features
+
+    def _calculate_grouping_threshold_real(
+        self,
+        pattern1: dict[str, Any],
+        pattern2: dict[str, Any]
+    ) -> float:
+        """Calculate adaptive threshold for pattern grouping."""
+        base_threshold = 0.4
+
+        # Adjust based on pattern complexity
+        content1 = str(pattern1.get('content', ''))
+        content2 = str(pattern2.get('content', ''))
+
+        complexity1 = len(content1.split()) + len(pattern1.get('concepts', []))
+        complexity2 = len(content2.split()) + len(pattern2.get('concepts', []))
+
+        avg_complexity = (complexity1 + complexity2) / 2
+
+        # More complex patterns need higher similarity to group
+        complexity_adjustment = min(avg_complexity * 0.02, 0.15)
+
+        # Adjust based on confidence levels
+        conf1 = pattern1.get('confidence', 0.5)
+        conf2 = pattern2.get('confidence', 0.5)
+        avg_confidence = (conf1 + conf2) / 2
+
+        # Lower confidence patterns group more easily
+        confidence_adjustment = (1.0 - avg_confidence) * 0.1
+
+        return base_threshold + complexity_adjustment - confidence_adjustment
+
+    def _create_coherent_synthesis_real(
+        self,
+        pattern_group: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """Create coherent synthesis using real coherence analysis from utils."""
+        from .utils import coherence_metrics
+
+        # Convert patterns to propositions for coherence analysis
+        propositions = []
+        all_concepts = []
+
+        for i, pattern in enumerate(pattern_group):
+            content = pattern.get('content', f'Pattern {i}')
+            confidence = pattern.get('confidence', 0.5)
+            concepts = pattern.get('concepts', [])
+
+            propositions.append({
+                'id': i,
+                'content': content,
+                'confidence': confidence,
+                'concepts': concepts
+            })
+
+            all_concepts.extend(concepts)
+
+        # Generate semantic relations between propositions
+        relations = self._generate_semantic_relations_real(propositions)
+
+        # Calculate real coherence metrics using utils
+        coherence_scores = coherence_metrics(propositions, relations)
+
+        # Synthesize content intelligently
+        synthesized_content = self._synthesize_propositions_real(propositions, relations, coherence_scores)
+
+        # Create evidence summary
+        evidence_summary = []
+        for i, pattern in enumerate(pattern_group):
+            content = pattern.get('content', f'Pattern {i}')
+            truncated = content[:80] + "..." if len(content) > 80 else content
+            confidence = pattern.get('confidence', 0.5)
+            evidence_summary.append(f"Pattern {i+1} (conf: {confidence:.2f}): {truncated}")
+
+        return {
+            'content': synthesized_content,
+            'evidence_summary': evidence_summary,
+            'coherence_score': coherence_scores['overall_coherence'],
+            'constraint_satisfaction': coherence_scores['constraint_satisfaction'],
+            'explanatory_breadth': coherence_scores['explanatory_breadth'],
+            'analogical_fit': coherence_scores['analogical_fit'],
+            'unique_concepts': list(set(all_concepts)),
+            'proposition_relations': relations,
+            'pattern_group_size': len(pattern_group)
+        }
+
+    def _generate_semantic_relations_real(
+        self,
+        propositions: list[dict[str, Any]]
+    ) -> list[tuple[int, int, str]]:
+        """Generate real semantic relations between propositions."""
+        from .utils import semantic_similarity
+
+        relations = []
+
+        for i, prop1 in enumerate(propositions):
+            for j, prop2 in enumerate(propositions[i+1:], i+1):
+
+                # Check for concept overlap (support relations)
+                concepts1 = set(prop1.get('concepts', []))
+                concepts2 = set(prop2.get('concepts', []))
+                concept_overlap = len(concepts1 & concepts2)
+
+                if concept_overlap > 0:
+                    relations.append((i, j, 'supports'))
+
+                # Check for semantic similarity in content
+                content1 = prop1.get('content', '')
+                content2 = prop2.get('content', '')
+
+                if content1 and content2:
+                    # Create feature sets for similarity
+                    words1 = set(content1.lower().split())
+                    words2 = set(content2.lower().split())
+
+                    features1 = {'features': list(words1)}
+                    features2 = {'features': list(words2)}
+
+                    similarity = semantic_similarity(features1, features2, method="jaccard")
+
+                    if similarity > 0.4:
+                        relations.append((i, j, 'supports'))
+                    elif similarity > 0.2:
+                        relations.append((i, j, 'analogous'))
+
+                # Check for explanatory relations based on confidence
+                conf1 = prop1.get('confidence', 0.5)
+                conf2 = prop2.get('confidence', 0.5)
+
+                if conf1 > conf2 + 0.2:
+                    relations.append((i, j, 'explains'))
+                elif conf2 > conf1 + 0.2:
+                    relations.append((j, i, 'explains'))
+
+        return relations
+
+    def _synthesize_propositions_real(
+        self,
+        propositions: list[dict[str, Any]],
+        relations: list[tuple[int, int, str]],
+        coherence_scores: dict[str, Any]
+    ) -> str:
+        """Synthesize propositions into coherent insight using real analysis."""
+
+        if not propositions:
+            return "No propositions available for synthesis"
+
+        # Find highest confidence proposition as anchor
+        anchor_prop = max(propositions, key=lambda p: p.get('confidence', 0.0))
+        anchor_content = anchor_prop.get('content', 'Central insight')
+
+        # Analyze relation types
+        support_relations = [r for r in relations if r[2] == 'supports']
+        explanation_relations = [r for r in relations if r[2] == 'explains']
+        analogical_relations = [r for r in relations if r[2] == 'analogous']
+
+        # Build synthesis
+        synthesis_parts = []
+
+        # Core insight
+        synthesis_parts.append(f"Core insight: {anchor_content}")
+
+        # Support structure
+        if support_relations:
+            synthesis_parts.append(f"Supported by {len(support_relations)} corroborating patterns")
+
+        # Explanatory structure
+        if explanation_relations:
+            synthesis_parts.append(f"With {len(explanation_relations)} explanatory connections")
+
+        # Analogical connections
+        if analogical_relations:
+            synthesis_parts.append(f"Connected through {len(analogical_relations)} analogical relations")
+
+        # Coherence assessment
+        overall_coherence = coherence_scores.get('overall_coherence', 0.0)
+        if overall_coherence > 0.7:
+            synthesis_parts.append("Exhibiting high conceptual coherence")
+        elif overall_coherence > 0.5:
+            synthesis_parts.append("Showing moderate conceptual coherence")
+        else:
+            synthesis_parts.append("Revealing complex, partially coherent patterns")
+
+        # Conceptual breadth
+        all_concepts = []
+        for prop in propositions:
+            all_concepts.extend(prop.get('concepts', []))
+
+        unique_concepts = list(set(all_concepts))
+        if len(unique_concepts) > 2:
+            synthesis_parts.append(f"Integrating concepts: {', '.join(unique_concepts[:3])}")
+
+        return ". ".join(synthesis_parts)
+
+    def _calculate_synthesis_confidence_real(
+        self,
+        synthesis: dict[str, Any],
+        pattern_group: list[dict[str, Any]]
+    ) -> float:
+        """Calculate real confidence in synthesis using coherence metrics."""
+        from .utils import calculate_epistemic_uncertainty
+
+        # Base confidence from coherence scores
+        coherence_confidence = synthesis.get('coherence_score', 0.5)
+        constraint_satisfaction = synthesis.get('constraint_satisfaction', 0.5)
+        explanatory_breadth = synthesis.get('explanatory_breadth', 0.0)
+
+        # Evidence quantity factor
+        evidence_count = len(pattern_group)
+        evidence_factor = min(evidence_count / 5.0, 1.0)  # Plateau at 5 patterns
+
+        # Individual pattern confidence
+        individual_confidences = [p.get('confidence', 0.5) for p in pattern_group]
+        avg_individual_confidence = sum(individual_confidences) / len(individual_confidences)
+
+        # Weighted combination of factors
+        base_confidence = (
+            0.4 * coherence_confidence +
+            0.25 * constraint_satisfaction +
+            0.15 * explanatory_breadth +
+            0.1 * evidence_factor +
+            0.1 * avg_individual_confidence
+        )
+
+        # Apply epistemic uncertainty calculation
+        epistemic_uncertainty = calculate_epistemic_uncertainty(
+            evidence_count=evidence_count,
+            coherence_score=coherence_confidence,
+            temporal_factor=1.0,
+            domain_complexity=0.7  # Philosophy is inherently complex
+        )
+
+        # Final confidence accounting for uncertainty
+        final_confidence = base_confidence * (1.0 - epistemic_uncertainty)
+
+        return float(np.clip(final_confidence, 0.0, 1.0))
+
+    def _create_single_pattern_synthesis_real(
+        self,
+        pattern: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Create enhanced synthesis from single pattern."""
+        content = pattern.get('content', 'Single pattern insight')
+        confidence = pattern.get('confidence', 0.5)
+        concepts = pattern.get('concepts', [])
+
+        # Assess pattern richness
+        content_complexity = len(str(content).split()) if content else 0
+        concept_richness = len(concepts)
+
+        # Calculate adjusted confidence for single pattern
+        richness_factor = min((content_complexity + concept_richness * 2) / 10.0, 1.0)
+        adjusted_confidence = confidence * (0.7 + 0.3 * richness_factor)  # Single patterns get slight penalty
+
+        return {
+            'content': f"Single-pattern insight: {content}",
+            'evidence_summary': [f"Pattern (conf: {confidence:.2f}): {str(content)[:100]}..."],
+            'pattern_count': 1,
+            'coherence_score': confidence,  # For single pattern, confidence approximates coherence
+            'constraint_satisfaction': 1.0,  # No constraints to violate with single pattern
+            'explanatory_breadth': 0.2,  # Limited breadth for single pattern
+            'analogical_fit': 0.0,  # No analogies with single pattern
+            'unique_concepts': concepts,
+            'proposition_relations': [],
+            'synthesis_type': 'single_pattern',
+            'synthesis_confidence': adjusted_confidence,
+            'epistemic_status': self._assess_synthesis_epistemic_status(adjusted_confidence),
+            'supporting_patterns': [pattern.get('id', 'pattern_0')]
+        }
+
+    def _filter_by_global_coherence_real(
+        self,
+        syntheses: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Filter syntheses by real coherence criteria using utils functions."""
+        if not syntheses:
+            return []
+
+        # Apply minimum coherence threshold
+        min_coherence = 0.25  # Allow lower threshold for exploratory analysis
+        coherent_syntheses = [
+            s for s in syntheses
+            if s.get('coherence_score', 0.0) >= min_coherence
+        ]
+
+        # Remove redundant syntheses using semantic similarity
+        unique_syntheses = []
+        for synthesis in coherent_syntheses:
+            is_redundant = False
+
+            for existing in unique_syntheses:
+                if self._syntheses_semantically_similar_real(synthesis, existing):
+                    # Keep the one with higher confidence
+                    if synthesis.get('synthesis_confidence', 0.0) > existing.get('synthesis_confidence', 0.0):
+                        unique_syntheses.remove(existing)
+                        break
+                    else:
+                        is_redundant = True
+                        break
+
+            if not is_redundant:
+                unique_syntheses.append(synthesis)
+
+        return unique_syntheses
+
+    def _syntheses_semantically_similar_real(
+        self,
+        synthesis1: dict[str, Any],
+        synthesis2: dict[str, Any]
+    ) -> bool:
+        """Check if two syntheses are semantically similar using real analysis."""
+        from .utils import semantic_similarity
+
+        # Compare concept overlap
+        concepts1 = set(synthesis1.get('unique_concepts', []))
+        concepts2 = set(synthesis2.get('unique_concepts', []))
+
+        if concepts1 and concepts2:
+            concept_overlap = len(concepts1 & concepts2) / len(concepts1 | concepts2)
+            if concept_overlap > 0.7:
+                return True
+
+        # Compare content similarity
+        content1 = synthesis1.get('content', '')
+        content2 = synthesis2.get('content', '')
+
+        if content1 and content2:
+            words1 = set(content1.lower().split())
+            words2 = set(content2.lower().split())
+
+            features1 = {'features': list(words1)}
+            features2 = {'features': list(words2)}
+
+            similarity = semantic_similarity(features1, features2, method="jaccard")
+            if similarity > 0.6:
+                return True
+
+        return False
+
+    def _rank_by_explanatory_value_real(
+        self,
+        syntheses: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Rank syntheses by real explanatory value using multiple criteria."""
+
+        def explanatory_score(synthesis):
+            coherence = synthesis.get('coherence_score', 0.0)
+            breadth = synthesis.get('explanatory_breadth', 0.0)
+            constraint_satisfaction = synthesis.get('constraint_satisfaction', 0.0)
+            analogical_fit = synthesis.get('analogical_fit', 0.0)
+            pattern_count = synthesis.get('pattern_count', 1)
+            confidence = synthesis.get('synthesis_confidence', 0.0)
+
+            # Normalize pattern count (diminishing returns after 5 patterns)
+            pattern_factor = min(pattern_count / 5.0, 1.0)
+
+            # Weighted explanatory score emphasizing coherence and breadth
+            score = (
+                0.35 * coherence +
+                0.25 * breadth +
+                0.15 * constraint_satisfaction +
+                0.1 * analogical_fit +
+                0.1 * pattern_factor +
+                0.05 * confidence
+            )
+
+            return score
+
+        # Sort by explanatory score (descending)
+        ranked = sorted(syntheses, key=explanatory_score, reverse=True)
+
+        # Add rank information to each synthesis
+        for i, synthesis in enumerate(ranked):
+            synthesis['explanatory_rank'] = i + 1
+            synthesis['explanatory_score'] = explanatory_score(synthesis)
+
+        return ranked
+
+    def _group_related_patterns_enhanced(
+        self,
+        patterns: list[dict[str, Any]]
+    ) -> list[list[dict[str, Any]]]:
+        """Group patterns using enhanced similarity and coherence measures."""
+        # from .utils import semantic_similarity # This import is handled in _calculate_pattern_similarity_enhanced
+
+        if not patterns:
+            return []
+
+        groups = []
+        used_indices = set()
+
+        for i, pattern1 in enumerate(patterns):
+            if i in used_indices:
+                continue
+
+            current_group = [pattern1]
+            used_indices.add(i)
+
+            # Find related patterns
+            for j, pattern2 in enumerate(patterns[i+1:], i+1):
+                if j in used_indices:
+                    continue
+
+                # Calculate multi-dimensional similarity
+                similarity_score = self._calculate_pattern_similarity_enhanced(pattern1, pattern2)
+
+                # Use adaptive threshold based on pattern characteristics
+                threshold = self._calculate_similarity_threshold(pattern1, pattern2)
+
+                if similarity_score > threshold:
+                    current_group.append(pattern2)
+                    used_indices.add(j)
+
+            groups.append(current_group)
+
+        return groups
+
+    def _calculate_pattern_similarity_enhanced(
+        self,
+        pattern1: dict[str, Any],
+        pattern2: dict[str, Any]
+    ) -> float:
+        """Calculate enhanced similarity between patterns."""
+        from .utils import semantic_similarity
+
+        similarity_dimensions = []
+
+        # Conceptual similarity
+        if 'concepts' in pattern1 and 'concepts' in pattern2:
+            conceptual_sim = semantic_similarity(
+                {'features': pattern1['concepts']},
+                {'features': pattern2['concepts']},
+                method='jaccard'
+            )
+            similarity_dimensions.append(('conceptual', conceptual_sim, 0.4))
+
+        # Context similarity
+        if 'context' in pattern1 and 'context' in pattern2:
+            context_match = 1.0 if pattern1['context'] == pattern2['context'] else 0.0
+            similarity_dimensions.append(('contextual', context_match, 0.3))
+
+        # Temporal similarity
+        if 'timestamp' in pattern1 and 'timestamp' in pattern2:
+            # Simplified temporal similarity (would use actual time analysis)
+            temporal_sim = 0.8  # Assume relatively recent patterns are similar
+            similarity_dimensions.append(('temporal', temporal_sim, 0.1))
+
+        # Confidence correlation
+        conf1 = pattern1.get('confidence', 0.5)
+        conf2 = pattern2.get('confidence', 0.5)
+        conf_similarity = 1.0 - abs(conf1 - conf2)
+        similarity_dimensions.append(('confidence', conf_similarity, 0.2))
+
+        # Weighted average
+        if similarity_dimensions:
+            total_weight = sum(weight for _, _, weight in similarity_dimensions)
+            weighted_sum = sum(score * weight for _, score, weight in similarity_dimensions)
+            return weighted_sum / total_weight
+
+        return 0.0
+
+    def _calculate_similarity_threshold(
+        self,
+        pattern1: dict[str, Any],
+        pattern2: dict[str, Any]
+    ) -> float:
+        """Calculate adaptive similarity threshold."""
+
+        # Base threshold
+        base_threshold = 0.6
+
+        # Adjust based on pattern complexity
+        complexity1 = len(pattern1.get('concepts', [])) + len(str(pattern1.get('content', '')).split())
+        complexity2 = len(pattern2.get('concepts', [])) + len(str(pattern2.get('content', '')).split())
+
+        avg_complexity = (complexity1 + complexity2) / 2
+
+        # More complex patterns need higher similarity to group
+        complexity_adjustment = min(avg_complexity * 0.05, 0.2)
+
+        # Adjust based on confidence - low confidence patterns group more easily
+        avg_confidence = (pattern1.get('confidence', 0.5) + pattern2.get('confidence', 0.5)) / 2
+        confidence_adjustment = (1.0 - avg_confidence) * 0.1
+
+        return base_threshold + complexity_adjustment - confidence_adjustment
+
+    def _create_coherent_synthesis(
+        self,
+        pattern_group: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """Create a coherent synthesis from a group of patterns."""
+        from .utils import coherence_metrics
+
+        # Extract all concepts from patterns
+        all_concepts = []
+        for pattern in pattern_group:
+            all_concepts.extend(pattern.get('concepts', []))
+
+        # Create propositions from patterns
+        propositions = []
+        for i, pattern in enumerate(pattern_group):
+            propositions.append({
+                'id': i,
+                'content': pattern.get('content', ''),
+                'confidence': pattern.get('confidence', 0.5),
+                'concepts': pattern.get('concepts', [])
+            })
+
+        # Generate relations between propositions
+        relations = self._generate_proposition_relations(propositions)
+
+        # Calculate coherence metrics
+        coherence_scores = coherence_metrics(propositions, relations)
+
+        # Synthesize content
+        synthesized_content = self._synthesize_propositions(propositions, relations)
+
+        # Create evidence summary
+        evidence_summary = [
+            f"Pattern {i+1}: {p.get('content', 'Unspecified pattern')[:100]}..."
+            for i, p in enumerate(pattern_group)
+        ]
+
+        return {
+            'content': synthesized_content,
+            'evidence_summary': evidence_summary,
+            'coherence_score': coherence_scores['overall_coherence'],
+            'constraint_satisfaction': coherence_scores['constraint_satisfaction'],
+            'explanatory_breadth': coherence_scores['explanatory_breadth'],
+            'analogical_fit': coherence_scores['analogical_fit'],
+            'unique_concepts': list(set(all_concepts)),
+            'proposition_relations': relations
+        }
+
+    def _generate_proposition_relations(
+        self,
+        propositions: list[dict[str, Any]]
+    ) -> list[tuple[int, int, str]]:
+        """Generate relations between propositions."""
+        relations = []
+
+        for i, prop1 in enumerate(propositions):
+            for j, prop2 in enumerate(propositions[i+1:], i+1):
+                # Check for support relations
+                common_concepts = set(prop1.get('concepts', [])) & set(prop2.get('concepts', []))
+
+                if common_concepts:
+                    # Propositions with shared concepts support each other
+                    relations.append((i, j, 'supports'))
+
+                # Check for explanatory relations
+                if prop1.get('confidence', 0.5) > prop2.get('confidence', 0.5) + 0.2:
+                    relations.append((i, j, 'explains'))
+                elif prop2.get('confidence', 0.5) > prop1.get('confidence', 0.5) + 0.2:
+                    relations.append((j, i, 'explains'))
+
+        return relations
+
+    def _synthesize_propositions(
+        self,
+        propositions: list[dict[str, Any]],
+        relations: list[tuple[int, int, str]]
+    ) -> str:
+        """Synthesize propositions into coherent insight."""
+
+        if not propositions:
+            return "No patterns available for synthesis"
+
+        # Find most confident proposition as anchor
+        anchor_prop = max(propositions, key=lambda p: p.get('confidence', 0.0))
+        anchor_content = anchor_prop.get('content', 'Core insight')
+
+        # Identify supporting propositions
+        support_relations = [r for r in relations if r[2] == 'supports']
+        explanation_relations = [r for r in relations if r[2] == 'explains']
+
+        synthesis_parts = [f"Central insight: {anchor_content}"]
+
+        if support_relations:
+            synthesis_parts.append(f"Supported by {len(support_relations)} corroborating patterns")
+
+        if explanation_relations:
+            synthesis_parts.append(f"With {len(explanation_relations)} explanatory connections")
+
+        # Add conceptual breadth information
+        all_concepts = []
+        for prop in propositions:
+            all_concepts.extend(prop.get('concepts', []))
+
+        unique_concepts = list(set(all_concepts))
+        if len(unique_concepts) > 1:
+            synthesis_parts.append(f"Integrating concepts: {', '.join(unique_concepts[:3])}")
+
+        return ". ".join(synthesis_parts)
+
+    def _calculate_synthesis_confidence(
+        self,
+        synthesis: dict[str, Any],
+        pattern_group: list[dict[str, Any]]
+    ) -> float:
+        """Calculate confidence in the synthesis."""
+
+        # Base confidence from coherence
+        coherence_confidence = synthesis.get('coherence_score', 0.5)
+
+        # Evidence quantity factor
+        evidence_factor = min(len(pattern_group) / 5.0, 1.0)  # More evidence = higher confidence
+
+        # Individual pattern confidence
+        individual_confidences = [p.get('confidence', 0.5) for p in pattern_group]
+        avg_individual_confidence = sum(individual_confidences) / len(individual_confidences)
+
+        # Synthesis confidence combines multiple factors
+        synthesis_confidence = (
+            0.4 * coherence_confidence +
+            0.3 * evidence_factor +
+            0.3 * avg_individual_confidence
+        )
+
+        return float(np.clip(synthesis_confidence, 0.0, 1.0))
+
+    def _assess_synthesis_epistemic_status(self, confidence: float) -> str:
+        """Assess epistemic status of synthesis."""
+        if confidence >= 0.8:
+            return "high_confidence"
+        elif confidence >= 0.6:
+            return "moderate_confidence"
+        elif confidence >= 0.4:
+            return "provisional"
+        else:
+            return "speculative"
+
+    def _create_single_pattern_synthesis(
+        self,
+        pattern: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Create synthesis from single pattern."""
+        return {
+            'content': pattern.get('content', 'Single pattern insight'),
+            'evidence_summary': [pattern.get('summary', str(pattern))],
+            'pattern_count': 1,
+            'coherence_score': pattern.get('confidence', 0.5),
+            'synthesis_type': 'single_pattern',
+            'synthesis_confidence': pattern.get('confidence', 0.5),
+            'epistemic_status': self._assess_synthesis_epistemic_status(pattern.get('confidence', 0.5)),
+            'supporting_patterns': [pattern.get('id', 'pattern_0')]
+        }
+
+    def _filter_by_global_coherence(
+        self,
+        syntheses: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Filter syntheses by global coherence criteria."""
+
+        # Filter out low-coherence syntheses
+        min_coherence = 0.3
+        filtered = [s for s in syntheses if s.get('coherence_score', 0.0) >= min_coherence]
+
+        # Remove redundant syntheses (simplified)
+        unique_syntheses = []
+        for synthesis in filtered:
+            is_redundant = False
+            for existing in unique_syntheses:
+                if self._syntheses_too_similar(synthesis, existing):
+                    is_redundant = True
+                    break
+
+            if not is_redundant:
+                unique_syntheses.append(synthesis)
+
+        return unique_syntheses
+
+    def _syntheses_too_similar(
+        self,
+        synthesis1: dict[str, Any],
+        synthesis2: dict[str, Any]
+    ) -> bool:
+        """Check if two syntheses are too similar."""
+
+        # Check concept overlap
+        concepts1 = set(synthesis1.get('unique_concepts', []))
+        concepts2 = set(synthesis2.get('unique_concepts', []))
+
+        if concepts1 and concepts2:
+            overlap = len(concepts1 & concepts2) / len(concepts1 | concepts2)
+            return overlap > 0.8
+
+        return False
+
+    def _rank_by_explanatory_value(
+        self,
+        syntheses: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Rank syntheses by explanatory value."""
+
+        def explanatory_score(synthesis):
+            coherence = synthesis.get('coherence_score', 0.0)
+            breadth = synthesis.get('explanatory_breadth', 0.0)
+            pattern_count = synthesis.get('pattern_count', 1)
+            confidence = synthesis.get('synthesis_confidence', 0.0)
+
+            # Weighted explanatory score
+            return (
+                0.3 * coherence +
+                0.3 * breadth +
+                0.2 * (pattern_count / 10.0) +  # Normalize pattern count
+                0.2 * confidence
+            )
+
+        return sorted(syntheses, key=explanatory_score, reverse=True)
 
     def _calculate_inference_confidence(
         self,
