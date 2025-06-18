@@ -236,6 +236,62 @@ This server embodies its own philosophical commitments:
 - **Bug-as-Feature**: Errors provide learning opportunities
 - **Fork-Friendly**: Multiple development paths encouraged
 
+## NARS Configuration & Setup
+
+### Flexible Installation Support
+
+The server now supports multiple ONA installation methods:
+
+1. **pip-installed ONA** (Recommended)
+   ```bash
+   uv add ona
+   ```
+
+2. **Local executable** via environment variable
+   ```bash
+   # Set in .env file:
+   ONA_PATH=/path/to/your/NAR
+   ```
+
+3. **Automatic detection** in common locations
+
+### Configuration via Environment Variables
+
+Create a `.env` file from the template:
+```bash
+cp .env.example .env
+```
+
+Key configuration options:
+- `ONA_PATH`: Path to NAR executable (optional if pip-installed)
+- `NARS_MEMORY_SIZE`: Concept memory size (default: 1000)
+- `NARS_INFERENCE_STEPS`: Inference depth (default: 50)
+- `NARS_SILENT_MODE`: Suppress ONA output (default: true)
+- `NARS_DECISION_THRESHOLD`: Decision confidence threshold (default: 0.6)
+
+### Testing NARS Integration
+
+Verify your installation:
+```bash
+# Run comprehensive test suite
+./test_nars_integration.py
+
+# Or with uv
+uv run python test_nars_integration.py
+```
+
+### Process Management
+
+The improved NARS manager includes:
+- **Robust cleanup patterns** preventing process leaks
+- **Signal handling** for graceful shutdown (SIGTERM, SIGINT)
+- **Automatic recovery** from subprocess failures
+- **Cross-platform support** (Linux, macOS, Windows)
+
+### Troubleshooting
+
+See `docs/NARS_INSTALLATION.md` for detailed troubleshooting guide.
+
 ## Contributing
 
 We welcome contributions that:
@@ -243,6 +299,7 @@ We welcome contributions that:
 - Add new interpretive schemas
 - Improve contextual understanding
 - Challenge existing assumptions
+- Strengthen NARS integration capabilities
 
 ## License
 

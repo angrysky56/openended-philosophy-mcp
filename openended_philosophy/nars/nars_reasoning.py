@@ -7,6 +7,8 @@ providing non-axiomatic inference, multi-perspective synthesis, and
 epistemic uncertainty quantification.
 """
 
+# import asyncio
+import contextlib
 import logging
 from dataclasses import dataclass
 from typing import Any
@@ -88,7 +90,7 @@ class NARSReasoning:
         # Get relevant beliefs from memory
         attention_buffer = self.memory.get_attention_buffer(
             query=f"{concept} {context}",
-            include_categories=self._context_to_categories(context)
+            include_categories=self._extract_context_categories(context)
         )
 
         # Prime NARS with relevant beliefs
@@ -278,8 +280,8 @@ class NARSReasoning:
         """Apply deductive reasoning pattern."""
         # Find general principles
         principles = [e for e in evidence
-                     if "==>" in e.term or "-->" in e.term
-                     and e.truth.confidence > 0.7]
+                     if (("==>" in e.term or "-->" in e.term)
+                         and e.truth.confidence > 0.7)]
 
         if not principles:
             return None
@@ -336,7 +338,7 @@ class NARSReasoning:
             return None
 
         # Induce general rule
-        best_pattern = max(pattern_counts, key=lambda k: pattern_counts.get(k, 0))
+        best_pattern = max(pattern_counts, key=lambda k: pattern_counts[k])
         support_ratio = pattern_counts[best_pattern] / len(instances)
 
         # Calculate inductive truth
@@ -408,18 +410,20 @@ class NARSReasoning:
         """Apply analogical reasoning pattern."""
         # Find similar phenomena
         similar_items = []
+        phenomenon_embedding = self.memory._generate_embedding(phenomenon)
 
         for item in evidence:
-            if ("-->" in item.term and
-                    phenomenon not in item.term and
-                    self.memory._generate_embedding(phenomenon) is not None):
-                # Check semantic similarity
+            if (
+                "-->" in item.term
+                and phenomenon not in item.term
+                and phenomenon_embedding is not None
+            ):
                 item_embedding = self.memory._generate_embedding(item.term)
-                similarity = np.dot(
-                    self.memory._generate_embedding(phenomenon),
+                similarity = float(np.dot(
+                    phenomenon_embedding,
                     item_embedding
-                ) / (np.linalg.norm(self.memory._generate_embedding(phenomenon)) *
-                    np.linalg.norm(item_embedding))
+                ) / (np.linalg.norm(phenomenon_embedding) *
+                     np.linalg.norm(item_embedding)))
 
                 if similarity > 0.6:
                     similar_items.append((item, similarity))
@@ -458,6 +462,7 @@ class NARSReasoning:
             )
 
         return None
+
     async def _dialectical_reasoning(self,
                                    phenomenon: str,
                                    evidence: list[MemoryItem]) -> ReasoningResult | None:
@@ -507,89 +512,16 @@ class NARSReasoning:
     # Helper Methods
     # ─────────────────────────────────────────────────────────────────────────
 
-    async def _synthesize_cross_perspective(self, concept: str, context: str, perspective_analyses: dict[str, Any]) -> dict[str, Any]:
-        """Synthesize insights across multiple philosophical perspectives."""
-        return {"summary": f"Cross-perspective synthesis for {concept}"}
-
-    def _assess_conceptual_coherence(self, perspective_analyses: dict[str, Any]) -> dict[str, Any]:
-        """Assess the coherence of conceptual analyses."""
-        return {"coherence_score": 0.0}
-
-    def _calculate_uncertainty_profile(self, perspective_analyses: dict[str, Any]) -> dict[str, Any]:
-        """Calculate the overall uncertainty profile."""
-        return {"uncertainty_score": 0.0}
-
-    async def _build_concept_graph(self, domain_beliefs: list[MemoryItem], depth: int) -> dict[str, Any]:
-        """Build a conceptual graph from beliefs."""
-        return {"nodes": [], "edges": []}
-
-    def _analyze_coherence_patterns(self, concept_graph: dict[str, Any]) -> list[str]:
-        """Analyze coherence patterns in the conceptual graph."""
-        return ["No patterns identified"]
-
-    def _identify_conceptual_attractors(self, concept_graph: dict[str, Any]) -> list[str]:
-        """Identify conceptual attractors in the graph."""
-        return ["No attractors identified"]
-
-    async def _analyze_conceptual_stability(self, concept_graph: dict[str, Any], attractors: list[str]) -> dict[str, Any]:
-        """Analyze the stability of the conceptual landscape."""
-        return {"stability_score": 0.0}
-
-    def _extract_philosophical_structure(self, concept_graph: dict[str, Any]) -> dict[str, Any]:
-        """Extract philosophical structure from the conceptual graph."""
-        return {"structure": "undefined"}
-
-    async def _gather_phenomenon_evidence(self, phenomenon: str, depth: int) -> list[MemoryItem]:
-        """Gather evidence for a phenomenon."""
-        return []
-
-    async def _generate_perspective_insights(self, phenomenon: str, perspective: str, reasoning_results: dict[str, Any], evidence: list[MemoryItem]) -> list[str]:
-        """Generate perspective-specific insights."""
-        return [f"Insight from {perspective} for {phenomenon}"]
-
-    def _identify_contradictions(self, perspective_insights: dict[str, Any]) -> list[str]:
-        """Identify contradictions across perspectives."""
-        return []
-
-    def _generate_meta_insights(self, phenomenon: str, perspective_insights: dict[str, Any], contradictions: list[str]) -> list[str]:
-        """Generate meta-insights from the overall analysis."""
-        return [f"Meta-insight for {phenomenon}"]
-
-    def _generate_revision_conditions(self, reasoning_results: dict[str, Any]) -> list[str]:
-        """Generate conditions for revising insights."""
-        return ["No revision conditions"]
-
-    async def _test_in_domain(self, narsese_hypothesis: str, domain: str, domain_evidence: list[MemoryItem], criteria: dict[str, Any]) -> dict[str, Any]:
-        """Test a hypothesis within a specific domain."""
-        return {"test_result": "unknown"}
-
-    def _calculate_hypothesis_coherence(self, domain_results: dict[str, Any]) -> float:
-        """Calculate the overall coherence of a hypothesis."""
-        return 0.0
-
-    def _assess_pragmatic_value(self, hypothesis: str, domain_results: dict[str, Any]) -> dict[str, Any]:
-        """Assess the pragmatic value of a hypothesis."""
-        return {"pragmatic_value": "unknown"}
-
-    def _calculate_hypothesis_confidence(self, domain_results: dict[str, Any]) -> float:
-        """Calculate the overall confidence in a hypothesis."""
-        return 0.0
-
-    def _derive_implications(self, hypothesis: str, domain_results: dict[str, Any]) -> list[str]:
-        """Derive implications from a tested hypothesis."""
-        return ["No implications derived"]
-
     async def _prime_nars_memory(self, beliefs: list[MemoryItem]) -> None:
         """Prime NARS with relevant beliefs from memory."""
-        from contextlib import suppress
         for belief in beliefs:
             if belief.occurrence_time == "eternal":
                 narsese = f"{belief.term}. {{{belief.truth.frequency:.2f} {belief.truth.confidence:.2f}}}"
-                with suppress(Exception):  # Ignore priming failures
+                with contextlib.suppress(Exception):
                     await self.nars.query(narsese, timeout=0.5)
 
-    def _context_to_categories(self, context: str) -> list[str]:
-        """Map context to philosophical categories."""
+    def _extract_context_categories(self, context: str) -> list[str]:
+        """Extract context to philosophical categories."""
         context_lower = context.lower()
 
         category_mappings = {
@@ -610,7 +542,7 @@ class NARSReasoning:
     def _domain_to_categories(self, domain: str) -> list[str]:
         """Map domain to philosophical categories."""
         # Similar to context mapping but domain-specific
-        return self._context_to_categories(domain)
+        return self._extract_context_categories(domain)
 
     def _generate_perspective_queries(self,
                                     concept: str,
@@ -715,10 +647,12 @@ class NARSReasoning:
         return limitations.get(perspective, ["Perspective-specific limitations apply"])
 
     def _hypothesis_to_narsese(self, hypothesis: str) -> str:
-        """Convert natural language hypothesis to Narsese."""
-        # Simple conversion - in production use NLP
-        hypothesis_lower = hypothesis.lower()
+        """
+        Convert natural language hypothesis to Narsese.
 
+        Note: This uses a simple pattern-matching conversion; NLP-based conversion is not implemented.
+        """
+        hypothesis_lower = hypothesis.lower()
         # Pattern matching for common forms
         if " is " in hypothesis_lower:
             parts = hypothesis_lower.split(" is ")
@@ -729,3 +663,174 @@ class NARSReasoning:
         else:
             # Default to property assertion
             return f"<{hypothesis} --> true>"
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Missing Helper Method Implementations
+    # ─────────────────────────────────────────────────────────────────────────
+
+    async def _synthesize_cross_perspective(self,
+                                          concept: str,
+                                          context: str,
+                                          perspective_analyses: dict[str, Any]) -> dict[str, Any]:
+        """Synthesize insights across multiple philosophical perspectives."""
+        if not perspective_analyses:
+            return {
+                "status": "no_perspectives",
+                "synthesis": "No perspective analyses available"
+            }
+
+        # Extract common themes
+        all_findings = []
+        for analysis in perspective_analyses.values():
+            if isinstance(analysis, dict) and "findings" in analysis:
+                all_findings.extend(analysis["findings"])
+
+        claim_counts = {}
+        for finding in all_findings:
+            claim = finding.get("claim")
+            if claim:
+                claim_counts[claim] = claim_counts.get(claim, 0) + 1
+
+        common_themes = [claim for claim, count in claim_counts.items() if count > 1]
+
+        # Calculate synthesis confidence
+        confidence_values = []
+        for analysis in perspective_analyses.values():
+            if isinstance(analysis, dict):
+                confidence_values.append(analysis.get("average_confidence", 0.0))
+
+        synthesis_confidence = np.mean(confidence_values) if confidence_values else 0.0
+        synthesis_confidence = float(np.mean(confidence_values)) if confidence_values else 0.0
+
+        # Identify emergent insights
+        emergent_insights = []
+        perspective_names = list(perspective_analyses.keys())
+        emergent_insights.append(
+                f"The combination of {', '.join(perspective_names)} suggests a new angle on {concept}."
+            )
+
+        return {
+            "status": "synthesis_complete",
+            "synthesis": f"Cross-perspective synthesis for '{concept}' in context '{context}'.",
+            "common_themes": common_themes,
+            "synthesis_confidence": synthesis_confidence,
+            "emergent_insights": emergent_insights
+        }
+
+    def _assess_conceptual_coherence(self, perspective_analyses: dict[str, Any]) -> dict[str, Any]:
+        """Assess coherence of concept across perspectives."""
+        # Placeholder implementation
+        confidences = [
+            p.get("average_confidence", 0.0)
+            for p in perspective_analyses.values() if isinstance(p, dict)
+        ]
+
+        coherence = np.std(confidences) if confidences else 0.0
+        return {"coherence_score": float(1 - coherence), "status": "placeholder"}
+    def _calculate_uncertainty_profile(self, perspective_analyses: dict[str, Any]) -> dict[str, Any]:
+        """Calculate overall uncertainty profile."""
+        # Placeholder implementation
+        confidences = [
+            p.get("average_confidence", 0.0)
+            for p in perspective_analyses.values() if isinstance(p, dict)
+        ]
+
+        avg_confidence = np.mean(confidences) if confidences else 0.0
+        return {"overall_uncertainty": float(1 - avg_confidence), "status": "placeholder"}
+    async def _build_concept_graph(self, beliefs: list[MemoryItem], depth: int) -> dict[str, Any]:
+        """Build a conceptual graph from beliefs."""
+        # Placeholder implementation
+        nodes = {item.term for item in beliefs}
+        return {"nodes": list(nodes), "edges": [], "status": "placeholder"}
+
+    def _analyze_coherence_patterns(self, concept_graph: dict[str, Any]) -> list[str]:
+        """Analyze coherence patterns in the graph."""
+        # Placeholder implementation
+        if len(concept_graph.get("nodes", [])) > 5:
+            return ["high_connectivity", "central_concept_found"]
+        return ["low_connectivity"]
+
+    def _identify_conceptual_attractors(self, concept_graph: dict[str, Any]) -> list[str]:
+        """Identify conceptual attractors in the graph."""
+        # Placeholder implementation
+        return concept_graph.get("nodes", [])[:2]
+
+    async def _analyze_conceptual_stability(self, concept_graph: dict[str, Any], attractors: list[str]) -> dict[str, Any]:
+        """Analyze stability of the conceptual system."""
+        # Placeholder implementation
+        return {"stability_score": 0.8, "status": "placeholder"}
+
+    def _extract_philosophical_structure(self, concept_graph: dict[str, Any]) -> dict[str, Any]:
+        """Extract underlying philosophical structure."""
+        # Placeholder implementation
+        return {"structure_type": "foundationalist", "status": "placeholder"}
+
+    async def _gather_phenomenon_evidence(self, phenomenon: str, depth: int) -> list[MemoryItem]:
+        """Gather evidence related to a phenomenon."""
+        # Placeholder implementation
+        return self.memory.get_attention_buffer(query=phenomenon)
+
+    async def _generate_perspective_insights(self, phenomenon: str, perspective: str, reasoning_results: dict[str, Any], evidence: list[MemoryItem]) -> list[str]:
+        """Generate insights from a specific perspective."""
+        # Placeholder implementation
+        return [f"Insight from {perspective} perspective on {phenomenon}."]
+
+    def _identify_contradictions(self, perspective_insights: dict[str, Any]) -> list[str]:
+        """Identify contradictions between perspectives."""
+        # Placeholder implementation
+        if len(perspective_insights) > 1:
+            return ["Potential contradiction between perspectives found."]
+        return []
+
+    def _generate_meta_insights(self, phenomenon: str, perspective_insights: dict[str, Any], contradictions: list[str]) -> list[str]:
+        """Generate meta-insights from analysis."""
+        # Placeholder implementation
+        if contradictions:
+            return ["The presence of contradictions suggests the phenomenon is complex."]
+        return ["The perspectives seem to converge on a single view."]
+
+    def _generate_revision_conditions(self, reasoning_results: dict[str, Any]) -> dict[str, str]:
+        """Generate conditions under which insights should be revised."""
+        # Placeholder implementation
+        return {"condition": "If new contradictory evidence emerges, conclusions should be revised."}
+
+    async def _test_in_domain(self, narsese_hypothesis: str, domain: str, domain_evidence: list[MemoryItem], criteria: dict[str, Any]) -> dict[str, Any]:
+        """Test a hypothesis within a specific domain."""
+        # Placeholder implementation
+        query = f"{narsese_hypothesis}?"
+        try:
+            result = await self.nars.query(query)
+            if result and result.get("answers"):
+                answer = result["answers"][0]
+                if answer.get("truth"):
+                    return {"support": answer["truth"]["confidence"], "status": "tested"}
+        except Exception:
+            pass
+        return {"support": 0.1, "status": "placeholder_test_failed"}
+
+    def _calculate_hypothesis_coherence(self, domain_results: dict[str, Any]) -> float:
+        """Calculate overall coherence of a hypothesis."""
+        # Placeholder implementation
+        supports = [res.get("support", 0.0) for res in domain_results.values()]
+        if not supports:
+            return 0.0
+        return float(1.0 - np.std(supports))
+
+    def _assess_pragmatic_value(self, hypothesis: str, domain_results: dict[str, Any]) -> dict[str, Any]:
+        """Assess the pragmatic value of a hypothesis."""
+        # Placeholder implementation
+        supports = [res.get("support", 0.0) for res in domain_results.values()]
+        avg_support = np.mean(supports) if supports else 0.0
+        return {"utility": float(avg_support), "status": "placeholder"}
+    def _calculate_hypothesis_confidence(self, domain_results: dict[str, Any]) -> float:
+        """Calculate overall confidence in a hypothesis."""
+        # Placeholder implementation
+        supports = [res.get("support", 0.0) for res in domain_results.values()]
+        if not supports:
+            return 0.0
+        return float(np.mean(supports))
+
+    def _derive_implications(self, hypothesis: str, domain_results: dict[str, Any]) -> list[str]:
+        """Derive implications from a tested hypothesis."""
+        # Placeholder implementation
+        return [f"The hypothesis '{hypothesis}' seems to hold across tested domains."]

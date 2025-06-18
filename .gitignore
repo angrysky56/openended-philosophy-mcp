@@ -55,3 +55,11 @@ Thumbs.db
 *.sqlite
 *.pickle
 /tmp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Keep example files
+!.env.example

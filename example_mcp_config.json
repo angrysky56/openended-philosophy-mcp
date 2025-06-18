@@ -4,14 +4,39 @@
       "command": "uv",
       "args": [
         "--directory",
-        "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+        "/path/to/openended-philosophy-mcp",
         "run",
         "openended-philosophy-server"
       ],
       "env": {
-        "PYTHONPATH": "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
-        "LOG_LEVEL": "INFO"
+        "PYTHONPATH": "/path/to/openended-philosophy-mcp",
+        "LOG_LEVEL": "INFO",
+        "ONA_PATH": ""
       }
     }
+  }
+}
+
+// Configuration Notes:
+// 1. Replace "/path/to/openended-philosophy-mcp" with your actual installation path
+// 2. ONA_PATH can be left empty if ONA is pip-installed or in PATH- added to pyproject.toml via uv add
+// 3. Set ONA_PATH to full path of NAR executable for custom installations
+// 4. Additional environment variables can be added from .env.example
+// 5. LOG_LEVEL options: DEBUG, INFO, WARNING, ERROR
+
+Working config example-
+
+},
+"openended-philosophy": {
+  "command": "uv",
+  "args": [
+    "--directory",
+    "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+    "run",
+    "openended-philosophy-server"
+  ],
+  "env": {
+    "PYTHONPATH": "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
+    "LOG_LEVEL": "INFO"
   }
 }
