@@ -42,7 +42,8 @@ from .core import (
     LanguageGameProcessor,
 )
 from .nars import NARSManager, NARSMemory, NARSReasoning, Truth, TruthValue
-from .utils import calculate_epistemic_uncertainty, setup_logging
+from .prompts import get_prompt_by_name, list_available_prompts
+from .utils import calculate_epistemic_uncertainty, safe_json_dumps, setup_logging
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Global Process Management Infrastructure
@@ -496,6 +497,39 @@ class OpenEndedPhilosophyServer:
                 # Ensure cleanup
                 self._active_operations.discard(operation_id)
                 logger.debug(f"Cleaned up operation: {name} [{operation_id}]")
+
+        # ─────────────────────────────────────────────────────────────────────
+        # Prompts Handlers
+        # ─────────────────────────────────────────────────────────────────────
+
+        @self.server.list_prompts()
+        async def list_prompts():
+            """List available philosophical prompt templates."""
+            logger.info("Listing available philosophical prompts")
+            try:
+                prompts = list_available_prompts()
+                logger.debug(f"Retrieved {len(prompts)} prompts")
+                return prompts
+            except Exception as e:
+                logger.error(f"Error listing prompts: {e}", exc_info=True)
+                raise
+
+        @self.server.get_prompt()
+        async def get_prompt(name: str, arguments: dict[str, str] | None = None):
+            """Get specific philosophical prompt with processed arguments."""
+            logger.info(f"Retrieving prompt: {name}")
+            logger.debug(f"Prompt arguments: {arguments}")
+
+            try:
+                prompt_result = get_prompt_by_name(name, arguments)
+                logger.debug(f"Generated prompt with {len(prompt_result.messages)} messages")
+                return prompt_result
+            except ValueError as e:
+                logger.error(f"Invalid prompt request: {e}")
+                raise
+            except Exception as e:
+                logger.error(f"Error generating prompt {name}: {e}", exc_info=True)
+                raise
 
     # ─────────────────────────────────────────────────────────────────────────
     # Core Philosophical Operations (Enhanced)
@@ -4570,36 +4604,6 @@ class OpenEndedPhilosophyServer:
         return float(np.clip(final_uncertainty, 0.0, 1.0))
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-class PhilosophicalJSONEncoder(json.JSONEncoder):
-    """Custom JSON encoder for philosophical analysis results."""
-
-    def default(self, o):
-        if isinstance(o, np.floating):
-            return float(o)
-        elif isinstance(o, np.integer):
-            return int(o)
-        elif isinstance(o, np.ndarray):
-            return o.tolist()
-        elif hasattr(o, 'isoformat'):
-            return o.isoformat()
-        elif hasattr(o, '__dataclass_fields__'):
-            # Handle dataclass objects using asdict
-            return asdict(o)
-        return super().default(o)
-
-def safe_json_dumps(obj: Any, **kwargs) -> str:
-    """Safely serialize objects to JSON with philosophical error handling."""
-    try:
-        return json.dumps(obj, cls=PhilosophicalJSONEncoder, **kwargs)
-    except Exception as e:
-        logger.error(f"JSON serialization error: {e}")
-        # Return a safe error object
-        return json.dumps({
-            "error": "serialization_failed",
-            "message": str(e),
-            "epistemic_status": "computational_limitation"
-        }, indent=kwargs.get('indent', 2))
 
 async def main() -> None:
     """
