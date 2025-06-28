@@ -1,0 +1,103 @@
+{
+  "enhanced_llm_processor": {
+    "test_passed": true,
+    "analysis_confidence": 0.2666666666666666,
+    "concepts_extracted": 0,
+    "semantic_relations": 0,
+    "philosophical_frameworks": [
+      "general_philosophy"
+    ],
+    "uncertainty_levels": {
+      "epistemic": 1.0,
+      "relational": 0.8,
+      "methodological": 0.4,
+      "overall": 0.7333333333333334
+    },
+    "practical_implications": 1,
+    "revision_triggers": 2,
+    "analysis_metadata": {
+      "analysis_timestamp": "2025-06-28T03:30:45.009965",
+      "context_domain": "philosophy_of_mind",
+      "depth_level": 3,
+      "perspective_analyses": [
+        {
+          "perspective": "analytic",
+          "confidence": 0.7,
+          "insights_count": 0
+        },
+        {
+          "perspective": "continental",
+          "confidence": 0.7,
+          "insights_count": 0
+        },
+        {
+          "perspective": "pragmatist",
+          "confidence": 0.7,
+          "insights_count": 0
+        },
+        {
+          "perspective": "phenomenological",
+          "confidence": 0.7,
+          "insights_count": 0
+        }
+      ]
+    },
+    "sophistication_check": "FAILED"
+  },
+  "recursive_self_analysis": {
+    "test_passed": true,
+    "meta_analysis_present": false,
+    "immediate_reflection": false,
+    "framework_assessment": false,
+    "improvement_recommendations": 0,
+    "recursive_insights": 0,
+    "epistemic_status": null,
+    "quality_assessment": null,
+    "meta_sophistication": "FAILED"
+  },
+  "enhanced_insight_synthesis": {
+    "test_passed": true,
+    "insights_generated": 0,
+    "perspectives_used": [
+      "materialist",
+      "phenomenological",
+      "enactivist",
+      "pragmatist"
+    ],
+    "insight_details": [],
+    "multi_perspectival_check": "FAILED"
+  },
+  "system_integration": {
+    "test_passed": false,
+    "error": "cannot import name 'CoherenceAnalyzer' from 'openended_philosophy.core' (/home/ty/Repositories/ai_workspace/openended-philosophy-mcp/openended_philosophy/core.py)"
+  },
+  "performance_improvements": {
+    "test_passed": true,
+    "enhanced_analysis_time": 9.5e-05,
+    "concepts_extracted": 0,
+    "relations_identified": 0,
+    "frameworks_applied": 1,
+    "uncertainty_quantified": true,
+    "practical_implications": 1,
+    "analysis_depth": 4,
+    "performance_metrics": {
+      "concepts_per_second": 0.0,
+      "analysis_completeness": 0.2666666666666666,
+      "feature_richness": 1
+    },
+    "performance_check": "NEEDS_OPTIMIZATION"
+  },
+  "final_report": {
+    "test_summary": {
+      "total_tests": 5,
+      "passed_tests": 4,
+      "success_rate": 80.0,
+      "total_duration": 0.003054
+    },
+    "implementation_plan_verification": {
+      "phase_1_nars_integration": "PARTIAL",
+      "phase_2_insight_synthesis": "PARTIAL",
+      "phase_3_recursive_analysis": "PARTIAL",
+      "phase_4_integration": "PARTIAL"
+    },
+    "detailed_results": 

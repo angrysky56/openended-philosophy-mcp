@@ -16,7 +16,7 @@ from .insight_synthesis import (
     DialecticalTension,
     EnhancedInsightSynthesis,
     PerspectivalAnalysis,
-    PhilosophicalInsight,
+    SubstantiveInsight,
     SynthesisPathway,
 )
 from .llm_semantic_processor import (
@@ -41,7 +41,7 @@ __all__ = [
 
     # Insight Synthesis
     'EnhancedInsightSynthesis',
-    'PhilosophicalInsight',
+    'SubstantiveInsight',
     'PerspectivalAnalysis',
     'DialecticalTension',
     'SynthesisPathway'

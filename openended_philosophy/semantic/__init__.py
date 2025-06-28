@@ -50,26 +50,39 @@ analysis = await processor.analyze_statement(
 ```
 """
 
+# Import all semantic processing components
 from .llm_semantic_processor import LLMSemanticProcessor
 from .philosophical_ontology import PhilosophicalOntology
 from .semantic_embedding_space import SemanticEmbeddingSpace
 from .types import (
-    PhilosophicalContext,
-    SemanticAnalysis,
-    PhilosophicalConcept,
+    AnalysisQualityMetrics,
+    ConceptExtractionResult,
+    ConceptExtractor,
+    ExtractedConcept,
+    LanguageGame,
     PhilosophicalCategory,
+    PhilosophicalConcept,
+    PhilosophicalContext,
+    PhilosophicalDomain,
+    SemanticAnalysis,
     SemanticRelation,
-    ConceptExtractor
+    SemanticRelationType,
 )
 
 __all__ = [
     "LLMSemanticProcessor",
-    "PhilosophicalOntology", 
+    "PhilosophicalOntology",
     "SemanticEmbeddingSpace",
     "PhilosophicalContext",
     "SemanticAnalysis",
     "PhilosophicalConcept",
     "PhilosophicalCategory",
     "SemanticRelation",
-    "ConceptExtractor"
+    "ConceptExtractor",
+    "PhilosophicalDomain",
+    "LanguageGame",
+    "SemanticRelationType",
+    "ExtractedConcept",
+    "ConceptExtractionResult",
+    "AnalysisQualityMetrics"
 ]

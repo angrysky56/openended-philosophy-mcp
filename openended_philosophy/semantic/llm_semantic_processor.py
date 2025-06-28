@@ -47,11 +47,18 @@ analysis = await processor.analyze_statement(
 ```
 """
 
+import asyncio
 import logging
+import re
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from typing import Any
 
 from .types import (
+    ConceptExtractionResult,
+    ConceptExtractor,
+    ExtractedConcept,
+    LanguageGame,
     PhilosophicalConcept,
     PhilosophicalContext,
     PhilosophicalDomain,
@@ -65,16 +72,16 @@ logger = logging.getLogger(__name__)
 
 class MetaphysicalConceptExtractor:
     """
-        Extracts metaphysical concepts from philosophical statements using a systematic and rigorous analytical framework.
+    Extracts metaphysical concepts from philosophical statements.
 
-        Systematic metaphysical concept extraction with philosophical rigor.
+    Systematic metaphysical concept extraction with philosophical rigor.
 
-        ### Methodological Approach:
-        - Ontological category identification
-        - Existence claim analysis
-        - Modal concept recognition
-        - Temporal and spatial concept mapping
-        """
+    ### Methodological Approach:
+    - Ontological category identification
+    - Existence claim analysis
+    - Modal concept recognition
+    - Temporal and spatial concept mapping
+    """
 
     def __init__(self):
         self.domain_focus = PhilosophicalDomain.METAPHYSICS
@@ -99,122 +106,48 @@ class MetaphysicalConceptExtractor:
         statement: str,
         context: PhilosophicalContext
     ) -> list[PhilosophicalConcept]:
-        """
-        Extract metaphysical concepts using systematic analytical framework.
-
-        ### Argumentative Integrity Analysis:
-        1. Identify ontological commitments in statement
-        2. Categorize existence claims and modal assertions
-        3. Map causal and relational structures
-
-        Returns:
-            List[PhilosophicalConcept]: A list of unique PhilosophicalConcept instances extracted from the statement.
-        """
-        concepts = []
-        seen_terms = set()
+        """Extract metaphysical concepts from statement."""
+        extracted = []
         statement_lower = statement.lower()
 
-        # 1. Conceptual Framework Deconstruction
         for category, indicators in self.ontological_indicators.items():
             for indicator in indicators:
                 if indicator in statement_lower:
-                    concept = await self._construct_metaphysical_concept(
-                        indicator, category, statement, context
+                    concept = PhilosophicalConcept(
+                        term=indicator,
+                        domain=PhilosophicalDomain.METAPHYSICS,
+                        definition=f"Metaphysical concept related to {category}",
+                        attributes={"category": category, "extraction_method": "pattern_matching"},
+                        philosophical_tradition="Western_Analytic",
+                        confidence_level=self.extraction_confidence
                     )
-                    if concept and concept.term not in seen_terms:
-                        seen_terms.add(concept.term)
-                        concepts.append(concept)
+                    extracted.append(concept)
 
-        return concepts
+        return extracted[:5]  # Limit to top 5 concepts
 
-    async def _construct_metaphysical_concept(
-        self,
-        term: str,
-        category: str,
-        statement: str,
-        context: PhilosophicalContext
-    ) -> PhilosophicalConcept | None:
-        """Construct metaphysical concept with systematic categorization."""
+    def get_domain_focus(self) -> PhilosophicalDomain:
+        return self.domain_focus
 
-        # Contextual and Interpretative Nuances
-        metaphysical_traditions = {
-            "being": "ontological_analysis",
-            "substance": "aristotelian_metaphysics",
-            "property": "property_theory",
-            "relation": "relational_metaphysics",
-            "universals": "platonic_realism",
-            "particulars": "nominalist_analysis",
-            "modality": "modal_metaphysics",
-            "time": "temporal_ontology",
-            "space": "spatial_ontology",
-            "causation": "causal_theory"
-        }
-
-        return PhilosophicalConcept(
-            term=term,
-            domain=PhilosophicalDomain.METAPHYSICS,
-            definition=f"Metaphysical concept in {category} category",
-            attributes={
-                "metaphysical_category": category,
-                "ontological_status": "systematic_analysis_required",
-                "modal_properties": "context_dependent",
-                "temporal_characteristics": "requires_examination"
-            },
-            philosophical_tradition=metaphysical_traditions.get(category, "general_metaphysics"),
-            context_dependencies=[
-                f"Interpretation depends on {category} framework",
-                "Modal context affects ontological status",
-                "Temporal assumptions influence meaning"
-            ],
-            epistemic_status="provisional",
-            confidence_level=0.8,
-            revision_conditions=[
-                "Alternative ontological frameworks considered",
-                "Modal assumptions explicitly examined",
-                "Temporal presuppositions clarified"
-            ]
-        )
-
-    def _deduplicate_concepts(self, concepts: list[PhilosophicalConcept]) -> list[PhilosophicalConcept]:
-        """Remove duplicate concepts while preserving analytical rigor."""
-        seen_terms = set()
-        unique_concepts = []
-
-        for concept in concepts:
-            if concept.term not in seen_terms:
-                seen_terms.add(concept.term)
-                unique_concepts.append(concept)
-
-        return unique_concepts
+    def get_extraction_confidence(self) -> float:
+        return self.extraction_confidence
 
 
 class EpistemologicalConceptExtractor:
-    """
-    Systematic epistemological concept extraction with methodological critique.
-
-    ### Critical Perspective Integration:
-    - Knowledge claim identification and analysis
-    - Justification structure mapping
-    - Skeptical challenge recognition
-    - Epistemic virtue and vice categorization
-    """
+    """Extracts epistemological concepts focusing on knowledge, belief, and justification."""
 
     def __init__(self):
         self.domain_focus = PhilosophicalDomain.EPISTEMOLOGY
-        self.extraction_confidence = 0.87
+        self.extraction_confidence = 0.80
 
-        # Epistemological concept categories with systematic organization
         self.epistemic_indicators = {
-            "knowledge": ["know", "knowledge", "understanding", "comprehension", "grasp"],
-            "belief": ["believe", "belief", "opinion", "conviction", "accept"],
-            "justification": ["justified", "reason", "evidence", "support", "warrant"],
-            "truth": ["true", "truth", "accurate", "correct", "fact", "reality"],
-            "experience": ["experience", "perceive", "observe", "sense", "empirical"],
-            "reasoning": ["reason", "logic", "infer", "deduce", "conclude", "argument"],
-            "skepticism": ["doubt", "uncertain", "question", "skeptical", "fallible"],
-            "certainty": ["certain", "sure", "definite", "absolute", "indubitable"],
-            "method": ["method", "methodology", "approach", "procedure", "technique"],
-            "inquiry": ["inquiry", "investigation", "research", "study", "explore"]
+            "knowledge": ["knowledge", "know", "knowing", "cognition", "understanding"],
+            "belief": ["believe", "belief", "think", "opinion", "conviction"],
+            "justification": ["justified", "evidence", "reason", "proof", "support"],
+            "truth": ["true", "truth", "false", "falsity", "accuracy", "correct"],
+            "certainty": ["certain", "doubt", "uncertain", "probable", "likely"],
+            "experience": ["experience", "empirical", "observation", "sensory", "perception"],
+            "reason": ["rational", "logic", "logical", "reasoning", "argument"],
+            "skepticism": ["skeptical", "doubt", "questionable", "uncertain", "dubious"]
         }
 
     async def extract(
@@ -222,145 +155,48 @@ class EpistemologicalConceptExtractor:
         statement: str,
         context: PhilosophicalContext
     ) -> list[PhilosophicalConcept]:
-        """
-        Extract epistemological concepts through systematic analysis.
-
-        ### Methodological Critique:
-        1. Identify epistemic commitments and assumptions
-        2. Map justification structures and evidence relations
-        3. Assess knowledge claims and their warranting conditions
-        4. Examine methodological assumptions and limitations
-        """
-        concepts = []
+        """Extract epistemological concepts from statement."""
+        extracted = []
         statement_lower = statement.lower()
 
-        # Systematic concept identification
         for category, indicators in self.epistemic_indicators.items():
             for indicator in indicators:
                 if indicator in statement_lower:
-                    concept = await self._construct_epistemological_concept(
-                        indicator, category, statement, context
+                    concept = PhilosophicalConcept(
+                        term=indicator,
+                        domain=PhilosophicalDomain.EPISTEMOLOGY,
+                        definition=f"Epistemological concept related to {category}",
+                        attributes={"category": category, "extraction_method": "pattern_matching"},
+                        philosophical_tradition="Western_Analytic",
+                        confidence_level=self.extraction_confidence
                     )
-                    if concept:
-                        concepts.append(concept)
+                    extracted.append(concept)
 
-        return self._enhance_epistemological_analysis(concepts, statement, context)
+        return extracted[:5]
 
-    async def _construct_epistemological_concept(
-        self,
-        term: str,
-        category: str,
-        statement: str,
-        context: PhilosophicalContext
-    ) -> PhilosophicalConcept | None:
-        """Construct epistemological concept with methodological awareness."""
+    def get_domain_focus(self) -> PhilosophicalDomain:
+        return self.domain_focus
 
-        # Map to epistemological traditions
-        epistemic_traditions = {
-            "knowledge": "traditional_analysis",
-            "belief": "doxastic_analysis",
-            "justification": "evidentialist_theory",
-            "truth": "correspondence_theory",
-            "experience": "empiricist_tradition",
-            "reasoning": "rationalist_tradition",
-            "skepticism": "skeptical_tradition",
-            "certainty": "cartesian_foundationalism",
-            "method": "methodological_analysis",
-            "inquiry": "pragmatist_epistemology"
-        }
-
-        return PhilosophicalConcept(
-            term=term,
-            domain=PhilosophicalDomain.EPISTEMOLOGY,
-            definition=f"Epistemological concept in {category} domain",
-            attributes={
-                "epistemic_category": category,
-                "justification_structure": "requires_analysis",
-                "evidential_base": "context_dependent",
-                "methodological_assumptions": "systematic_examination_needed"
-            },
-            philosophical_tradition=epistemic_traditions.get(category, "general_epistemology"),
-            context_dependencies=[
-                f"Epistemic evaluation depends on {category} framework",
-                "Justification standards vary across contexts",
-                "Methodological assumptions affect epistemic status"
-            ],
-            epistemic_status="provisional",
-            confidence_level=0.82,
-            revision_conditions=[
-                "Alternative justification theories considered",
-                "Methodological assumptions made explicit",
-                "Evidence standards clarified"
-            ]
-        )
-
-    def _enhance_epistemological_analysis(
-        self,
-        concepts: list[PhilosophicalConcept],
-        statement: str,
-        context: PhilosophicalContext
-    ) -> list[PhilosophicalConcept]:
-        """Enhance analysis with systematic epistemological evaluation."""
-
-        # Add meta-epistemological concepts if statement contains epistemic claims
-        if any(word in statement.lower() for word in ["certain", "know", "prove", "demonstrate"]):
-            meta_concept = PhilosophicalConcept(
-                term="epistemic_status",
-                domain=PhilosophicalDomain.EPISTEMOLOGY,
-                definition="Meta-level epistemic evaluation of claims",
-                attributes={
-                    "meta_level": "second_order_epistemic_analysis",
-                    "reflexivity": "epistemic_self_awareness",
-                    "fallibilism": "built_in_uncertainty_acknowledgment"
-                },
-                philosophical_tradition="meta_epistemology",
-                epistemic_status="meta_analytical",
-                confidence_level=0.9
-            )
-            concepts.append(meta_concept)
-
-        return self._deduplicate_concepts(concepts)
-
-    def _deduplicate_concepts(self, concepts: list[PhilosophicalConcept]) -> list[PhilosophicalConcept]:
-        """Remove duplicates while preserving systematic analysis."""
-        seen_terms = set()
-        unique_concepts = []
-
-        for concept in concepts:
-            if concept.term not in seen_terms:
-                seen_terms.add(concept.term)
-                unique_concepts.append(concept)
-
-        return unique_concepts
+    def get_extraction_confidence(self) -> float:
+        return self.extraction_confidence
 
 
 class EthicalConceptExtractor:
-    """
-    Systematic ethical concept extraction with normative analysis.
-
-    ### Contextual and Interpretative Nuances:
-    - Normative framework identification
-    - Value commitment analysis
-    - Moral psychology integration
-    - Applied ethics domain mapping
-    """
+    """Extracts ethical concepts focusing on morality, values, and normative claims."""
 
     def __init__(self):
         self.domain_focus = PhilosophicalDomain.ETHICS
-        self.extraction_confidence = 0.83
+        self.extraction_confidence = 0.75
 
-        # Ethical concept systematic categorization
         self.ethical_indicators = {
-            "normative": ["ought", "should", "must", "duty", "obligation", "right", "wrong"],
-            "virtue": ["virtue", "character", "excellent", "good", "bad", "vice", "moral"],
-            "consequentialist": ["consequence", "outcome", "result", "utility", "happiness", "welfare"],
-            "deontological": ["duty", "categorical", "imperative", "universal", "respect", "dignity"],
-            "value": ["value", "good", "bad", "better", "worse", "worth", "important"],
-            "justice": ["justice", "fair", "unfair", "equal", "rights", "desert", "merit"],
-            "care": ["care", "compassion", "empathy", "relationship", "responsibility", "harm"],
-            "freedom": ["free", "freedom", "liberty", "autonomy", "choice", "agency"],
-            "responsibility": ["responsible", "accountability", "blame", "praise", "liable"],
-            "moral_psychology": ["emotion", "intuition", "sentiment", "feeling", "motivation"]
+            "moral": ["moral", "immoral", "amoral", "ethics", "ethical", "morality"],
+            "good": ["good", "bad", "evil", "virtue", "vice", "virtuous"],
+            "right": ["right", "wrong", "correct", "incorrect", "proper", "improper"],
+            "duty": ["duty", "obligation", "ought", "should", "must", "responsibility"],
+            "justice": ["just", "unjust", "fair", "unfair", "justice", "injustice"],
+            "value": ["value", "valuable", "worthless", "precious", "important"],
+            "harm": ["harm", "help", "benefit", "damage", "hurt", "suffering"],
+            "autonomy": ["autonomy", "freedom", "liberty", "choice", "consent"]
         }
 
     async def extract(
@@ -368,143 +204,157 @@ class EthicalConceptExtractor:
         statement: str,
         context: PhilosophicalContext
     ) -> list[PhilosophicalConcept]:
-        """
-        Extract ethical concepts through systematic normative analysis.
-
-        ### Synthetic Evaluation:
-        1. Identify normative commitments and value frameworks
-        2. Map virtue, consequentialist, and deontological elements
-        3. Assess moral psychology and responsibility attributions
-        4. Integrate care ethics and justice theory perspectives
-        """
-        concepts = []
+        """Extract ethical concepts from statement."""
+        extracted = []
         statement_lower = statement.lower()
 
-        # Systematic ethical concept identification
         for category, indicators in self.ethical_indicators.items():
             for indicator in indicators:
                 if indicator in statement_lower:
-                    concept = await self._construct_ethical_concept(
-                        indicator, category, statement, context
+                    concept = PhilosophicalConcept(
+                        term=indicator,
+                        domain=PhilosophicalDomain.ETHICS,
+                        definition=f"Ethical concept related to {category}",
+                        attributes={"category": category, "extraction_method": "pattern_matching"},
+                        philosophical_tradition="Western_Analytic",
+                        confidence_level=self.extraction_confidence
                     )
-                    if concept:
-                        concepts.append(concept)
+                    extracted.append(concept)
 
-        return self._enhance_ethical_analysis(concepts, statement, context)
+        return extracted[:5]
 
-    async def _construct_ethical_concept(
-        self,
-        term: str,
-        category: str,
-        statement: str,
-        context: PhilosophicalContext
-    ) -> PhilosophicalConcept | None:
-        """Construct ethical concept with normative awareness."""
+    def get_domain_focus(self) -> PhilosophicalDomain:
+        return self.domain_focus
 
-        # Map to ethical traditions with systematic analysis
-        ethical_traditions = {
-            "normative": "normative_ethics",
-            "virtue": "aristotelian_virtue_ethics",
-            "consequentialist": "utilitarian_tradition",
-            "deontological": "kantian_ethics",
-            "value": "value_theory",
-            "justice": "theories_of_justice",
-            "care": "ethics_of_care",
-            "freedom": "liberal_political_philosophy",
-            "responsibility": "moral_responsibility_theory",
-            "moral_psychology": "empirical_moral_psychology"
+    def get_extraction_confidence(self) -> float:
+        return self.extraction_confidence
+
+
+class AestheticConceptExtractor:
+    """Extracts aesthetic concepts focusing on beauty, art, and aesthetic experience."""
+
+    def __init__(self):
+        self.domain_focus = PhilosophicalDomain.AESTHETICS
+        self.extraction_confidence = 0.70
+
+        self.aesthetic_indicators = {
+            "beauty": ["beautiful", "beauty", "ugly", "aesthetic", "aesthetics"],
+            "art": ["art", "artistic", "artist", "artwork", "creative", "creativity"],
+            "taste": ["taste", "judgment", "appreciation", "preference", "like", "dislike"],
+            "sublime": ["sublime", "magnificent", "awe", "wonder", "transcendent"],
+            "form": ["form", "shape", "structure", "composition", "design"],
+            "expression": ["expression", "expressive", "meaning", "symbolic", "represent"]
         }
 
-        return PhilosophicalConcept(
-            term=term,
-            domain=PhilosophicalDomain.ETHICS,
-            definition=f"Ethical concept in {category} framework",
-            attributes={
-                "normative_category": category,
-                "moral_valence": "requires_contextual_analysis",
-                "universalizability": "framework_dependent",
-                "practical_implications": "systematic_evaluation_needed"
-            },
-            philosophical_tradition=ethical_traditions.get(category, "general_ethics"),
-            context_dependencies=[
-                f"Normative evaluation depends on {category} theory",
-                "Cultural context affects moral interpretation",
-                "Applied domain influences practical meaning"
-            ],
-            epistemic_status="normative_provisional",
-            confidence_level=0.78,
-            revision_conditions=[
-                "Alternative normative frameworks considered",
-                "Cultural relativism possibilities examined",
-                "Practical consequences systematically assessed"
-            ]
-        )
-
-    def _enhance_ethical_analysis(
+    async def extract(
         self,
-        concepts: list[PhilosophicalConcept],
         statement: str,
         context: PhilosophicalContext
     ) -> list[PhilosophicalConcept]:
-        """Enhance with systematic ethical evaluation."""
+        """Extract aesthetic concepts from statement."""
+        extracted = []
+        statement_lower = statement.lower()
 
-        # Add meta-ethical concepts for normative claims
-        if any(word in statement.lower() for word in ["ought", "should", "wrong", "right", "good", "bad"]):
-            meta_ethical_concept = PhilosophicalConcept(
-                term="normative_status",
-                domain=PhilosophicalDomain.ETHICS,
-                definition="Meta-ethical evaluation of normative claims",
-                attributes={
-                    "meta_ethical_level": "second_order_normative_analysis",
-                    "objectivity_question": "systematic_examination_required",
-                    "motivation_question": "internalism_externalism_considerations"
-                },
-                philosophical_tradition="meta_ethics",
-                epistemic_status="meta_normative",
-                confidence_level=0.85
-            )
-            concepts.append(meta_ethical_concept)
+        for category, indicators in self.aesthetic_indicators.items():
+            for indicator in indicators:
+                if indicator in statement_lower:
+                    concept = PhilosophicalConcept(
+                        term=indicator,
+                        domain=PhilosophicalDomain.AESTHETICS,
+                        definition=f"Aesthetic concept related to {category}",
+                        attributes={"category": category, "extraction_method": "pattern_matching"},
+                        philosophical_tradition="Western_Analytic",
+                        confidence_level=self.extraction_confidence
+                    )
+                    extracted.append(concept)
 
-        return self._deduplicate_concepts(concepts)
+        return extracted[:5]
 
-    def _deduplicate_concepts(self, concepts: list[PhilosophicalConcept]) -> list[PhilosophicalConcept]:
-        """Remove duplicates with normative analysis preservation."""
-        seen_terms = set()
-        unique_concepts = []
+    def get_domain_focus(self) -> PhilosophicalDomain:
+        return self.domain_focus
 
-        for concept in concepts:
-            if concept.term not in seen_terms:
-                seen_terms.add(concept.term)
-                unique_concepts.append(concept)
+    def get_extraction_confidence(self) -> float:
+        return self.extraction_confidence
 
-        return unique_concepts
+
+class LogicalConceptExtractor:
+    """Extracts logical concepts focusing on reasoning, arguments, and logical structures."""
+
+    def __init__(self):
+        self.domain_focus = PhilosophicalDomain.LOGIC
+        self.extraction_confidence = 0.85
+
+        self.logical_indicators = {
+            "argument": ["argument", "premise", "conclusion", "inference", "reasoning"],
+            "logical": ["logical", "illogical", "logic", "valid", "invalid", "sound"],
+            "conditional": ["if", "then", "implies", "implication", "conditional"],
+            "negation": ["not", "no", "never", "none", "negation", "negative"],
+            "quantifier": ["all", "some", "every", "any", "exists", "universal"],
+            "consistency": ["consistent", "inconsistent", "contradiction", "compatible"],
+            "necessity": ["necessary", "sufficient", "condition", "requirement"]
+        }
+
+    async def extract(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> list[PhilosophicalConcept]:
+        """Extract logical concepts from statement."""
+        extracted = []
+        statement_lower = statement.lower()
+
+        for category, indicators in self.logical_indicators.items():
+            for indicator in indicators:
+                if indicator in statement_lower:
+                    concept = PhilosophicalConcept(
+                        term=indicator,
+                        domain=PhilosophicalDomain.LOGIC,
+                        definition=f"Logical concept related to {category}",
+                        attributes={"category": category, "extraction_method": "pattern_matching"},
+                        philosophical_tradition="Western_Analytic",
+                        confidence_level=self.extraction_confidence
+                    )
+                    extracted.append(concept)
+
+        return extracted[:5]
+
+    def get_domain_focus(self) -> PhilosophicalDomain:
+        return self.domain_focus
+
+    def get_extraction_confidence(self) -> float:
+        return self.extraction_confidence
 
 
 class LLMSemanticProcessor:
     """
-    Enhanced semantic processor implementing systematic philosophical analysis.
+    Sophisticated semantic processing using LLM capabilities for philosophical analysis.
 
-    ### Synthetic Evaluation Framework:
-
-    This processor embodies the comprehensive interpretative methodology:
-    1. **Conceptual Framework Deconstruction**: Systematic concept identification
-    2. **Methodological Critique**: Analysis method evaluation and limitation acknowledgment
-    3. **Critical Perspective Integration**: Multi-domain and multi-traditional analysis
-    4. **Argumentative Integrity Analysis**: Logical coherence and consistency examination
-    5. **Contextual and Interpretative Nuances**: Language game and cultural context awareness
-    6. **Synthetic Evaluation**: Comprehensive integration with constructive insights
+    This class provides deep semantic understanding of philosophical statements,
+    extracting concepts, identifying relationships, and assessing epistemic uncertainty.
     """
 
     def __init__(self):
-        """Initialize with systematic concept extraction capabilities."""
+        """Initialize the LLM semantic processor with concept extractors."""
+        # Initialize concept extractors for different philosophical domains
         self.concept_extractors = {
             PhilosophicalDomain.METAPHYSICS: MetaphysicalConceptExtractor(),
             PhilosophicalDomain.EPISTEMOLOGY: EpistemologicalConceptExtractor(),
             PhilosophicalDomain.ETHICS: EthicalConceptExtractor(),
-            # Additional extractors to be implemented
+            PhilosophicalDomain.AESTHETICS: AestheticConceptExtractor(),
+            PhilosophicalDomain.LOGIC: LogicalConceptExtractor()
         }
 
-        logger.info("LLM Semantic Processor initialized with systematic analysis capabilities")
+        # Relation type indicators for semantic relationship identification
+        self.relation_indicators = {
+            SemanticRelationType.CAUSAL: ["causes", "results in", "leads to", "produces", "generates"],
+            SemanticRelationType.LOGICAL_IMPLICATION: ["implies", "entails", "follows from", "therefore", "thus"],
+            SemanticRelationType.PART_WHOLE: ["part of", "contains", "includes", "comprises", "consists of"],
+            SemanticRelationType.SIMILARITY: ["similar to", "like", "resembles", "analogous to", "comparable"],
+            SemanticRelationType.OPPOSITION: ["opposite", "contrary", "conflicts with", "opposed to", "against"],
+            SemanticRelationType.DEPENDENCY: ["depends on", "requires", "needs", "relies on", "based on"]
+        }
+
+        logger.info("LLMSemanticProcessor initialized with philosophical concept extractors")
 
     async def analyze_statement(
         self,
@@ -512,199 +362,201 @@ class LLMSemanticProcessor:
         context: PhilosophicalContext
     ) -> SemanticAnalysis:
         """
-        Perform comprehensive semantic analysis using systematic philosophical methodology.
-
-        ### Argumentative Integrity Analysis:
-        1. Multi-domain concept extraction and categorization
-        2. Semantic relationship identification and mapping
-        3. Pragmatic implication derivation and assessment
-        4. Epistemic uncertainty systematic quantification
+        Comprehensive semantic analysis of philosophical statements.
 
         Args:
-            statement: Text to analyze with philosophical rigor
-            context: Philosophical context providing interpretative framework
+            statement: The philosophical statement to analyze
+            context: Philosophical context for interpretation
 
         Returns:
-            Comprehensive semantic analysis with uncertainty quantification
+            Comprehensive semantic analysis results
         """
-        logger.debug(f"Analyzing statement: '{statement}' in context: {context.domain}")
+        try:
+            logger.debug(f"Analyzing statement: {statement[:100]}...")
 
-        # 1. Conceptual Framework Deconstruction
-        primary_concepts = await self._extract_concepts_systematically(statement, context)
+            # Extract concepts using multiple domain-specific extractors
+            concepts = await self._extract_concepts_llm(statement, context)
 
-        # 2. Methodological Critique - Semantic Relations Analysis
-        semantic_relations = await self._identify_semantic_relations(primary_concepts, statement, context)
+            # Identify semantic relations between concepts
+            relations = await self._identify_semantic_relations(concepts, statement)
 
-        # 3. Critical Perspective Integration - Pragmatic Analysis
-        pragmatic_implications = await self._analyze_pragmatic_implications(statement, context, primary_concepts)
+            # Analyze pragmatic implications
+            pragmatic_implications = await self._analyze_pragmatic_implications(statement, context)
 
-        # 4. Argumentative Integrity Analysis - Uncertainty Assessment
-        epistemic_uncertainty = await self._assess_epistemic_uncertainty(statement, primary_concepts, context)
+            # Assess epistemic uncertainty
+            epistemic_uncertainty = await self._assess_epistemic_uncertainty(statement, concepts, context)
 
-        # 5. Contextual and Interpretative Nuances
-        context_dependencies = self._identify_context_dependencies(primary_concepts, context)
-        revision_triggers = await self._generate_revision_triggers(primary_concepts, context)
+            # Identify context dependencies
+            context_dependencies = self._identify_context_dependencies(statement, context)
 
-        # 6. Synthetic Evaluation - Comprehensive Integration
-        philosophical_presuppositions = self._identify_philosophical_presuppositions(statement, primary_concepts)
-        methodological_assumptions = self._identify_methodological_assumptions(context, primary_concepts)
-        interpretive_alternatives = self._generate_interpretive_alternatives(statement, primary_concepts)
-        analytical_limitations = self._assess_analytical_limitations(context, primary_concepts)
+            # Generate revision triggers
+            revision_triggers = await self._generate_revision_triggers(concepts, statement)
 
-        return SemanticAnalysis(
-            primary_concepts=primary_concepts,
-            semantic_relations=semantic_relations,
-            pragmatic_implications=pragmatic_implications,
-            epistemic_uncertainty=epistemic_uncertainty,
-            context_dependencies=context_dependencies,
-            revision_triggers=revision_triggers,
-            philosophical_presuppositions=philosophical_presuppositions,
-            methodological_assumptions=methodological_assumptions,
-            interpretive_alternatives=interpretive_alternatives,
-            analytical_limitations=analytical_limitations,
-            confidence_intervals=self._calculate_confidence_intervals(primary_concepts),
-            analysis_timestamp=datetime.now(),
-        )
+            # Identify philosophical presuppositions
+            presuppositions = self._identify_philosophical_presuppositions(statement)
 
-    async def _extract_concepts_systematically(
+            # Assess methodological assumptions
+            methodological_assumptions = self._assess_methodological_assumptions(statement, context)
+
+            # Generate interpretive alternatives
+            interpretive_alternatives = self._generate_interpretive_alternatives(statement, context)
+
+            # Identify analytical limitations
+            analytical_limitations = self._identify_analytical_limitations(statement)
+
+            analysis = SemanticAnalysis(
+                primary_concepts=concepts,
+                semantic_relations=relations,
+                pragmatic_implications=pragmatic_implications,
+                epistemic_uncertainty=epistemic_uncertainty,
+                context_dependencies=context_dependencies,
+                revision_triggers=revision_triggers,
+                philosophical_presuppositions=presuppositions,
+                methodological_assumptions=methodological_assumptions,
+                interpretive_alternatives=interpretive_alternatives,
+                analytical_limitations=analytical_limitations
+            )
+
+            logger.debug(f"Analysis completed: {len(concepts)} concepts, {len(relations)} relations")
+            return analysis
+
+        except Exception as e:
+            logger.error(f"Error in semantic analysis: {e}")
+            # Return minimal analysis on error
+            return SemanticAnalysis(
+                primary_concepts=[],
+                semantic_relations=[],
+                pragmatic_implications=[],
+                epistemic_uncertainty={"general": 0.8},
+                context_dependencies=[],
+                revision_triggers=["analysis_error"]
+            )
+
+    async def _extract_concepts_llm(
         self,
         statement: str,
         context: PhilosophicalContext
     ) -> list[PhilosophicalConcept]:
-        """Extract concepts using systematic multi-domain analysis."""
+        """Extract philosophical concepts using domain-specific extractors."""
         all_concepts = []
 
-        # Primary domain extraction
-        primary_extractor = self.concept_extractors.get(context.domain)
-        if primary_extractor:
+        # Use primary domain extractor
+        if context.domain in self.concept_extractors:
+            primary_extractor = self.concept_extractors[context.domain]
             primary_concepts = await primary_extractor.extract(statement, context)
             all_concepts.extend(primary_concepts)
 
-        # Cross-domain analysis for interdisciplinary connections
+        # Use additional extractors for cross-domain concepts
         for domain, extractor in self.concept_extractors.items():
-            if domain != context.domain and len(context.interdisciplinary_connections) > 0 and domain.value in context.interdisciplinary_connections:
-                cross_concepts = await extractor.extract(statement, context)
-                # Add cross-domain concepts with lower confidence
-                for concept in cross_concepts:
-                    concept.confidence_level *= 0.8  # Reduce confidence for cross-domain
-                    concept.epistemic_status = "cross_domain_provisional"
-                all_concepts.extend(cross_concepts)
+            if domain != context.domain:
+                additional_concepts = await extractor.extract(statement, context)
+                # Limit additional concepts to avoid overwhelming results
+                all_concepts.extend(additional_concepts[:2])
 
-        return self._deduplicate_and_rank_concepts(all_concepts)
+        # Remove duplicates and rank by confidence
+        unique_concepts = []
+        seen_terms = set()
+
+        for concept in all_concepts:
+            if concept.term not in seen_terms:
+                unique_concepts.append(concept)
+                seen_terms.add(concept.term)
+
+        # Sort by confidence and return top concepts
+        unique_concepts.sort(key=lambda c: c.confidence_level, reverse=True)
+        return unique_concepts[:10]  # Limit to top 10 concepts
 
     async def _identify_semantic_relations(
         self,
         concepts: list[PhilosophicalConcept],
-        statement: str,
-        context: PhilosophicalContext
+        statement: str
     ) -> list[SemanticRelation]:
-        """Identify semantic relations with systematic analysis."""
+        """Identify semantic relationships between extracted concepts."""
         relations = []
-
-        # Analyze pairwise concept relationships
-        for i, concept1 in enumerate(concepts):
-            for concept2 in concepts[i+1:]:
-                relation = await self._analyze_concept_relation(
-                    concept1, concept2, statement, context
-                )
-                if relation:
-                    relations.append(relation)
-
-        return relations
-
-    async def _analyze_concept_relation(
-        self,
-        concept1: PhilosophicalConcept,
-        concept2: PhilosophicalConcept,
-        statement: str,
-        context: PhilosophicalContext
-    ) -> SemanticRelation | None:
-        """Analyze relationship between two concepts."""
         statement_lower = statement.lower()
-        term1_lower = concept1.term.lower()
-        term2_lower = concept2.term.lower()
 
-        # Identify relation types through systematic pattern analysis
-        if any(causal in statement_lower for causal in ["cause", "because", "due to", "results in"]) and term1_lower in statement_lower and term2_lower in statement_lower:
-            return SemanticRelation(
-                source_concept=concept1.term,
-                target_concept=concept2.term,
-                relation_type=SemanticRelationType.CAUSAL,
-                strength=0.8,
-                confidence=0.7,
-                philosophical_justification="Causal relation indicated by linguistic markers",
-                supporting_evidence=[f"Statement contains causal indicators: {statement}"]
-            )
+        # Check for explicit relation indicators in the statement
+        for relation_type, indicators in self.relation_indicators.items():
+            for indicator in indicators:
+                if indicator in statement_lower:
+                    # Find concepts around this indicator
+                    for i, concept1 in enumerate(concepts):
+                        for concept2 in concepts[i+1:]:
+                            relation = SemanticRelation(
+                                source_concept=concept1.term,
+                                target_concept=concept2.term,
+                                relation_type=relation_type,
+                                strength=0.7,  # Default strength
+                                confidence=0.6,
+                                philosophical_justification=f"Identified via indicator: {indicator}"
+                            )
+                            relations.append(relation)
 
-        # Logical implication analysis
-        # Logical implication analysis
-        if any(logical in statement_lower for logical in ["implies", "therefore", "follows", "entails"]) and term1_lower in statement_lower and term2_lower in statement_lower:
-            return SemanticRelation(
-                source_concept=concept1.term,
-                target_concept=concept2.term,
-                relation_type=SemanticRelationType.LOGICAL_IMPLICATION,
-                strength=0.9,
-                confidence=0.8,
-                philosophical_justification="Logical implication indicated by inference markers",
-                supporting_evidence=[f"Statement contains logical indicators: {statement}"]
-            )
-        # Similarity and opposition analysis
-        if concept1.domain == concept2.domain:
-            return SemanticRelation(
-                source_concept=concept1.term,
-                target_concept=concept2.term,
-                relation_type=SemanticRelationType.SIMILARITY,
-                strength=0.6,
-                confidence=0.6,
-                philosophical_justification="Domain similarity suggests conceptual relationship",
-                supporting_evidence=[f"Both concepts in {concept1.domain.value} domain"]
-            )
+                            # Limit relations to avoid explosion
+                            if len(relations) >= 5:
+                                break
+                        if len(relations) >= 5:
+                            break
 
-        return None
+        # Add some default relations between concepts of similar domains
+        if len(relations) < 3 and len(concepts) >= 2:
+            for i, concept1 in enumerate(concepts[:3]):
+                for concept2 in concepts[i+1:4]:
+                    if concept1.domain == concept2.domain:
+                        relation = SemanticRelation(
+                            source_concept=concept1.term,
+                            target_concept=concept2.term,
+                            relation_type=SemanticRelationType.SIMILARITY,
+                            strength=0.5,
+                            confidence=0.4,
+                            philosophical_justification="Same philosophical domain"
+                        )
+                        relations.append(relation)
+
+        return relations[:5]  # Limit to 5 relations
 
     async def _analyze_pragmatic_implications(
         self,
         statement: str,
-        context: PhilosophicalContext,
-        concepts: list[PhilosophicalConcept]
+        context: PhilosophicalContext
     ) -> list[str]:
-        """Analyze pragmatic implications through systematic evaluation."""
+        """Analyze pragmatic implications of the statement."""
         implications = []
 
-        # Language game specific implications
-        if context.language_game.value == "scientific_discourse":
-            implications.extend([
-                "Requires empirical validation for acceptance",
-                "Subject to peer review and replication standards",
-                "Must integrate with existing scientific framework"
-            ])
-        elif context.language_game.value == "ethical_deliberation":
-            implications.extend([
-                "Demands normative evaluation and value assessment",
-                "Requires consideration of practical consequences",
-                "Must address moral responsibility attributions"
-            ])
-        elif context.language_game.value == "aesthetic_judgment":
-            implications.extend([
-                "Involves subjective evaluation and taste considerations",
-                "Requires sensitivity to cultural and historical context",
-                "Permits disagreement without objective resolution"
-            ])
-
         # Domain-specific implications
-        if context.domain == PhilosophicalDomain.METAPHYSICS:
-            implications.append("Requires ontological commitment examination")
+        if context.domain == PhilosophicalDomain.ETHICS:
+            if any(word in statement.lower() for word in ["should", "ought", "must", "duty"]):
+                implications.append("Implies normative obligations or moral duties")
+            if any(word in statement.lower() for word in ["good", "bad", "right", "wrong"]):
+                implications.append("Suggests moral evaluation or judgment")
+
         elif context.domain == PhilosophicalDomain.EPISTEMOLOGY:
-            implications.append("Demands epistemic justification analysis")
-        elif context.domain == PhilosophicalDomain.ETHICS:
-            implications.append("Necessitates normative framework evaluation")
+            if any(word in statement.lower() for word in ["know", "believe", "certain"]):
+                implications.append("Involves epistemic commitments about knowledge claims")
+            if any(word in statement.lower() for word in ["evidence", "proof", "justify"]):
+                implications.append("Requires justificatory or evidential support")
 
-        # Concept-driven implications
-        for concept in concepts:
-            if concept.epistemic_status == "contested":
-                implications.append(f"'{concept.term}' requires careful interpretation due to contested status")
+        elif context.domain == PhilosophicalDomain.METAPHYSICS:
+            if any(word in statement.lower() for word in ["exists", "real", "being"]):
+                implications.append("Makes ontological commitments about existence")
+            if any(word in statement.lower() for word in ["necessary", "possible", "actual"]):
+                implications.append("Involves modal claims about necessity and possibility")
 
-        return implications
+        # General pragmatic patterns
+        if "if" in statement.lower() and "then" in statement.lower():
+            implications.append("Establishes conditional relationships")
+
+        if any(word in statement.lower() for word in ["because", "therefore", "thus", "hence"]):
+            implications.append("Suggests causal or logical connections")
+
+        # Default implications if none found
+        if not implications:
+            implications = [
+                "May require conceptual clarification",
+                "Could involve implicit philosophical commitments"
+            ]
+
+        return implications[:4]  # Limit to 4 implications
 
     async def _assess_epistemic_uncertainty(
         self,
@@ -712,268 +564,222 @@ class LLMSemanticProcessor:
         concepts: list[PhilosophicalConcept],
         context: PhilosophicalContext
     ) -> dict[str, float]:
-        """Systematically assess epistemic uncertainty across dimensions."""
+        """Assess epistemic uncertainty across multiple dimensions."""
         uncertainty = {}
 
-        # Conceptual uncertainty
-        if concepts:
-            concept_confidences = [c.confidence_level for c in concepts]
-            uncertainty["conceptual_clarity"] = 1.0 - (sum(concept_confidences) / len(concept_confidences))
-        else:
-            uncertainty["conceptual_clarity"] = 0.9
+        # Conceptual clarity uncertainty
+        concept_confidence_avg = sum(c.confidence_level for c in concepts) / len(concepts) if concepts else 0.5
+        uncertainty["conceptual_clarity"] = 1.0 - concept_confidence_avg
 
-        # Contextual uncertainty
-        if len(context.interdisciplinary_connections) > 2:
-            uncertainty["contextual_complexity"] = 0.7
-        else:
-            uncertainty["contextual_complexity"] = 0.3
+        # Contextual sensitivity uncertainty
+        context_indicators = len(context.perspective_constraints or [])
+        uncertainty["contextual_sensitivity"] = min(0.3 + (context_indicators * 0.1), 0.8)
 
-        # Methodological uncertainty
-        if context.language_game.value == "ordinary_language":
-            uncertainty["methodological_precision"] = 0.6
-        elif context.language_game.value == "scientific_discourse":
-            uncertainty["methodological_precision"] = 0.2
-        else:
-            uncertainty["methodological_precision"] = 0.4
+        # Domain complexity uncertainty
+        domain_complexity = {
+            PhilosophicalDomain.LOGIC: 0.2,
+            PhilosophicalDomain.ETHICS: 0.6,
+            PhilosophicalDomain.AESTHETICS: 0.7,
+            PhilosophicalDomain.METAPHYSICS: 0.8,
+            PhilosophicalDomain.EPISTEMOLOGY: 0.5
+        }
+        uncertainty["domain_complexity"] = domain_complexity.get(context.domain, 0.5)
 
-        # Interpretive uncertainty
-        controversial_terms = ["consciousness", "free will", "truth", "justice", "beauty"]
-        if any(term in statement.lower() for term in controversial_terms):
-            uncertainty["interpretive_controversy"] = 0.8
-        else:
-            uncertainty["interpretive_controversy"] = 0.3
+        # Statement complexity uncertainty
+        word_count = len(statement.split())
+        complexity_score = min(word_count / 50.0, 1.0)  # Normalize to 0-1
+        uncertainty["statement_complexity"] = complexity_score * 0.5
 
-        # Meta-level uncertainty about uncertainty assessment
-        uncertainty["meta_epistemic"] = 0.4
+        # Language game uncertainty
+        language_game_uncertainty = {
+            LanguageGame.SCIENTIFIC_DISCOURSE: 0.3,
+            LanguageGame.ORDINARY_LANGUAGE: 0.6,
+            LanguageGame.ETHICAL_DELIBERATION: 0.7,
+            LanguageGame.AESTHETIC_JUDGMENT: 0.8
+        }
+        uncertainty["language_game"] = language_game_uncertainty.get(
+            context.language_game, 0.5
+        )
 
         return uncertainty
 
     def _identify_context_dependencies(
         self,
-        concepts: list[PhilosophicalConcept],
+        statement: str,
         context: PhilosophicalContext
     ) -> list[str]:
-        """Identify systematic context dependencies."""
+        """Identify context dependencies in the statement."""
         dependencies = []
 
+        # Domain-specific dependencies
+        dependencies.append(f"Depends on {context.domain.value} philosophical framework")
+
         # Language game dependencies
-        dependencies.append(f"Interpretation depends on {context.language_game.value} framework")
+        dependencies.append(f"Interpreted within {context.language_game.value} context")
 
-        # Domain dependencies
-        dependencies.append(f"Analysis grounded in {context.domain.value} perspective")
-
-        # Cultural and temporal dependencies
-        if context.cultural_context:
-            dependencies.append(f"Cultural context: {context.cultural_context}")
+        # Temporal context dependencies
         if context.temporal_context:
-            dependencies.append(f"Temporal context: {context.temporal_context}")
+            dependencies.append(f"May be influenced by {context.temporal_context} perspective")
 
-        # Concept-specific dependencies
-        for concept in concepts:
-            dependencies.extend(concept.context_dependencies)
+        # Cultural context dependencies
+        if context.cultural_context:
+            dependencies.append(f"Culturally situated within {context.cultural_context}")
 
-        return list(set(dependencies))  # Remove duplicates
+        # Perspective constraints
+        if context.perspective_constraints:
+            dependencies.append(f"Limited by perspective constraints: {', '.join(context.perspective_constraints[:2])}")
+
+        # Detect deictic expressions that require context
+        deictic_indicators = ["this", "that", "here", "there", "now", "then", "I", "you", "we"]
+        if any(word in statement.lower().split() for word in deictic_indicators):
+            dependencies.append("Contains deictic expressions requiring contextual resolution")
+
+        return dependencies[:5]
 
     async def _generate_revision_triggers(
         self,
         concepts: list[PhilosophicalConcept],
-        context: PhilosophicalContext
+        statement: str
     ) -> list[str]:
-        """Generate systematic revision triggers."""
+        """Generate conditions that would trigger revision of the analysis."""
         triggers = []
 
         # Conceptual revision triggers
-        for concept in concepts:
-            triggers.extend(concept.revision_conditions)
+        if concepts:
+            triggers.append("Discovery of new philosophical literature on key concepts")
+            triggers.append("Emergence of counterexamples to central claims")
 
-        # Methodological revision triggers
+        # Domain-specific triggers
+        if any(c.domain == PhilosophicalDomain.ETHICS for c in concepts):
+            triggers.append("Changes in moral intuitions or ethical frameworks")
+
+        if any(c.domain == PhilosophicalDomain.EPISTEMOLOGY for c in concepts):
+            triggers.append("New empirical evidence affecting knowledge claims")
+
+        if any(c.domain == PhilosophicalDomain.METAPHYSICS for c in concepts):
+            triggers.append("Advances in physics or cognitive science relevant to ontology")
+
+        # General triggers
         triggers.extend([
-            "Alternative methodological approaches considered",
-            "Cross-cultural philosophical perspectives examined",
-            "Empirical research findings challenge theoretical assumptions"
+            "Critical examination of underlying assumptions",
+            "Alternative interpretive frameworks",
+            "Cross-cultural philosophical perspectives"
         ])
 
-        # Context-specific triggers
-        if context.domain == PhilosophicalDomain.ETHICS:
-            triggers.append("Moral intuitions or practical cases conflict with analysis")
-        elif context.domain == PhilosophicalDomain.EPISTEMOLOGY:
-            triggers.append("Epistemic paradoxes or counterexamples discovered")
-        elif context.domain == PhilosophicalDomain.METAPHYSICS:
-            triggers.append("Scientific discoveries challenge ontological assumptions")
+        return triggers[:4]
 
-        return list(set(triggers))
-
-    def _identify_philosophical_presuppositions(
-        self,
-        statement: str,
-        concepts: list[PhilosophicalConcept]
-    ) -> list[str]:
-        """Identify underlying philosophical presuppositions."""
+    def _identify_philosophical_presuppositions(self, statement: str) -> list[str]:
+        """Identify implicit philosophical presuppositions in the statement."""
         presuppositions = []
 
+        statement_lower = statement.lower()
+
         # Ontological presuppositions
-        if any(term in statement.lower() for term in ["exists", "real", "actual"]):
-            presuppositions.append("Presupposes realist ontology about discussed entities")
+        if any(word in statement_lower for word in ["exists", "real", "being", "entity"]):
+            presuppositions.append("Presupposes a realist ontology")
 
         # Epistemological presuppositions
-        if any(term in statement.lower() for term in ["know", "certain", "prove"]):
-            presuppositions.append("Assumes possibility of knowledge and justification")
+        if any(word in statement_lower for word in ["know", "knowledge", "true", "certain"]):
+            presuppositions.append("Assumes the possibility of knowledge")
 
-        # Methodological presuppositions
-        if any(term in statement.lower() for term in ["because", "therefore", "implies"]):
-            presuppositions.append("Presupposes logical/causal reasoning validity")
+        # Causal presuppositions
+        if any(word in statement_lower for word in ["causes", "because", "results"]):
+            presuppositions.append("Presupposes causal relationships")
 
-        # Semantic presuppositions
-        presuppositions.append("Assumes shared linguistic understanding and meaning stability")
+        # Normative presuppositions
+        if any(word in statement_lower for word in ["should", "ought", "good", "bad"]):
+            presuppositions.append("Assumes normative standards exist")
 
-        return presuppositions
+        # Rational presuppositions
+        if any(word in statement_lower for word in ["reason", "logical", "argument"]):
+            presuppositions.append("Presupposes rationality and logical coherence")
 
-    def _identify_methodological_assumptions(
+        # Default presupposition
+        if not presuppositions:
+            presuppositions.append("Presupposes the meaningfulness of philosophical discourse")
+
+        return presuppositions[:3]
+
+    def _assess_methodological_assumptions(
         self,
-        context: PhilosophicalContext,
-        concepts: list[PhilosophicalConcept]
+        statement: str,
+        context: PhilosophicalContext
     ) -> list[str]:
-        """Identify methodological assumptions in analysis."""
+        """Assess implicit methodological assumptions."""
         assumptions = []
 
-        # Language game assumptions
-        if context.language_game.value == "scientific_discourse":
-            assumptions.extend([
-                "Scientific method provides reliable knowledge",
-                "Empirical evidence has epistemic priority",
-                "Theoretical unification is valuable"
-            ])
-        elif context.language_game.value == "ethical_deliberation":
-            assumptions.extend([
-                "Moral reasoning can guide action",
-                "Normative claims have truth values",
-                "Practical wisdom is achievable"
-            ])
+        # Domain-specific methodological assumptions
+        if context.domain == PhilosophicalDomain.LOGIC:
+            assumptions.append("Assumes formal logical methods are applicable")
+        elif context.domain == PhilosophicalDomain.ETHICS:
+            assumptions.append("Assumes moral reasoning can guide action")
+        elif context.domain == PhilosophicalDomain.AESTHETICS:
+            assumptions.append("Assumes aesthetic judgments have intersubjective validity")
 
-        # Analytical assumptions
+        # Language game assumptions
+        if context.language_game == LanguageGame.SCIENTIFIC_DISCOURSE:
+            assumptions.append("Assumes scientific methodology as authoritative")
+        elif context.language_game == LanguageGame.ORDINARY_LANGUAGE:
+            assumptions.append("Assumes common sense as starting point")
+
+        # General assumptions
         assumptions.extend([
-            "Systematic concept analysis reveals important insights",
-            "Multiple perspectives enhance understanding",
-            "Uncertainty acknowledgment improves epistemic humility"
+            "Assumes language can accurately represent philosophical concepts",
+            "Assumes rational discourse can resolve philosophical disputes"
         ])
 
-        return assumptions
+        return assumptions[:3]
 
     def _generate_interpretive_alternatives(
         self,
         statement: str,
-        concepts: list[PhilosophicalConcept]
+        context: PhilosophicalContext
     ) -> list[str]:
         """Generate alternative interpretive possibilities."""
         alternatives = []
 
-        # Traditional alternatives
+        # Perspective-based alternatives
+        if context.domain == PhilosophicalDomain.ETHICS:
+            alternatives.extend([
+                "Consequentialist interpretation focusing on outcomes",
+                "Deontological interpretation emphasizing duties",
+                "Virtue ethics interpretation highlighting character"
+            ])
+        elif context.domain == PhilosophicalDomain.EPISTEMOLOGY:
+            alternatives.extend([
+                "Empiricist interpretation emphasizing experience",
+                "Rationalist interpretation emphasizing reason",
+                "Pragmatist interpretation focusing on practical success"
+            ])
+        elif context.domain == PhilosophicalDomain.METAPHYSICS:
+            alternatives.extend([
+                "Materialist interpretation reducing to physical processes",
+                "Idealist interpretation emphasizing mental reality",
+                "Dualist interpretation recognizing multiple fundamental types"
+            ])
+
+        # Cultural alternatives
         alternatives.extend([
-            "Continental vs. analytic interpretive framework",
-            "Historical vs. systematic philosophical approach",
-            "Descriptive vs. normative analytical stance"
+            "Western analytic philosophical interpretation",
+            "Continental philosophical interpretation",
+            "Non-Western philosophical perspective"
         ])
 
-        # Domain-specific alternatives
-        if any(c.domain == PhilosophicalDomain.ETHICS for c in concepts):
-            alternatives.extend([
-                "Consequentialist vs. deontological evaluation",
-                "Virtue ethics vs. duty-based framework",
-                "Care ethics vs. justice-based approach"
-            ])
+        return alternatives[:4]
 
-        if any(c.domain == PhilosophicalDomain.EPISTEMOLOGY for c in concepts):
-            alternatives.extend([
-                "Foundationalist vs. coherentist justification",
-                "Internalist vs. externalist epistemic framework",
-                "Skeptical vs. anti-skeptical perspective"
-            ])
+    def _identify_analytical_limitations(self, statement: str) -> list[str]:
+        """Identify limitations of the current analysis."""
+        limitations = [
+            "Analysis based on pattern matching rather than deep semantic understanding",
+            "Limited by Western philosophical framework assumptions",
+            "May miss contextual nuances requiring background knowledge",
+            "Uncertainty assessments are heuristic rather than probabilistically grounded"
+        ]
 
-        return alternatives
+        # Statement-specific limitations
+        if len(statement.split()) < 5:
+            limitations.append("Statement too brief for comprehensive analysis")
+        elif len(statement.split()) > 100:
+            limitations.append("Statement complexity may exceed analytical capabilities")
 
-    def _assess_analytical_limitations(
-        self,
-        context: PhilosophicalContext,
-        concepts: list[PhilosophicalConcept]
-    ) -> list[str]:
-        """Systematically assess analytical limitations."""
-        limitations = []
-
-        # Methodological limitations
-        limitations.extend([
-            "Analysis limited by current concept extraction capabilities",
-            "Semantic relation identification relies on surface linguistic patterns",
-            "Cross-cultural perspectives may be underrepresented"
-        ])
-
-        # Contextual limitations
-        if len(context.interdisciplinary_connections) == 0:
-            limitations.append("Analysis may miss important interdisciplinary insights")
-
-        # Temporal limitations
-        limitations.append("Analysis reflects current philosophical discourse patterns")
-
-        # Epistemic limitations
-        limitations.extend([
-            "Uncertainty quantification based on heuristic assessment",
-            "Revision triggers may not capture all relevant considerations",
-            "Meta-level analysis subject to same limitations as object-level analysis"
-        ])
-
-        return limitations
-
-    def _calculate_confidence_intervals(
-        self,
-        concepts: list[PhilosophicalConcept]
-    ) -> dict[str, dict[str, float]]:
-        """Calculate confidence intervals for key analytical dimensions."""
-        intervals = {}
-
-        if concepts:
-            concept_confidences = [c.confidence_level for c in concepts]
-            mean_confidence = sum(concept_confidences) / len(concept_confidences)
-
-            intervals["conceptual_analysis"] = {
-                "mean": mean_confidence,
-                "lower_bound": max(0.0, mean_confidence - 0.2),
-                "upper_bound": min(1.0, mean_confidence + 0.2),
-                "confidence_level": 0.95
-            }
-
-        intervals["semantic_relations"] = {
-            "mean": 0.7,
-            "lower_bound": 0.5,
-            "upper_bound": 0.9,
-            "confidence_level": 0.90
-        }
-
-        intervals["pragmatic_implications"] = {
-            "mean": 0.6,
-            "lower_bound": 0.4,
-            "upper_bound": 0.8,
-            "confidence_level": 0.85
-        }
-
-        return intervals
-
-    def _deduplicate_and_rank_concepts(
-        self,
-        concepts: list[PhilosophicalConcept]
-    ) -> list[PhilosophicalConcept]:
-        """Deduplicate and rank concepts by systematic criteria."""
-        # Remove duplicates by term
-        seen_terms = set()
-        unique_concepts = []
-
-        for concept in concepts:
-            if concept.term not in seen_terms:
-                seen_terms.add(concept.term)
-                unique_concepts.append(concept)
-
-        # Rank by confidence and epistemic status
-        unique_concepts.sort(
-            key=lambda c: (c.confidence_level, c.epistemic_status != "provisional"),
-            reverse=True
-        )
-
-        return unique_concepts
+        return limitations[:4]

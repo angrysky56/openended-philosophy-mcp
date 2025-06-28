@@ -98,785 +98,713 @@ class OntologicalHierarchy:
     subdomain: str | None = None
     specializations: list[str] = field(default_factory=list)
     parent_domains: list[PhilosophicalDomain] = field(default_factory=list)
-    sibling_domains: list[PhilosophicalDomain] = field(default_factory=list)
-    interdisciplinary_connections: list[str] = field(default_factory=list)
-    historical_development: list[str] = field(default_factory=list)
-    contemporary_debates: list[str] = field(default_factory=list)
+    cross_cutting_themes: list[str] = field(default_factory=list)
     methodological_approaches: list[str] = field(default_factory=list)
+    historical_development: dict[str, str] = field(default_factory=dict)
+    contemporary_debates: list[str] = field(default_factory=list)
 
 
 @dataclass
 class RelationTypeMapping:
     """
-    Systematic mapping of philosophical relation types with domain sensitivity.
+    Systematic mapping of philosophical relationship types with domain specificity.
 
     ### 5. Contextual and Interpretative Nuances:
-    - Domain-specific relation type prevalence and interpretation
-    - Context-dependent relation strength and confidence assessment
-    - Cultural and historical variation in relational understanding
+    - Domain-specific relationship interpretation frameworks
+    - Context-dependent relationship strength assessment
+    - Historical evolution of relationship concepts
     """
     relation_type: SemanticRelationType
-    typical_domains: list[PhilosophicalDomain]
-    strength_indicators: list[str]
-    confidence_factors: list[str]
+    applicable_domains: list[PhilosophicalDomain]
+    typical_strength_range: tuple[float, float]
     context_dependencies: list[str]
-    philosophical_traditions: list[str]
-    contradictory_interpretations: list[str] = field(default_factory=list)
-    methodological_considerations: list[str] = field(default_factory=list)
+    philosophical_justification: str
+    historical_examples: list[str] = field(default_factory=list)
+    contemporary_applications: list[str] = field(default_factory=list)
+
+
+@dataclass
+class CategorizationContext:
+    """
+    Comprehensive context for philosophical categorization decisions.
+
+    Provides systematic framework for context-sensitive categorization
+    while maintaining analytical rigor and epistemic humility.
+    """
+    primary_indicators: dict[str, float]
+    secondary_indicators: dict[str, float]
+    cross_cutting_signals: dict[str, float]
+    confidence_factors: dict[str, float]
+    uncertainty_sources: list[str]
+    alternative_interpretations: list[dict[str, Any]]
 
 
 class PhilosophicalOntology:
     """
     Comprehensive ontology system for philosophical concept categorization.
 
-    ### 6. Synthetic Evaluation:
-
-    This implementation provides a comprehensive interpretative framework that:
-    - Balances systematic organization with categorical flexibility
-    - Integrates multiple philosophical traditions and perspectives
-    - Acknowledges limitations while providing practical categorization utility
-    - Enables systematic exploration of cross-domain philosophical connections
+    This class provides systematic categorization capabilities for philosophical
+    concepts, analyzing semantic content to determine appropriate philosophical
+    domains, assess complexity, and identify cross-cutting themes.
     """
 
     def __init__(self):
-        """Initialize comprehensive philosophical ontology with systematic organization."""
-
-        # 1. Core Domain Hierarchy Construction
-        self.concept_hierarchy = self._build_systematic_concept_hierarchy()
-
-        # 2. Relational Type System Development
-        self.relation_types = self._define_comprehensive_relation_types()
-
-        # 3. Context Sensitivity Mapping
+        """Initialize the philosophical ontology system."""
+        self.concept_hierarchy = self._build_concept_hierarchy()
+        self.relation_types = self._define_relation_types()
         self.context_sensitivity_map = self._build_context_sensitivity_map()
+        self.domain_indicators = self._build_domain_indicators()
+        self.complexity_assessors = self._build_complexity_assessors()
+        self.cross_cutting_themes = self._build_cross_cutting_themes()
 
-        # 4. Cross-Cutting Theme Analysis
-        self.cross_cutting_themes = self._identify_cross_cutting_themes()
-
-        # 5. Complexity Assessment Framework
-        self.complexity_indicators = self._develop_complexity_indicators()
-
-        # 6. Interdisciplinary Connection Mapping
-        self.interdisciplinary_map = self._build_interdisciplinary_map()
-
-        logger.info("Philosophical Ontology initialized with systematic categorical framework")
+        logger.info("PhilosophicalOntology initialized with systematic categorization framework")
 
     def categorize(self, semantic_analysis: SemanticAnalysis) -> PhilosophicalCategory:
         """
-        Systematically categorize philosophical content with comprehensive analysis.
-
-        ### Methodological Approach:
-        1. Primary domain identification through concept analysis
-        2. Secondary domain assessment via cross-cutting analysis
-        3. Complexity evaluation using systematic indicators
-        4. Interdisciplinary connection mapping
-        5. Confidence assessment with uncertainty quantification
+        Systematically categorize philosophical content with nuanced understanding.
 
         Args:
             semantic_analysis: Comprehensive semantic analysis results
 
         Returns:
-            Systematic philosophical categorization with justification
+            Multi-dimensional philosophical categorization with confidence metrics
         """
-        logger.debug("Performing systematic philosophical categorization")
+        try:
+            # Determine primary category through systematic analysis
+            primary_category = self._determine_primary_category(semantic_analysis)
 
-        # 1. Primary Domain Determination
-        primary_category = self._determine_primary_category(semantic_analysis)
+            # Identify secondary categories
+            secondary_categories = self._identify_secondary_categories(semantic_analysis)
 
-        # 2. Secondary Domain Analysis
-        secondary_categories = self._identify_secondary_categories(semantic_analysis)
+            # Identify cross-cutting themes
+            cross_cutting = self._identify_cross_cutting_themes(semantic_analysis)
 
-        # 3. Cross-Cutting Theme Identification
-        cross_cutting_themes = self._identify_cross_cutting_themes_for_analysis(semantic_analysis)
+            # Assess complexity level
+            complexity_level = self._assess_complexity_level(semantic_analysis)
 
-        # 4. Complexity Assessment
-        complexity_level = self._assess_complexity_level(semantic_analysis)
+            # Find interdisciplinary connections
+            interdisciplinary_connections = self._find_interdisciplinary_connections(semantic_analysis)
 
-        # 5. Interdisciplinary Connection Analysis
-        interdisciplinary_connections = self._find_interdisciplinary_connections(semantic_analysis)
+            # Generate alternative categorizations
+            alternative_categorizations = self._generate_alternative_categorizations(semantic_analysis)
 
-        # 6. Alternative Categorization Recognition
-        alternative_categorizations = self._generate_alternative_categorizations(
-            semantic_analysis, primary_category
-        )
+            # Calculate confidence
+            categorical_confidence = self._calculate_categorical_confidence(semantic_analysis, primary_category)
 
-        # 7. Confidence Assessment with Systematic Justification
-        categorical_confidence = self._calculate_categorical_confidence(
-            semantic_analysis, primary_category, secondary_categories
-        )
+            # Generate justification
+            justification = self._generate_categorization_justification(
+                semantic_analysis, primary_category, secondary_categories
+            )
 
-        # 8. Justification Development
-        justification = self._develop_categorical_justification(
-            semantic_analysis, primary_category, secondary_categories
-        )
+            # Identify limitations
+            limitations = self._identify_categorical_limitations(semantic_analysis)
 
-        # 9. Limitation Acknowledgment
-        categorical_limitations = self._identify_categorical_limitations(
-            semantic_analysis, primary_category
-        )
+            category = PhilosophicalCategory(
+                primary=primary_category,
+                secondary=secondary_categories,
+                cross_cutting=cross_cutting,
+                complexity_level=complexity_level,
+                interdisciplinary_connections=interdisciplinary_connections,
+                alternative_categorizations=alternative_categorizations,
+                categorical_confidence=categorical_confidence,
+                justification=justification,
+                categorical_limitations=limitations
+            )
 
-        return PhilosophicalCategory(
-            primary=primary_category,
-            secondary=secondary_categories,
-            cross_cutting=cross_cutting_themes,
-            complexity_level=complexity_level,
-            interdisciplinary_connections=interdisciplinary_connections,
-            alternative_categorizations=alternative_categorizations,
-            categorical_confidence=categorical_confidence,
-            justification=justification,
-            categorical_limitations=categorical_limitations
-        )
+            logger.debug(f"Categorized as primary: {primary_category.value}, confidence: {categorical_confidence}")
+            return category
 
-    def _build_systematic_concept_hierarchy(self) -> dict[PhilosophicalDomain, OntologicalHierarchy]:
-        """
-        Build comprehensive hierarchical organization of philosophical domains.
+        except Exception as e:
+            logger.error(f"Error in categorization: {e}")
+            # Return minimal categorization on error
+            return PhilosophicalCategory(
+                primary=PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE,  # Default
+                categorical_confidence=0.1,
+                justification="Categorization failed, using default"
+            )
 
-        ### Systematic Organization Principles:
-        - Historical tradition acknowledgment with contemporary development integration
-        - Logical coherence maintenance across hierarchical levels
-        - Flexibility for boundary revision and categorical development
-        """
+    def _build_concept_hierarchy(self) -> dict[PhilosophicalDomain, OntologicalHierarchy]:
+        """Build systematic hierarchical organization of philosophical domains."""
         hierarchy = {}
 
-        # Metaphysics - Foundational Ontological Analysis
+        # Metaphysics
         hierarchy[PhilosophicalDomain.METAPHYSICS] = OntologicalHierarchy(
             domain=PhilosophicalDomain.METAPHYSICS,
             specializations=[
-                "ontology", "philosophy_of_time", "philosophy_of_space",
-                "causation", "modality", "identity", "persistence", "universals_particulars"
+                "ontology", "philosophy_of_mind", "philosophy_of_time",
+                "modal_metaphysics", "philosophy_of_causation"
             ],
-            sibling_domains=[
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE
-            ],
-            interdisciplinary_connections=[
-                "physics", "mathematics", "computer_science", "theology"
-            ],
-            historical_development=[
-                "presocratic_cosmology", "aristotelian_categories", "medieval_scholasticism",
-                "modern_rationalism", "analytic_metaphysics", "process_philosophy"
-            ],
-            contemporary_debates=[
-                "grounding_theory", "quantum_metaphysics", "composition_puzzle",
-                "temporal_ontology", "modal_realism"
+            cross_cutting_themes=[
+                "realism_vs_antirealism", "emergence", "reduction", "naturalism"
             ],
             methodological_approaches=[
-                "conceptual_analysis", "formal_ontology", "naturalistic_metaphysics",
-                "experimental_philosophy"
+                "conceptual_analysis", "thought_experiments", "formal_methods"
+            ],
+            contemporary_debates=[
+                "hard_problem_of_consciousness", "free_will", "personal_identity"
             ]
         )
 
-        # Epistemology - Systematic Knowledge Analysis
+        # Epistemology
         hierarchy[PhilosophicalDomain.EPISTEMOLOGY] = OntologicalHierarchy(
             domain=PhilosophicalDomain.EPISTEMOLOGY,
             specializations=[
-                "knowledge_theory", "justification", "skepticism", "epistemic_virtue",
-                "social_epistemology", "formal_epistemology", "applied_epistemology"
+                "theory_of_knowledge", "philosophy_of_science", "formal_epistemology",
+                "social_epistemology", "virtue_epistemology"
             ],
-            sibling_domains=[
-                PhilosophicalDomain.METAPHYSICS, PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE,
-                PhilosophicalDomain.PHILOSOPHY_OF_MIND
-            ],
-            interdisciplinary_connections=[
-                "cognitive_science", "psychology", "sociology", "education",
-                "information_science", "artificial_intelligence"
-            ],
-            historical_development=[
-                "ancient_skepticism", "rationalist_foundationalism", "empiricist_tradition",
-                "kantian_synthesis", "pragmatist_naturalism", "analytic_epistemology"
-            ],
-            contemporary_debates=[
-                "internalism_externalism", "closure_sensitivity", "epistemic_injustice",
-                "disagreement_problem", "experimental_epistemology"
+            cross_cutting_themes=[
+                "justification", "reliability", "coherence", "foundationalism"
             ],
             methodological_approaches=[
-                "conceptual_analysis", "formal_modeling", "experimental_methods",
-                "genealogical_analysis", "social_network_analysis"
+                "analysis_of_knowledge", "skeptical_arguments", "naturalized_epistemology"
+            ],
+            contemporary_debates=[
+                "gettier_problems", "epistemic_injustice", "testimony"
             ]
         )
 
-        # Ethics - Comprehensive Normative Analysis
+        # Ethics
         hierarchy[PhilosophicalDomain.ETHICS] = OntologicalHierarchy(
             domain=PhilosophicalDomain.ETHICS,
             specializations=[
-                "normative_ethics", "meta_ethics", "applied_ethics", "virtue_ethics",
-                "deontological_ethics", "consequentialist_ethics", "care_ethics",
-                "political_philosophy", "environmental_ethics"
+                "normative_ethics", "metaethics", "applied_ethics",
+                "virtue_ethics", "moral_psychology"
             ],
-            sibling_domains=[
-                PhilosophicalDomain.POLITICAL_PHILOSOPHY, PhilosophicalDomain.AESTHETICS,
-                PhilosophicalDomain.PHILOSOPHY_OF_MIND
-            ],
-            interdisciplinary_connections=[
-                "psychology", "sociology", "anthropology", "economics", "law",
-                "public_policy", "environmental_science", "medicine"
-            ],
-            historical_development=[
-                "virtue_tradition", "divine_command_theory", "natural_law",
-                "kantian_deontology", "utilitarian_calculus", "existentialist_ethics"
-            ],
-            contemporary_debates=[
-                "moral_realism_anti_realism", "moral_psychology", "global_justice",
-                "bioethics", "climate_ethics", "AI_ethics", "experimental_moral_philosophy"
+            cross_cutting_themes=[
+                "consequentialism_vs_deontology", "moral_realism", "responsibility"
             ],
             methodological_approaches=[
-                "reflective_equilibrium", "casuistry", "empirical_ethics",
-                "genealogical_critique", "phenomenological_analysis"
+                "reflective_equilibrium", "moral_intuitions", "consequentialist_calculation"
+            ],
+            contemporary_debates=[
+                "moral_enhancement", "effective_altruism", "moral_motivation"
             ]
         )
 
-        # Philosophy of Mind - Consciousness and Mental Phenomena
-        hierarchy[PhilosophicalDomain.PHILOSOPHY_OF_MIND] = OntologicalHierarchy(
-            domain=PhilosophicalDomain.PHILOSOPHY_OF_MIND,
+        # Logic
+        hierarchy[PhilosophicalDomain.LOGIC] = OntologicalHierarchy(
+            domain=PhilosophicalDomain.LOGIC,
             specializations=[
-                "consciousness", "mental_causation", "personal_identity", "other_minds",
-                "cognitive_architecture", "emotions", "perception", "action_theory"
+                "formal_logic", "philosophical_logic", "modal_logic",
+                "temporal_logic", "epistemic_logic"
             ],
-            sibling_domains=[
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.METAPHYSICS,
-                PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE
-            ],
-            interdisciplinary_connections=[
-                "neuroscience", "cognitive_science", "psychology", "artificial_intelligence",
-                "linguistics", "computer_science", "medicine"
-            ],
-            historical_development=[
-                "cartesian_dualism", "behaviorism", "identity_theory", "functionalism",
-                "eliminative_materialism", "property_dualism"
-            ],
-            contemporary_debates=[
-                "hard_problem_consciousness", "extended_mind", "embodied_cognition",
-                "predictive_processing", "integrated_information_theory"
+            cross_cutting_themes=[
+                "validity", "soundness", "completeness", "consistency"
             ],
             methodological_approaches=[
-                "thought_experiments", "conceptual_analysis", "empirical_philosophy",
-                "computational_modeling", "phenomenological_investigation"
+                "formal_systems", "model_theory", "proof_theory"
+            ],
+            contemporary_debates=[
+                "logical_pluralism", "relevance_logic", "paraconsistent_logic"
             ]
         )
 
-        # Additional domains following similar systematic pattern...
-        # [Aesthetic, Logic, Philosophy of Science, etc. would follow similar structure]
+        # Aesthetics
+        hierarchy[PhilosophicalDomain.AESTHETICS] = OntologicalHierarchy(
+            domain=PhilosophicalDomain.AESTHETICS,
+            specializations=[
+                "philosophy_of_art", "philosophy_of_beauty", "aesthetic_experience",
+                "philosophy_of_literature", "philosophy_of_music"
+            ],
+            cross_cutting_themes=[
+                "aesthetic_judgment", "aesthetic_properties", "artistic_value"
+            ],
+            methodological_approaches=[
+                "aesthetic_theory", "critical_analysis", "phenomenological_description"
+            ],
+            contemporary_debates=[
+                "institutional_theory_of_art", "aesthetic_cognitivism", "environmental_aesthetics"
+            ]
+        )
 
         return hierarchy
 
-    def _define_comprehensive_relation_types(self) -> dict[SemanticRelationType, RelationTypeMapping]:
-        """
-        Define comprehensive semantic relation types with domain-sensitive analysis.
+    def _define_relation_types(self) -> dict[SemanticRelationType, RelationTypeMapping]:
+        """Define systematic mapping of philosophical relationship types."""
+        relations = {}
 
-        ### Systematic Relation Analysis:
-        - Domain-specific prevalence and interpretation patterns
-        - Context-dependent strength and confidence indicators
-        - Cross-cultural and historical variation acknowledgment
-        """
-        relation_mappings = {}
-
-        # Causal Relations - Metaphysical and Scientific Analysis
-        relation_mappings[SemanticRelationType.CAUSAL] = RelationTypeMapping(
+        relations[SemanticRelationType.CAUSAL] = RelationTypeMapping(
             relation_type=SemanticRelationType.CAUSAL,
-            typical_domains=[
-                PhilosophicalDomain.METAPHYSICS, PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE,
-                PhilosophicalDomain.PHILOSOPHY_OF_MIND, PhilosophicalDomain.ETHICS
+            applicable_domains=[
+                PhilosophicalDomain.METAPHYSICS,
+                PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE,
+                PhilosophicalDomain.PHILOSOPHY_OF_MIND
             ],
-            strength_indicators=[
-                "because", "causes", "results_in", "brings_about", "produces",
-                "leads_to", "due_to", "owing_to", "on_account_of"
-            ],
-            confidence_factors=[
-                "temporal_precedence", "empirical_correlation", "mechanistic_understanding",
-                "theoretical_integration", "experimental_support"
-            ],
-            context_dependencies=[
-                "Scientific vs. everyday causation concepts",
-                "Deterministic vs. probabilistic causal frameworks",
-                "Agent causation vs. event causation distinctions"
-            ],
-            philosophical_traditions=[
-                "humean_regularity_theory", "aristotelian_four_causes",
-                "mechanistic_causation", "interventionist_theories"
-            ],
-            contradictory_interpretations=[
-                "Eliminativist vs. realist approaches to causation",
-                "Reductionist vs. emergentist causal frameworks"
-            ]
+            typical_strength_range=(0.6, 0.9),
+            context_dependencies=["temporal_ordering", "mechanism_specification"],
+            philosophical_justification="Causal relations fundamental to explanation and understanding",
+            historical_examples=["Hume_on_causation", "Mill_methods"],
+            contemporary_applications=["mental_causation", "causal_closure"]
         )
 
-        # Logical Implication - Formal and Informal Logic
-        relation_mappings[SemanticRelationType.LOGICAL_IMPLICATION] = RelationTypeMapping(
+        relations[SemanticRelationType.LOGICAL_IMPLICATION] = RelationTypeMapping(
             relation_type=SemanticRelationType.LOGICAL_IMPLICATION,
-            typical_domains=[
-                PhilosophicalDomain.LOGIC, PhilosophicalDomain.EPISTEMOLOGY,
-                PhilosophicalDomain.METAPHYSICS, PhilosophicalDomain.ETHICS
+            applicable_domains=[
+                PhilosophicalDomain.LOGIC,
+                PhilosophicalDomain.EPISTEMOLOGY,
+                PhilosophicalDomain.ETHICS
             ],
-            strength_indicators=[
-                "implies", "entails", "follows_from", "therefore", "hence",
-                "consequently", "thus", "if_then", "necessary_condition"
-            ],
-            confidence_factors=[
-                "formal_validity", "premise_truth", "inference_rule_application",
-                "logical_consistency", "deductive_closure"
-            ],
-            context_dependencies=[
-                "Classical vs. non-classical logic systems",
-                "Material vs. relevant implication distinctions",
-                "Strict vs. counterfactual conditional interpretation"
-            ],
-            philosophical_traditions=[
-                "aristotelian_syllogistic", "stoic_propositional_logic",
-                "modern_predicate_logic", "modal_logic_systems"
-            ]
+            typical_strength_range=(0.8, 1.0),
+            context_dependencies=["logical_system", "validity_conditions"],
+            philosophical_justification="Logical relations provide structural foundation for reasoning",
+            historical_examples=["Aristotelian_syllogistics", "Frege_logic"],
+            contemporary_applications=["material_conditionals", "relevant_implication"]
         )
 
-        # Dialectical Tension - Critical and Continental Analysis
-        relation_mappings[SemanticRelationType.DIALECTICAL_TENSION] = RelationTypeMapping(
-            relation_type=SemanticRelationType.DIALECTICAL_TENSION,
-            typical_domains=[
-                PhilosophicalDomain.ETHICS, PhilosophicalDomain.POLITICAL_PHILOSOPHY,
-                PhilosophicalDomain.CONTINENTAL_PHILOSOPHY, PhilosophicalDomain.AESTHETICS
+        relations[SemanticRelationType.PART_WHOLE] = RelationTypeMapping(
+            relation_type=SemanticRelationType.PART_WHOLE,
+            applicable_domains=[
+                PhilosophicalDomain.METAPHYSICS,
+                PhilosophicalDomain.PHILOSOPHY_OF_MIND,
+                PhilosophicalDomain.AESTHETICS
             ],
-            strength_indicators=[
-                "tension", "conflict", "contradiction", "paradox", "antinomy",
-                "opposition", "disagreement", "competing_claims"
-            ],
-            confidence_factors=[
-                "conceptual_opposition", "practical_conflict", "theoretical_inconsistency",
-                "value_disagreement", "methodological_dispute"
-            ],
-            context_dependencies=[
-                "Dialectical vs. analytical approaches to contradiction",
-                "Historical vs. logical contradiction interpretation",
-                "Productive vs. destructive tension assessment"
-            ],
-            philosophical_traditions=[
-                "hegelian_dialectic", "marxist_dialectical_materialism",
-                "socratic_elenchus", "buddhist_middle_way"
-            ]
+            typical_strength_range=(0.5, 0.8),
+            context_dependencies=["mereological_principles", "emergence_relations"],
+            philosophical_justification="Mereological relations crucial for understanding composition",
+            historical_examples=["Aristotelian_substance", "Husserlian_wholes"],
+            contemporary_applications=["composition_problems", "emergent_properties"]
         )
 
-        # Additional relation types would follow similar systematic analysis...
+        return relations
 
-        return relation_mappings
-
-    def _build_context_sensitivity_map(self) -> dict[LanguageGame, dict[str, Any]]:
-        """
-        Build systematic context sensitivity mapping for interpretation frameworks.
-
-        ### Context-Dependent Analysis Framework:
-        - Language game specific interpretation principles
-        - Domain-sensitive categorical adjustments
-        - Cultural and historical context acknowledgment
-        """
-        context_map = {}
-
-        # Scientific Discourse Context
-        context_map[LanguageGame.SCIENTIFIC_DISCOURSE] = {
-            "categorical_priorities": [
-                "empirical_grounding", "theoretical_integration", "predictive_power",
-                "methodological_rigor", "peer_review_standards"
-            ],
-            "relation_preferences": [
-                SemanticRelationType.CAUSAL, SemanticRelationType.LOGICAL_IMPLICATION,
-                SemanticRelationType.DEPENDENCY
-            ],
-            "confidence_modifiers": {
-                "empirical_support": 1.2,
-                "theoretical_coherence": 1.1,
-                "speculative_claims": 0.7
+    def _build_context_sensitivity_map(self) -> dict[str, dict[str, float]]:
+        """Build map of context sensitivity for different philosophical domains."""
+        sensitivity_map = {
+            "cultural_context": {
+                PhilosophicalDomain.ETHICS.value: 0.8,
+                PhilosophicalDomain.AESTHETICS.value: 0.9,
+                PhilosophicalDomain.POLITICAL_PHILOSOPHY.value: 0.9,
+                PhilosophicalDomain.LOGIC.value: 0.2,
+                PhilosophicalDomain.METAPHYSICS.value: 0.4
             },
-            "complexity_factors": [
-                "mathematical_formalization", "experimental_testability",
-                "theoretical_unification", "interdisciplinary_integration"
-            ]
-        }
-
-        # Ethical Deliberation Context
-        context_map[LanguageGame.ETHICAL_DELIBERATION] = {
-            "categorical_priorities": [
-                "normative_commitment", "practical_consequence", "value_integration",
-                "moral_intuition_consistency", "stakeholder_consideration"
-            ],
-            "relation_preferences": [
-                SemanticRelationType.PRAGMATIC_CONSEQUENCE, SemanticRelationType.OPPOSITION,
-                SemanticRelationType.DIALECTICAL_TENSION
-            ],
-            "confidence_modifiers": {
-                "moral_consensus": 1.1,
-                "practical_experience": 1.0,
-                "controversial_claims": 0.8
+            "historical_context": {
+                PhilosophicalDomain.ETHICS.value: 0.7,
+                PhilosophicalDomain.EPISTEMOLOGY.value: 0.6,
+                PhilosophicalDomain.AESTHETICS.value: 0.8,
+                PhilosophicalDomain.LOGIC.value: 0.3,
+                PhilosophicalDomain.METAPHYSICS.value: 0.5
             },
-            "complexity_factors": [
-                "stakeholder_diversity", "value_conflict", "practical_constraint",
-                "long_term_consequence"
+            "linguistic_context": {
+                PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE.value: 0.9,
+                PhilosophicalDomain.LOGIC.value: 0.7,
+                PhilosophicalDomain.EPISTEMOLOGY.value: 0.6,
+                PhilosophicalDomain.ETHICS.value: 0.5,
+                PhilosophicalDomain.AESTHETICS.value: 0.6
+            }
+        }
+        return sensitivity_map
+
+    def _build_domain_indicators(self) -> dict[PhilosophicalDomain, dict[str, list[str]]]:
+        """Build systematic indicators for philosophical domain identification."""
+        indicators = {}
+
+        indicators[PhilosophicalDomain.METAPHYSICS] = {
+            "primary_terms": [
+                "being", "existence", "reality", "substance", "property",
+                "essence", "nature", "identity", "persistence", "change"
+            ],
+            "modal_terms": [
+                "necessary", "possible", "contingent", "actual", "potential",
+                "counterfactual", "possible_worlds"
+            ],
+            "temporal_terms": [
+                "time", "temporal", "past", "present", "future", "duration",
+                "instant", "eternal", "temporal_parts"
             ]
         }
 
-        # Aesthetic Judgment Context
-        context_map[LanguageGame.AESTHETIC_JUDGMENT] = {
-            "categorical_priorities": [
-                "subjective_validity", "cultural_sensitivity", "historical_awareness",
-                "formal_analysis", "emotional_response"
+        indicators[PhilosophicalDomain.EPISTEMOLOGY] = {
+            "knowledge_terms": [
+                "knowledge", "belief", "truth", "justification", "evidence",
+                "certainty", "doubt", "skepticism", "reliability"
             ],
-            "relation_preferences": [
-                SemanticRelationType.SIMILARITY, SemanticRelationType.OPPOSITION,
-                SemanticRelationType.HERMENEUTIC_CIRCLE
+            "cognitive_terms": [
+                "perception", "memory", "intuition", "reasoning", "inference",
+                "understanding", "comprehension", "cognition"
             ],
-            "confidence_modifiers": {
-                "cultural_consensus": 0.9,
-                "personal_taste": 0.7,
-                "critical_analysis": 1.0
-            },
-            "complexity_factors": [
-                "cultural_variation", "historical_development", "formal_innovation",
-                "interpretive_multiplicity"
+            "methodological_terms": [
+                "empiricism", "rationalism", "foundationalism", "coherentism",
+                "pragmatism", "naturalism", "testimony"
             ]
         }
 
-        return context_map
-
-    def _identify_cross_cutting_themes(self) -> dict[str, list[PhilosophicalDomain]]:
-        """
-        Identify systematic cross-cutting themes spanning multiple domains.
-
-        ### Cross-Domain Analysis:
-        - Themes that transcend traditional domain boundaries
-        - Systematic identification of recurring philosophical problems
-        - Integration opportunities across specialized subdisciplines
-        """
-        themes = {
-            "normativity": [
-                PhilosophicalDomain.ETHICS, PhilosophicalDomain.EPISTEMOLOGY,
-                PhilosophicalDomain.AESTHETICS, PhilosophicalDomain.LOGIC
+        indicators[PhilosophicalDomain.ETHICS] = {
+            "normative_terms": [
+                "right", "wrong", "good", "bad", "ought", "should", "duty",
+                "obligation", "permission", "prohibition"
             ],
-            "representation": [
-                PhilosophicalDomain.PHILOSOPHY_OF_MIND, PhilosophicalDomain.EPISTEMOLOGY,
-                PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE, PhilosophicalDomain.AESTHETICS
+            "value_terms": [
+                "value", "virtue", "vice", "character", "moral", "immoral",
+                "ethical", "unethical", "justice", "fairness"
             ],
-            "emergence": [
-                PhilosophicalDomain.METAPHYSICS, PhilosophicalDomain.PHILOSOPHY_OF_MIND,
-                PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE, PhilosophicalDomain.ETHICS
-            ],
-            "interpretation": [
-                PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE, PhilosophicalDomain.AESTHETICS,
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.CONTINENTAL_PHILOSOPHY
-            ],
-            "rationality": [
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.ETHICS,
-                PhilosophicalDomain.LOGIC, PhilosophicalDomain.PHILOSOPHY_OF_MIND
-            ],
-            "agency": [
-                PhilosophicalDomain.ETHICS, PhilosophicalDomain.PHILOSOPHY_OF_MIND,
-                PhilosophicalDomain.POLITICAL_PHILOSOPHY, PhilosophicalDomain.METAPHYSICS
-            ],
-            "experience": [
-                PhilosophicalDomain.PHENOMENOLOGY, PhilosophicalDomain.PHILOSOPHY_OF_MIND,
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.AESTHETICS
-            ],
-            "power": [
-                PhilosophicalDomain.POLITICAL_PHILOSOPHY, PhilosophicalDomain.ETHICS,
-                PhilosophicalDomain.EPISTEMOLOGY, PhilosophicalDomain.AESTHETICS
+            "consequentialist_terms": [
+                "consequences", "outcomes", "utility", "happiness", "welfare",
+                "well-being", "harm", "benefit"
             ]
         }
 
-        return themes
+        indicators[PhilosophicalDomain.LOGIC] = {
+            "logical_operators": [
+                "and", "or", "not", "if", "then", "implies", "equivalent",
+                "necessary", "sufficient", "conditional"
+            ],
+            "quantifiers": [
+                "all", "some", "every", "any", "exists", "universal",
+                "particular", "exactly", "at_least", "at_most"
+            ],
+            "validity_terms": [
+                "valid", "invalid", "sound", "unsound", "consistent",
+                "inconsistent", "contradiction", "tautology"
+            ]
+        }
 
-    def _develop_complexity_indicators(self) -> dict[str, Any]:
-        """
-        Develop systematic complexity assessment indicators.
+        indicators[PhilosophicalDomain.AESTHETICS] = {
+            "aesthetic_properties": [
+                "beautiful", "ugly", "sublime", "elegant", "graceful",
+                "harmonious", "balanced", "expressive", "meaningful"
+            ],
+            "art_terms": [
+                "art", "artwork", "artistic", "creativity", "expression",
+                "representation", "interpretation", "style", "form"
+            ],
+            "evaluation_terms": [
+                "aesthetic", "taste", "judgment", "appreciation", "criticism",
+                "evaluation", "assessment", "preference"
+            ]
+        }
 
-        Returns:
-            Dictionary mapping complexity factors to assessment criteria
-        """
+        return indicators
+
+    def _build_complexity_assessors(self) -> dict[str, Any]:
+        """Build systematic complexity assessment framework."""
         return {
-            "conceptual_density": {
-                "low": "1-3 primary concepts",
-                "medium": "4-7 primary concepts",
-                "high": "8+ primary concepts"
+            "conceptual_complexity": {
+                "simple": 1,
+                "moderate": 2,
+                "complex": 3,
+                "highly_complex": 4,
+                "extremely_complex": 5
             },
             "relational_complexity": {
-                "simple": "1-2 relation types",
-                "moderate": "3-5 relation types",
-                "complex": "6+ relation types"
+                "few_relations": 1,
+                "moderate_relations": 2,
+                "many_relations": 3,
+                "dense_network": 4,
+                "highly_interconnected": 5
             },
-            "cross_domain_integration": {
-                "single": "One primary domain",
-                "multiple": "2-3 domains involved",
-                "interdisciplinary": "4+ domains with external connections"
-            },
-            "epistemic_uncertainty": {
-                "low": "Average uncertainty < 0.4",
-                "moderate": "Average uncertainty 0.4-0.7",
-                "high": "Average uncertainty > 0.7"
+            "epistemic_complexity": {
+                "high_certainty": 1,
+                "moderate_certainty": 2,
+                "uncertain": 3,
+                "highly_uncertain": 4,
+                "radical_uncertainty": 5
             }
         }
 
-    def _build_interdisciplinary_map(self) -> dict[str, list[str]]:
-        """
-        Build systematic interdisciplinary connection mapping.
-
-        Returns:
-            Dictionary mapping philosophical domains to related disciplines
-        """
+    def _build_cross_cutting_themes(self) -> dict[str, list[PhilosophicalDomain]]:
+        """Build map of cross-cutting philosophical themes."""
         return {
-            "metaphysics": ["physics", "mathematics", "computer_science", "theology"],
-            "epistemology": ["cognitive_science", "psychology", "education", "information_science"],
-            "ethics": ["psychology", "sociology", "law", "public_policy", "medicine"],
-            "philosophy_of_mind": ["neuroscience", "cognitive_science", "artificial_intelligence"],
-            "philosophy_of_science": ["physics", "biology", "chemistry", "mathematics"],
-            "aesthetics": ["art_history", "psychology", "anthropology", "media_studies"],
-            "logic": ["mathematics", "computer_science", "linguistics"],
-            "political_philosophy": ["political_science", "sociology", "economics", "law"]
+            "realism_vs_antirealism": [
+                PhilosophicalDomain.METAPHYSICS,
+                PhilosophicalDomain.EPISTEMOLOGY,
+                PhilosophicalDomain.ETHICS,
+                PhilosophicalDomain.AESTHETICS
+            ],
+            "naturalism": [
+                PhilosophicalDomain.METAPHYSICS,
+                PhilosophicalDomain.EPISTEMOLOGY,
+                PhilosophicalDomain.PHILOSOPHY_OF_MIND,
+                PhilosophicalDomain.ETHICS
+            ],
+            "emergence": [
+                PhilosophicalDomain.METAPHYSICS,
+                PhilosophicalDomain.PHILOSOPHY_OF_MIND,
+                PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE
+            ],
+            "normativity": [
+                PhilosophicalDomain.ETHICS,
+                PhilosophicalDomain.EPISTEMOLOGY,
+                PhilosophicalDomain.AESTHETICS,
+                PhilosophicalDomain.LOGIC
+            ]
         }
 
     def _determine_primary_category(self, semantic_analysis: SemanticAnalysis) -> PhilosophicalDomain:
-        """Systematically determine primary philosophical domain."""
+        """Determine primary philosophical category through systematic analysis."""
         domain_scores = defaultdict(float)
 
         # Analyze concepts for domain indicators
         for concept in semantic_analysis.primary_concepts:
-            domain_scores[concept.domain] += concept.confidence_level
+            if hasattr(concept, 'domain') and concept.domain:
+                domain_scores[concept.domain] += concept.confidence_level
 
-        # Weight by concept importance and frequency
-        for concept in semantic_analysis.primary_concepts:
-            # Higher weight for higher confidence concepts
-            weight = concept.confidence_level ** 2
-            domain_scores[concept.domain] += weight
+        # Analyze statement content for domain-specific terms
+        for domain, indicators in self.domain_indicators.items():
+            for _, terms in indicators.items():
+                # Ideally, we would analyze the original statement text for domain-specific terms,
+                # but since the raw statement is not available in SemanticAnalysis, we use concept terms instead.
+                # To enable direct statement analysis, SemanticAnalysis would need to include the original text.
+                concept_terms = [c.term.lower() for c in semantic_analysis.primary_concepts]
+                matches = sum(1 for term in terms if any(term in ct for ct in concept_terms))
+                domain_scores[domain] += matches * 0.1
 
-        # Return domain with highest score
+        # Analyze semantic relations for domain preferences
+        for relation in semantic_analysis.semantic_relations:
+            if relation.relation_type in self.relation_types:
+                mapping = self.relation_types[relation.relation_type]
+                for domain in mapping.applicable_domains:
+                    domain_scores[domain] += relation.confidence * 0.2
+
+        # Find domain with highest score
         if domain_scores:
-            return max(domain_scores, key=lambda domain: domain_scores[domain])
-        else:
-            return PhilosophicalDomain.METAPHYSICS  # Default
+            primary_domain = max(domain_scores, key=lambda k: domain_scores[k])
+            return primary_domain
 
-    def _identify_secondary_categories(self, semantic_analysis: SemanticAnalysis) -> list[PhilosophicalDomain]:
-        """Identify secondary philosophical domains present in analysis."""
-        domain_scores = defaultdict(float)
+        # Default fallback
+        return PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE
 
-        for concept in semantic_analysis.primary_concepts:
-            domain_scores[concept.domain] += concept.confidence_level
-
-        # Sort domains by score and return top secondary domains
-        sorted_domains = sorted(domain_scores.items(), key=lambda x: x[1], reverse=True)
-
-        # Return secondary domains (excluding primary)
+    def _identify_secondary_categories(
+        self,
+        semantic_analysis: SemanticAnalysis
+    ) -> list[PhilosophicalDomain]:
+        """Identify secondary philosophical categories."""
         secondary = []
-        primary_domain = self._determine_primary_category(semantic_analysis)
 
-        for domain, score in sorted_domains:
-            if domain != primary_domain and score > 0.3:  # Threshold for significance
-                secondary.append(domain)
+        # Look for concepts from different domains
+        domains_found = set()
+        for concept in semantic_analysis.primary_concepts:
+            if hasattr(concept, 'domain') and concept.domain:
+                domains_found.add(concept.domain)
 
-        return secondary[:3]  # Return top 3 secondary domains
+        # Remove primary domain and add others as secondary
+        if len(domains_found) > 1:
+            primary = self._determine_primary_category(semantic_analysis)
+            domains_found.discard(primary)
+            secondary = list(domains_found)[:3]  # Limit to 3 secondary
 
-    def _identify_cross_cutting_themes_for_analysis(self, semantic_analysis: SemanticAnalysis) -> list[str]:
-        """Identify cross-cutting themes present in specific analysis."""
+        return secondary
+
+    def _identify_cross_cutting_themes(self, semantic_analysis: SemanticAnalysis) -> list[str]:
+        """Identify cross-cutting philosophical themes."""
         themes = []
 
-        # Check for normativity indicators
-        if any("ought" in concept.term or "should" in concept.term
-               for concept in semantic_analysis.primary_concepts):
-            themes.append("normativity")
+        # Check pragmatic implications for theme indicators
+        implications = semantic_analysis.pragmatic_implications
+        for implication in implications:
+            if "normative" in implication.lower():
+                themes.append("normativity")
+            elif "causal" in implication.lower():
+                themes.append("causation")
+            elif "modal" in implication.lower():
+                themes.append("modality")
 
-        # Check for representation indicators
-        if any("represent" in concept.term or "symbol" in concept.term
-               for concept in semantic_analysis.primary_concepts):
-            themes.append("representation")
+        # Check for realism indicators
+        concept_terms = [c.term.lower() for c in semantic_analysis.primary_concepts]
+        if any(term in ["real", "reality", "exists", "existence"] for term in concept_terms):
+            themes.append("realism_vs_antirealism")
 
         # Check for emergence indicators
-        if any("emerge" in concept.term or "complex" in concept.term
-               for concept in semantic_analysis.primary_concepts):
+        if any(term in ["emerge", "emergent", "level", "complex"] for term in concept_terms):
             themes.append("emergence")
 
-        # Check pragmatic implications for additional themes
-        if any("interpret" in impl for impl in semantic_analysis.pragmatic_implications):
-            themes.append("interpretation")
-
-        if any("rational" in impl for impl in semantic_analysis.pragmatic_implications):
-            themes.append("rationality")
-
-        return themes
+        return list(set(themes))[:3]  # Remove duplicates and limit
 
     def _assess_complexity_level(self, semantic_analysis: SemanticAnalysis) -> int:
-        """Systematically assess conceptual complexity on 1-5 scale."""
-        complexity_score = 1  # Base complexity
+        """Assess complexity level of the philosophical content."""
+        complexity_score = 0
 
-        # Factor 1: Number of primary concepts
+        # Conceptual complexity
         concept_count = len(semantic_analysis.primary_concepts)
         if concept_count > 5:
-            complexity_score += 1
-        if concept_count > 10:
+            complexity_score += 2
+        elif concept_count > 2:
             complexity_score += 1
 
-        # Factor 2: Semantic relations complexity
+        # Relational complexity
         relation_count = len(semantic_analysis.semantic_relations)
         if relation_count > 3:
+            complexity_score += 2
+        elif relation_count > 1:
             complexity_score += 1
 
-        # Factor 3: Cross-cutting themes
-        cross_cutting_count = len(self._identify_cross_cutting_themes_for_analysis(semantic_analysis))
-        if cross_cutting_count > 2:
-            complexity_score += 1
+        # Epistemic uncertainty
+        if semantic_analysis.epistemic_uncertainty:
+            avg_uncertainty = sum(semantic_analysis.epistemic_uncertainty.values()) / len(semantic_analysis.epistemic_uncertainty)
+            if avg_uncertainty > 0.7:
+                complexity_score += 2
+            elif avg_uncertainty > 0.4:
+                complexity_score += 1
 
-        # Factor 4: Epistemic uncertainty
-        avg_uncertainty = sum(semantic_analysis.epistemic_uncertainty.values()) / len(semantic_analysis.epistemic_uncertainty) if semantic_analysis.epistemic_uncertainty else 0
-        if avg_uncertainty > 0.7:
-            complexity_score += 1
-
-        return min(complexity_score, 5)  # Cap at 5
+        # Ensure level is between 1 and 5
+        return max(1, min(5, complexity_score))
 
     def _find_interdisciplinary_connections(self, semantic_analysis: SemanticAnalysis) -> list[str]:
-        """Find interdisciplinary connections based on concepts and relations."""
-        connections = set()
+        """Find potential interdisciplinary connections."""
+        connections = []
 
-        # Map concepts to interdisciplinary fields
-        interdisciplinary_mappings = {
-            "consciousness": ["neuroscience", "cognitive_science", "psychology"],
-            "knowledge": ["cognitive_science", "education", "information_science"],
-            "justice": ["law", "political_science", "sociology"],
-            "beauty": ["art_history", "psychology", "anthropology"],
-            "cause": ["physics", "biology", "computer_science"],
-            "mind": ["neuroscience", "psychology", "artificial_intelligence"],
-            "experience": ["psychology", "neuroscience", "phenomenology"],
-            "truth": ["logic", "mathematics", "computer_science"]
-        }
+        # Check concept terms for disciplinary indicators
+        concept_terms = [c.term.lower() for c in semantic_analysis.primary_concepts]
 
-        for concept in semantic_analysis.primary_concepts:
-            for term, fields in interdisciplinary_mappings.items():
-                if term in concept.term.lower():
-                    connections.update(fields)
+        if any(term in ["brain", "neural", "cognitive", "psychology"] for term in concept_terms):
+            connections.append("cognitive_science")
 
-        return list(connections)
+        if any(term in ["quantum", "physics", "scientific", "empirical"] for term in concept_terms):
+            connections.append("natural_sciences")
 
-    def _generate_alternative_categorizations(
-        self,
-        semantic_analysis: SemanticAnalysis,
-        primary_category: PhilosophicalDomain
-    ) -> list[dict[str, Any]]:
-        """Generate alternative categorical interpretations."""
+        if any(term in ["social", "political", "cultural", "society"] for term in concept_terms):
+            connections.append("social_sciences")
+
+        if any(term in ["computer", "artificial", "algorithm", "computational"] for term in concept_terms):
+            connections.append("computer_science")
+
+        if any(term in ["legal", "law", "rights", "justice"] for term in concept_terms):
+            connections.append("law")
+
+        return connections[:3]
+
+    def _generate_alternative_categorizations(self, semantic_analysis: SemanticAnalysis) -> list[dict[str, Any]]:
+        """Generate alternative categorization possibilities."""
         alternatives = []
 
-        # Traditional vs. Contemporary categorization
+        # Generate perspective-based alternatives
         alternatives.append({
-            "type": "temporal_perspective",
-            "description": "Historical vs. contemporary philosophical framework",
-            "justification": "Different historical periods emphasize different categorical boundaries"
+            "approach": "historical_perspective",
+            "primary_domain": "continental_philosophy",
+            "justification": "Alternative interpretation through continental tradition"
         })
 
-        # Analytic vs. Continental categorization
         alternatives.append({
-            "type": "methodological_perspective",
-            "description": "Analytic vs. continental philosophical approach",
-            "justification": "Different methodological traditions organize concepts differently"
+            "approach": "pragmatist_perspective",
+            "primary_domain": "applied_philosophy",
+            "justification": "Focus on practical consequences and applications"
         })
 
-        # Reductive vs. Non-reductive categorization
-        if primary_category in [PhilosophicalDomain.PHILOSOPHY_OF_MIND, PhilosophicalDomain.METAPHYSICS]:
+        if len(semantic_analysis.primary_concepts) > 2:
             alternatives.append({
-                "type": "ontological_perspective",
-                "description": "Reductive vs. non-reductive ontological framework",
-                "justification": "Different views on emergence and reduction affect categorization"
+                "approach": "interdisciplinary_perspective",
+                "primary_domain": "philosophy_of_science",
+                "justification": "Emphasis on interdisciplinary connections"
             })
 
-        return alternatives
+        return alternatives[:2]  # Limit to 2 alternatives
 
     def _calculate_categorical_confidence(
         self,
         semantic_analysis: SemanticAnalysis,
-        primary_category: PhilosophicalDomain,
-        secondary_categories: list[PhilosophicalDomain]
+        primary_category: PhilosophicalDomain
     ) -> float:
-        """Calculate confidence in categorical assignment."""
+        """Calculate confidence in the categorization."""
         confidence_factors = []
 
-        # Factor 1: Concept confidence alignment
-        primary_concepts = [c for c in semantic_analysis.primary_concepts if c.domain == primary_category]
-        if primary_concepts:
-            avg_concept_confidence = sum(c.confidence_level for c in primary_concepts) / len(primary_concepts)
-            confidence_factors.append(avg_concept_confidence)
+        # Concept confidence
+        if semantic_analysis.primary_concepts:
+            concept_confidence = sum(c.confidence_level for c in semantic_analysis.primary_concepts) / len(semantic_analysis.primary_concepts)
+            confidence_factors.append(concept_confidence)
 
-        # Factor 2: Domain concentration (fewer domains = higher confidence)
-        domain_diversity = len({c.domain for c in semantic_analysis.primary_concepts})
-        concentration_score = max(0.3, 1.0 - (domain_diversity - 1) * 0.2)
-        confidence_factors.append(concentration_score)
+        # Domain consistency
+        primary_domain_concepts = sum(1 for c in semantic_analysis.primary_concepts
+                                    if hasattr(c, 'domain') and c.domain == primary_category)
+        total_concepts = len(semantic_analysis.primary_concepts)
+        if total_concepts > 0:
+            domain_consistency = primary_domain_concepts / total_concepts
+            confidence_factors.append(domain_consistency)
 
-        # Factor 3: Relation coherence
+        # Relation confidence
         if semantic_analysis.semantic_relations:
-            relation_coherence = 0.8  # Simplified assessment
-            confidence_factors.append(relation_coherence)
+            relation_confidence = sum(r.confidence for r in semantic_analysis.semantic_relations) / len(semantic_analysis.semantic_relations)
+            confidence_factors.append(relation_confidence)
 
-        # Calculate weighted average
+        # Calculate overall confidence
         if confidence_factors:
             return sum(confidence_factors) / len(confidence_factors)
-        else:
-            return 0.5  # Default moderate confidence
 
-    def _develop_categorical_justification(
+        return 0.5  # Default moderate confidence
+
+    def _generate_categorization_justification(
         self,
         semantic_analysis: SemanticAnalysis,
         primary_category: PhilosophicalDomain,
         secondary_categories: list[PhilosophicalDomain]
     ) -> str:
-        """Develop systematic justification for categorical assignment."""
+        """Generate justification for the categorization decision."""
         justification_parts = []
 
-        # Primary domain justification
-        primary_concepts = [c for c in semantic_analysis.primary_concepts if c.domain == primary_category]
-        if primary_concepts:
-            concept_terms = [c.term for c in primary_concepts[:3]]
-            justification_parts.append(
-                f"Primary categorization as {primary_category.value} based on key concepts: {', '.join(concept_terms)}"
-            )
+        # Primary category justification
+        concept_count = len([c for c in semantic_analysis.primary_concepts
+                           if hasattr(c, 'domain') and c.domain == primary_category])
+        if concept_count > 0:
+            justification_parts.append(f"Primary categorization based on {concept_count} concepts in {primary_category.value}")
 
-        # Secondary domain justification
+        # Secondary category justification
         if secondary_categories:
-            justification_parts.append(
-                f"Secondary categorization includes {', '.join(d.value for d in secondary_categories[:2])} "
-                f"due to cross-domain conceptual presence"
-            )
+            secondary_names = [d.value for d in secondary_categories]
+            justification_parts.append(f"Secondary themes from {', '.join(secondary_names)}")
 
-        # Methodological justification
-        justification_parts.append(
-            "Categorization follows systematic concept-to-domain mapping with confidence-weighted assessment"
-        )
+        # Complexity justification
+        if semantic_analysis.semantic_relations:
+            justification_parts.append(f"Supported by {len(semantic_analysis.semantic_relations)} semantic relations")
 
-        return ". ".join(justification_parts)
+        if not justification_parts:
+            justification_parts.append("Categorization based on systematic analysis of semantic content")
 
-    def _identify_categorical_limitations(
-        self,
-        semantic_analysis: SemanticAnalysis,
-        primary_category: PhilosophicalDomain
-    ) -> list[str]:
-        """Identify limitations in categorical analysis."""
+        return "; ".join(justification_parts)
+
+    def _identify_categorical_limitations(self, semantic_analysis: SemanticAnalysis) -> list[str]:
+        """Identify limitations of the categorization."""
         limitations = []
 
-        # Systematic limitations
-        limitations.extend([
-            "Categorization reflects dominant Western philosophical traditions",
-            "Boundary decisions involve interpretive choices rather than objective determination",
-            "Cross-cutting themes may resist traditional domain categorization"
-        ])
+        # Uncertainty-based limitations
+        if semantic_analysis.epistemic_uncertainty:
+            high_uncertainty_aspects = [k for k, v in semantic_analysis.epistemic_uncertainty.items() if v > 0.6]
+            if high_uncertainty_aspects:
+                limitations.append(f"High uncertainty in: {', '.join(high_uncertainty_aspects)}")
 
-        # Analysis-specific limitations
-        if len(semantic_analysis.primary_concepts) < 3:
-            limitations.append("Limited concept base may affect categorical reliability")
+        # Context dependency limitations
+        if semantic_analysis.context_dependencies:
+            limitations.append("Categorization may vary with different contexts")
 
-        high_uncertainty = any(u > 0.8 for u in semantic_analysis.epistemic_uncertainty.values())
-        if high_uncertainty:
-            limitations.append("High epistemic uncertainty affects categorical confidence")
+        # Analytical limitations
+        if semantic_analysis.analytical_limitations:
+            limitations.extend(semantic_analysis.analytical_limitations[:2])
 
-        return limitations
+        # Default limitations
+        if not limitations:
+            limitations = [
+                "Categorization based on pattern matching rather than deep understanding",
+                "May reflect bias toward Western philosophical traditions"
+            ]
+
+        return limitations[:3]
+
+    # Additional utility methods for external use
 
     def get_relation_types(self, domain: str) -> list[SemanticRelationType]:
-        """Get typical relation types for a philosophical domain."""
-        domain_enum = PhilosophicalDomain(domain) if isinstance(domain, str) else domain
+        """Get relation types applicable to a specific domain."""
+        try:
+            domain_enum = PhilosophicalDomain(domain)
+            applicable_types = []
 
-        typical_relations = []
-        for relation_type, mapping in self.relation_types.items():
-            if domain_enum in mapping.typical_domains:
-                typical_relations.append(relation_type)
+            for relation_type, mapping in self.relation_types.items():
+                if domain_enum in mapping.applicable_domains:
+                    applicable_types.append(relation_type)
 
-        return typical_relations
+            return applicable_types
+        except ValueError:
+            logger.warning(f"Unknown domain: {domain}")
+            return []
 
-    def build_context_sensitivity_map(self) -> dict[str, Any]:
-        """Return the complete context sensitivity mapping."""
-        return {
-            lang_game.value: context_data
-            for lang_game, context_data in self.context_sensitivity_map.items()
-        }
+    def get_domain_specializations(self, domain: PhilosophicalDomain) -> list[str]:
+        """Get specializations for a philosophical domain."""
+        if domain in self.concept_hierarchy:
+            return self.concept_hierarchy[domain].specializations
+        return []
+
+    def get_cross_cutting_themes_for_domain(self, domain: PhilosophicalDomain) -> list[str]:
+        """Get cross-cutting themes applicable to a domain."""
+        applicable_themes = []
+
+        for theme, domains in self.cross_cutting_themes.items():
+            if domain in domains:
+                applicable_themes.append(theme)
+
+        return applicable_themes

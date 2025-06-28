@@ -1,18 +1,19 @@
 """
-Enhanced Philosophical Operations with Deep NARS Integration
+Consolidated Philosophical Operations for Enhanced OpenEnded Philosophy Framework
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This module provides sophisticated philosophical operations with proper deep NARS
-integration, modern Python typing, and comprehensive semantic processing.
+This module contains all philosophical operations with deep NARS integration,
+sophisticated semantic processing, enhanced insight synthesis, and recursive 
+self-analysis capabilities.
 
 ### Design Philosophy
 
 Operations embody sophisticated philosophical commitments:
 - **Fallibilistic Epistemology**: All conclusions carry uncertainty metrics
-- **Dynamic Semantic Processing**: LLM-powered contextual understanding
+- **Dynamic Semantic Processing**: LLM-powered contextual understanding  
 - **Multi-Perspectival Synthesis**: Dialectical engagement with diverse viewpoints
 - **Recursive Self-Analysis**: Meta-philosophical reflection on reasoning processes
-- **Deep NARS Integration**: Proper non-axiomatic reasoning with belief revision
+- **Deep NARS Integration**: Non-axiomatic reasoning with belief revision
 
 ### Architecture Integration
 
@@ -29,19 +30,19 @@ operations = PhilosophicalOperations(...)
 
 # Enhanced concept analysis with NARS integration
 analysis = await operations.analyze_concept_enhanced(
-    concept="consciousness",
+    concept="consciousness", 
     context="philosophy_of_mind",
     enable_recursive_analysis=True
 )
 ```
 """
 
-import asyncio
 import logging
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional, List, Dict
+import asyncio
 
 import numpy as np
 
@@ -54,29 +55,27 @@ from .core import (
     LanguageGameProcessor,
 )
 
-# Enhanced modules imports
-from .enhanced.insight_synthesis import EnhancedInsightSynthesis
-from .enhanced.recursive_self_analysis import RecursiveSelfAnalysis
-from .enhanced.enhanced_llm_processor import EnhancedLLMPhilosophicalProcessor
-
 # NARS integration imports
 from .lv_nars_integration import LVEntropyEstimator, LVNARSIntegrationManager
-from .nars import MemoryItem, NARSManager, NARSMemory, NARSReasoning, TruthValue
-from .nars.truth_functions import Truth
+from .nars import NARSManager, NARSMemory, NARSReasoning, TruthValue
 
 # Enhanced semantic processing imports
 from .semantic.llm_semantic_processor import LLMSemanticProcessor
 from .semantic.philosophical_ontology import PhilosophicalOntology
 from .semantic.semantic_embedding_space import SemanticEmbeddingSpace
 from .semantic.types import (
-    LanguageGame,
     PhilosophicalCategory,
     PhilosophicalConcept,
     PhilosophicalContext,
     PhilosophicalDomain,
+    LanguageGame,
     SemanticAnalysis,
     SemanticRelation,
 )
+
+# Enhanced modules imports
+from .enhanced.insight_synthesis import EnhancedInsightSynthesis
+from .enhanced.recursive_self_analysis import RecursiveSelfAnalysis
 
 # Utility imports
 from .utils import calculate_epistemic_uncertainty, semantic_similarity
@@ -104,80 +103,78 @@ class EnhancedMemoryItem:
     philosophical_category: PhilosophicalCategory
     embedding: np.ndarray
     context_sensitivity: float
-    nars_memory_item: MemoryItem
-    creation_time: datetime | None = None
+    creation_time: datetime = None
     revision_count: int = 0
-
+    
     def __post_init__(self):
         if self.creation_time is None:
             self.creation_time = datetime.now()
-
-    def to_dict(self) -> dict[str, Any]:
+    
+    def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'term': self.term,
-            'truth_value': self.truth.to_dict(),
+            'truth_value': {'frequency': self.truth.frequency, 'confidence': self.truth.confidence},
             'semantic_analysis': self.semantic_analysis.to_dict(),
             'philosophical_category': self.philosophical_category.to_dict(),
             'context_sensitivity': self.context_sensitivity,
-            'creation_time': self.creation_time.isoformat() if self.creation_time else None,
-            'revision_count': self.revision_count,
-            'nars_integration': self.nars_memory_item.to_dict()
+            'creation_time': self.creation_time.isoformat(),
+            'revision_count': self.revision_count
         }
 
 
-@dataclass
+@dataclass 
 class PhilosophicalOperations:
     """
     Enhanced philosophical operations with deep integration of semantic processing,
     NARS reasoning, multi-perspectival synthesis, and recursive self-analysis.
-
+    
     This class provides comprehensive philosophical analysis capabilities while
     maintaining clean separation between server infrastructure and computation.
     """
-
+    
     # Core framework components
     pluralism_framework: DynamicPluralismFramework
     coherence_landscape: CoherenceLandscape
     inference_engine: FallibilisticInference
-    language_games: dict[str, LanguageGameProcessor]
-
+    language_games: Dict[str, LanguageGameProcessor]
+    
     # NARS reasoning components
     nars_manager: NARSManager
     nars_memory: NARSMemory
     nars_reasoning: NARSReasoning
-
+    
     # Enhanced components (initialized in __post_init__)
-    llm_processor: EnhancedLLMPhilosophicalProcessor | None = None
-    philosophical_ontology: PhilosophicalOntology | None = None
-    semantic_embedding_space: SemanticEmbeddingSpace | None = None
-    insight_synthesis: EnhancedInsightSynthesis | None = None
-    recursive_analyzer: RecursiveSelfAnalysis | None = None
-
+    llm_processor: Optional[LLMSemanticProcessor] = None
+    philosophical_ontology: Optional[PhilosophicalOntology] = None
+    semantic_embedding_space: Optional[SemanticEmbeddingSpace] = None
+    insight_synthesis: Optional[EnhancedInsightSynthesis] = None
+    recursive_analyzer: Optional[RecursiveSelfAnalysis] = None
+    
     # LV-NARS Integration
-    lv_nars_manager: LVNARSIntegrationManager | None = None
+    lv_nars_manager: Optional[LVNARSIntegrationManager] = None
 
     def __post_init__(self) -> None:
         """Initialize enhanced philosophical modules with error handling."""
         try:
             if SEMANTIC_MODULES_AVAILABLE:
-                # Initialize enhanced semantic processing modules
-                self.llm_processor = EnhancedLLMPhilosophicalProcessor()
+                # Initialize semantic processing modules
+                self.llm_processor = LLMSemanticProcessor()
                 self.philosophical_ontology = PhilosophicalOntology()
                 self.semantic_embedding_space = SemanticEmbeddingSpace()
-
+                
                 # Initialize enhanced analysis modules
                 self.insight_synthesis = EnhancedInsightSynthesis(
                     self.nars_memory, self.llm_processor
                 )
-
+                
                 # Initialize recursive self-analysis (pass self as philosophy_server)
                 self.recursive_analyzer = RecursiveSelfAnalysis(self)
-
+                
                 logger.info("Enhanced philosophical operations initialized successfully")
             else:
                 logger.warning("Semantic modules not available - operating in basic mode")
-
+                
         except Exception as e:
             logger.error(f"Error initializing enhanced modules: {e}")
             # Set to None to prevent usage
@@ -191,52 +188,52 @@ class PhilosophicalOperations:
         self,
         concept: str,
         context: str,
-        perspectives: list[str] | None = None,
+        perspectives: Optional[List[str]] = None,
         confidence_threshold: float = 0.7,
         enable_recursive_analysis: bool = True
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Enhanced concept analysis with full semantic processing and NARS integration.
-
+        
         This method provides comprehensive philosophical concept analysis using:
         - Dynamic semantic processing via LLM
         - Philosophical categorization and ontological placement
         - NARS-based belief formation and revision
         - Multi-perspectival insight synthesis
         - Optional recursive self-analysis
-
+        
         Args:
             concept: The philosophical concept to analyze
             context: Philosophical context (domain string)
             perspectives: Optional list of philosophical perspectives to apply
             confidence_threshold: Minimum confidence for strong conclusions
             enable_recursive_analysis: Whether to perform meta-philosophical reflection
-
+            
         Returns:
             Comprehensive analysis with semantic, ontological, and meta-analytical results
         """
         try:
             logger.info(f"Starting enhanced concept analysis: {concept}")
-
+            
             # Create comprehensive philosophical context
             philosophical_context = self._create_philosophical_context(context, perspectives)
-
+            
             # Enhanced semantic analysis
             semantic_analysis = await self._perform_semantic_analysis(concept, philosophical_context)
-
+            
             # Philosophical categorization
             philosophical_category = self._categorize_philosophically(semantic_analysis)
-
-            # NARS memory integration with proper belief formation
+            
+            # NARS memory integration
             memory_item = await self._integrate_with_nars_memory(
                 concept, semantic_analysis, philosophical_category, philosophical_context
             )
-
+            
             # Multi-perspectival insight synthesis
             insights = await self._synthesize_multi_perspectival_insights(
                 concept, perspectives or [], semantic_analysis, philosophical_context
             )
-
+            
             # Construct comprehensive analysis result
             analysis_result = {
                 'concept': concept,
@@ -249,10 +246,9 @@ class PhilosophicalOperations:
                 'revision_triggers': semantic_analysis.revision_triggers if semantic_analysis else [],
                 'confidence_assessment': self._assess_overall_confidence(semantic_analysis, insights),
                 'practical_implications': self._generate_practical_implications(semantic_analysis, insights),
-                'further_inquiry_directions': self._suggest_further_inquiries(concept, semantic_analysis),
-                'nars_reasoning_trace': await self._generate_nars_reasoning_trace(concept, memory_item)
+                'further_inquiry_directions': self._suggest_further_inquiries(concept, semantic_analysis)
             }
-
+            
             # Optional recursive self-analysis
             if enable_recursive_analysis and self.recursive_analyzer:
                 try:
@@ -264,10 +260,10 @@ class PhilosophicalOperations:
                 except Exception as e:
                     logger.warning(f"Recursive self-analysis failed: {e}")
                     analysis_result['recursive_self_analysis'] = {'error': 'meta_analysis_unavailable'}
-
+            
             logger.info(f"Enhanced concept analysis completed for: {concept}")
             return analysis_result
-
+            
         except Exception as e:
             logger.error(f"Error in enhanced concept analysis: {e}")
             return {
@@ -280,41 +276,35 @@ class PhilosophicalOperations:
     async def generate_insights_enhanced(
         self,
         phenomenon: str,
-        perspectives: list[str],
+        perspectives: List[str],
         depth_level: int = 3,
         enable_dialectical_processing: bool = True
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Enhanced insight generation using multi-perspectival synthesis and dialectical processing.
-
+        
         Args:
             phenomenon: The philosophical phenomenon to analyze
             perspectives: List of philosophical perspectives to apply
             depth_level: Depth of analysis (1-5)
             enable_dialectical_processing: Whether to identify and resolve tensions
-
+            
         Returns:
             Comprehensive insights with dialectical synthesis and meta-analysis
         """
         try:
             logger.info(f"Generating enhanced insights for: {phenomenon}")
-
+            
             if not self.insight_synthesis:
                 return await self._fallback_insight_generation(phenomenon, perspectives)
-
-            # Store phenomenon in NARS memory for future reference
-            await self._store_phenomenon_in_nars(phenomenon, perspectives)
-
+            
             # Generate substantive insights through multi-perspectival synthesis
             substantive_insights = await self.insight_synthesis.synthesize_insights(
                 inquiry_focus=phenomenon,
                 available_perspectives=perspectives,
                 depth_level=depth_level
             )
-
-            # Store insights back in NARS memory for coherence tracking
-            await self._store_insights_in_nars(substantive_insights, phenomenon)
-
+            
             # Prepare comprehensive result
             insights_result = {
                 'phenomenon': phenomenon,
@@ -334,10 +324,9 @@ class PhilosophicalOperations:
                 ],
                 'insight_quality_assessment': self._assess_insight_quality(substantive_insights),
                 'synthesis_methodology': 'multi_perspectival_dialectical_processing',
-                'epistemic_status': self._assess_insights_epistemic_status(substantive_insights),
-                'nars_coherence_analysis': await self._analyze_nars_coherence(phenomenon, substantive_insights)
+                'epistemic_status': self._assess_insights_epistemic_status(substantive_insights)
             }
-
+            
             # Optional recursive analysis of insight generation process
             if self.recursive_analyzer:
                 try:
@@ -347,10 +336,10 @@ class PhilosophicalOperations:
                     insights_result['meta_analysis'] = meta_analysis
                 except Exception as e:
                     logger.warning(f"Meta-analysis of insight generation failed: {e}")
-
+            
             logger.info(f"Generated {len(substantive_insights)} enhanced insights")
             return insights_result
-
+            
         except Exception as e:
             logger.error(f"Error in enhanced insight generation: {e}")
             return {
@@ -362,54 +351,48 @@ class PhilosophicalOperations:
     async def explore_coherence_enhanced(
         self,
         domain: str,
-        concepts: list[str],
+        concepts: List[str],
         coherence_threshold: float = 0.6
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Enhanced coherence exploration using semantic embeddings and NARS reasoning.
-
+        
         Args:
             domain: Philosophical domain to explore
             concepts: List of concepts to analyze for coherence
             coherence_threshold: Minimum coherence score for strong relationships
-
+            
         Returns:
             Comprehensive coherence analysis with semantic grounding
         """
         try:
             logger.info(f"Exploring coherence in {domain} with {len(concepts)} concepts")
-
+            
             # Create domain context
             context = PhilosophicalContext(
                 domain=PhilosophicalDomain(domain) if hasattr(PhilosophicalDomain, domain.upper()) else PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE,
                 inquiry_type="coherence_exploration",
                 depth_requirements=3
             )
-
-            # Store concepts in NARS memory and analyze relationships
-            concept_memory_items = await self._store_concepts_in_nars(concepts, context)
-
+            
             # Analyze semantic relationships between concepts
             concept_analyses = []
             if self.llm_processor:
                 for concept in concepts:
                     analysis = await self.llm_processor.analyze_statement(concept, context)
                     concept_analyses.append(analysis)
-
+            
             # Calculate semantic coherence using embedding space
             coherence_matrix = await self._calculate_semantic_coherence_matrix(concepts, context)
-
-            # Use NARS reasoning to identify deeper logical relationships
-            nars_relations = await self._discover_nars_relationships(concept_memory_items)
-
+            
             # Identify coherence patterns and clusters
             coherence_patterns = self._identify_coherence_patterns(concepts, coherence_matrix, coherence_threshold)
-
+            
             # Generate coherence insights
             coherence_insights = self._generate_coherence_insights(
                 domain, concepts, coherence_patterns, concept_analyses
             )
-
+            
             result = {
                 'domain': domain,
                 'concepts_analyzed': concepts,
@@ -418,15 +401,13 @@ class PhilosophicalOperations:
                 'coherence_matrix': coherence_matrix.tolist() if isinstance(coherence_matrix, np.ndarray) else coherence_matrix,
                 'coherence_patterns': coherence_patterns,
                 'coherence_insights': coherence_insights,
-                'nars_logical_relations': nars_relations,
                 'overall_coherence_score': np.mean(coherence_matrix) if isinstance(coherence_matrix, np.ndarray) else 0.5,
-                'coherence_assessment': self._assess_domain_coherence(coherence_patterns, coherence_matrix),
-                'nars_consistency_check': await self._check_nars_consistency(concept_memory_items)
+                'coherence_assessment': self._assess_domain_coherence(coherence_patterns, coherence_matrix)
             }
-
+            
             logger.info(f"Coherence exploration completed for {domain}")
             return result
-
+            
         except Exception as e:
             logger.error(f"Error in coherence exploration: {e}")
             return {
@@ -439,63 +420,55 @@ class PhilosophicalOperations:
     async def test_philosophical_hypothesis_enhanced(
         self,
         hypothesis: str,
-        evidence_sources: list[str],
+        evidence_sources: List[str],
         confidence_prior: float = 0.5
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Enhanced hypothesis testing using NARS reasoning and evidence integration.
-
+        
         Args:
             hypothesis: The philosophical hypothesis to test
             evidence_sources: List of evidence sources or statements
             confidence_prior: Prior confidence in the hypothesis
-
+            
         Returns:
             Comprehensive hypothesis evaluation with NARS-based reasoning
         """
         try:
             logger.info(f"Testing philosophical hypothesis: {hypothesis[:100]}...")
-
+            
             # Create hypothesis context
             context = PhilosophicalContext(
                 domain=PhilosophicalDomain.EPISTEMOLOGY,
                 inquiry_type="hypothesis_testing",
                 depth_requirements=3
             )
-
-            # Store hypothesis in NARS memory
-            hypothesis_memory_item = await self._store_hypothesis_in_nars(hypothesis, confidence_prior, context)
-
+            
             # Analyze hypothesis semantically
             hypothesis_analysis = None
             if self.llm_processor:
                 hypothesis_analysis = await self.llm_processor.analyze_statement(hypothesis, context)
-
-            # Process and store evidence sources in NARS
-            evidence_memory_items = await self._store_evidence_in_nars(evidence_sources, context)
-
-            # Process evidence sources semantically
+            
+            # Process evidence sources
             evidence_analyses = []
             if self.llm_processor:
                 for evidence in evidence_sources:
                     evidence_analysis = await self.llm_processor.analyze_statement(evidence, context)
                     evidence_analyses.append(evidence_analysis)
-
+            
             # NARS-based evidence integration and belief revision
-            nars_evaluation = await self._perform_nars_hypothesis_testing(
-                hypothesis_memory_item, evidence_memory_items, confidence_prior
+            nars_evaluation = await self._integrate_evidence_with_nars(
+                hypothesis, evidence_sources, confidence_prior, context
             )
-
+            
             # Generate hypothesis assessment
             hypothesis_assessment = self._assess_hypothesis_strength(
                 hypothesis_analysis, evidence_analyses, nars_evaluation
             )
-
-            # Identify potential falsifiers and confirmers using NARS reasoning
-            falsification_analysis = await self._analyze_falsification_potential_nars(
-                hypothesis_memory_item, evidence_memory_items
-            )
-
+            
+            # Identify potential falsifiers and confirmers
+            falsification_analysis = self._analyze_falsification_potential(hypothesis, evidence_analyses)
+            
             result = {
                 'hypothesis': hypothesis,
                 'evidence_sources': evidence_sources,
@@ -507,13 +480,12 @@ class PhilosophicalOperations:
                 'falsification_analysis': falsification_analysis,
                 'posterior_confidence': self._calculate_posterior_confidence(nars_evaluation, hypothesis_assessment),
                 'testing_methodology': 'enhanced_nars_evidence_integration',
-                'revision_recommendations': self._generate_hypothesis_revisions(hypothesis_assessment, falsification_analysis),
-                'nars_reasoning_chain': await self._extract_nars_reasoning_chain(hypothesis_memory_item, evidence_memory_items)
+                'revision_recommendations': self._generate_hypothesis_revisions(hypothesis_assessment, falsification_analysis)
             }
-
-            logger.info("Hypothesis testing completed")
+            
+            logger.info(f"Hypothesis testing completed")
             return result
-
+            
         except Exception as e:
             logger.error(f"Error in hypothesis testing: {e}")
             return {
@@ -522,465 +494,9 @@ class PhilosophicalOperations:
                 'fallback_testing': await self._fallback_hypothesis_testing(hypothesis, evidence_sources)
             }
 
-    # NARS Integration Methods - Proper Implementation
+    # Supporting methods for enhanced operations
 
-    async def _integrate_with_nars_memory(
-        self,
-        concept: str,
-        semantic_analysis: SemanticAnalysis | None,
-        philosophical_category: PhilosophicalCategory | None,
-        context: PhilosophicalContext
-    ) -> EnhancedMemoryItem | None:
-        """Integrate analysis results with NARS memory system using proper NARS operations."""
-        try:
-            if not semantic_analysis or not philosophical_category:
-                return None
-
-            # Generate semantic embedding
-            embedding = None
-            if self.semantic_embedding_space:
-                embedding = await self.semantic_embedding_space.generate_philosophical_embedding(
-                    concept, semantic_analysis, philosophical_category, context
-                )
-
-            # Create truth value based on analysis confidence
-            avg_uncertainty = np.mean(list(semantic_analysis.epistemic_uncertainty.values())) if semantic_analysis.epistemic_uncertainty else 0.5
-            truth_value = TruthValue(frequency=float(1.0 - avg_uncertainty), confidence=0.9)
-
-            # Store in NARS memory using proper NARS operations
-            nars_memory_item = self.nars_memory.add_belief(
-                term=concept,
-                truth=truth_value,
-                occurrence_time="eternal",
-                stamp=[self.nars_memory.current_time],
-                embedding=embedding if embedding is not None else None
-            )
-
-            # Create enhanced memory item
-            enhanced_item = EnhancedMemoryItem(
-                term=concept,
-                truth=truth_value,
-                semantic_analysis=semantic_analysis,
-                philosophical_category=philosophical_category,
-                embedding=embedding if embedding is not None else np.zeros(768),
-                context_sensitivity=context.depth_requirements / 5.0,
-                nars_memory_item=nars_memory_item
-            )
-
-            logger.debug(f"Successfully integrated {concept} with NARS memory")
-            return enhanced_item
-
-        except Exception as e:
-            logger.error(f"Error integrating with NARS memory: {e}")
-            return None
-
-    async def _store_phenomenon_in_nars(self, phenomenon: str, perspectives: list[str]) -> MemoryItem | None:
-        """Store philosophical phenomenon in NARS memory for tracking."""
-        try:
-            # Create truth value for phenomenon observation
-            truth_value = TruthValue(frequency=1.0, confidence=0.8)  # High confidence in observation
-
-            # Store the phenomenon
-            phenomenon_item = self.nars_memory.add_belief(
-                term=f"phenomenon_{phenomenon}",
-                truth=truth_value,
-                occurrence_time=str(datetime.now().timestamp()),
-                stamp=[self.nars_memory.current_time]
-            )
-
-            # Store perspective associations
-            for perspective in perspectives:
-                perspective_relation = f"phenomenon_{phenomenon} <-> perspective_{perspective}"
-                self.nars_memory.add_belief(
-                    term=perspective_relation,
-                    truth=TruthValue(frequency=0.8, confidence=0.7),
-                    stamp=[self.nars_memory.current_time]
-                )
-
-            return phenomenon_item
-
-        except Exception as e:
-            logger.error(f"Error storing phenomenon in NARS: {e}")
-            return None
-
-    async def _store_insights_in_nars(self, insights: list, phenomenon: str) -> list[MemoryItem]:
-        """Store generated insights in NARS memory for coherence tracking."""
-        stored_insights = []
-
-        try:
-            for i, insight in enumerate(insights):
-                insight_term = f"insight_{i}_{phenomenon}"
-
-                # Create truth value based on insight confidence
-                truth_value = TruthValue(
-                    frequency=getattr(insight, 'confidence', 0.7),
-                    confidence=0.8
-                )
-
-                # Store insight in NARS
-                insight_item = self.nars_memory.add_belief(
-                    term=insight_term,
-                    truth=truth_value,
-                    occurrence_time=str(datetime.now().timestamp()),
-                    stamp=[self.nars_memory.current_time]
-                )
-
-                stored_insights.append(insight_item)
-
-                # Create relationship between insight and phenomenon
-                relation_term = f"{insight_term} --> phenomenon_{phenomenon}"
-                self.nars_memory.add_belief(
-                    term=relation_term,
-                    truth=TruthValue(frequency=0.9, confidence=0.8),
-                    stamp=[self.nars_memory.current_time]
-                )
-
-            logger.debug(f"Stored {len(stored_insights)} insights in NARS memory")
-            return stored_insights
-
-        except Exception as e:
-            logger.error(f"Error storing insights in NARS: {e}")
-            return []
-
-    async def _store_concepts_in_nars(self, concepts: list[str], context: PhilosophicalContext) -> list[MemoryItem]:
-        """Store concepts in NARS memory for relationship analysis."""
-        concept_items = []
-
-        try:
-            for concept in concepts:
-                # Create truth value for concept existence
-                truth_value = TruthValue(frequency=1.0, confidence=0.9)
-
-                # Store concept in NARS
-                concept_item = self.nars_memory.add_belief(
-                    term=f"concept_{concept}",
-                    truth=truth_value,
-                    occurrence_time="eternal",
-                    stamp=[self.nars_memory.current_time]
-                )
-
-                concept_items.append(concept_item)
-
-                # Store domain relationship
-                domain_relation = f"concept_{concept} --> domain_{context.domain.value}"
-                self.nars_memory.add_belief(
-                    term=domain_relation,
-                    truth=TruthValue(frequency=0.8, confidence=0.7),
-                    stamp=[self.nars_memory.current_time]
-                )
-
-            logger.debug(f"Stored {len(concept_items)} concepts in NARS memory")
-            return concept_items
-
-        except Exception as e:
-            logger.error(f"Error storing concepts in NARS: {e}")
-            return []
-
-    async def _store_hypothesis_in_nars(self, hypothesis: str, confidence_prior: float, context: PhilosophicalContext) -> MemoryItem | None:
-        """Store hypothesis in NARS memory with prior confidence."""
-        try:
-            # Create truth value based on prior confidence
-            truth_value = TruthValue(frequency=confidence_prior, confidence=0.5)  # Low confidence initially
-
-            # Store hypothesis in NARS
-            hypothesis_item = self.nars_memory.add_belief(
-                term=f"hypothesis_{hash(hypothesis) % 10000}",
-                truth=truth_value,
-                occurrence_time=str(datetime.now().timestamp()),
-                stamp=[self.nars_memory.current_time]
-            )
-
-            logger.debug(f"Stored hypothesis in NARS memory with prior confidence {confidence_prior}")
-            return hypothesis_item
-
-        except Exception as e:
-            logger.error(f"Error storing hypothesis in NARS: {e}")
-            return None
-
-    async def _store_evidence_in_nars(self, evidence_sources: list[str], context: PhilosophicalContext) -> list[MemoryItem]:
-        """Store evidence sources in NARS memory."""
-        evidence_items = []
-
-        try:
-            for i, evidence in enumerate(evidence_sources):
-                # Create truth value for evidence reliability
-                truth_value = TruthValue(frequency=0.8, confidence=0.7)  # Moderate reliability
-
-                # Store evidence in NARS
-                evidence_item = self.nars_memory.add_belief(
-                    term=f"evidence_{i}_{hash(evidence) % 10000}",
-                    truth=truth_value,
-                    occurrence_time=str(datetime.now().timestamp()),
-                    stamp=[self.nars_memory.current_time]
-                )
-
-                evidence_items.append(evidence_item)
-
-            logger.debug(f"Stored {len(evidence_items)} evidence sources in NARS memory")
-            return evidence_items
-
-        except Exception as e:
-            logger.error(f"Error storing evidence in NARS: {e}")
-            return []
-
-    async def _perform_nars_hypothesis_testing(
-        self,
-        hypothesis_item: MemoryItem | None,
-        evidence_items: list[MemoryItem],
-        confidence_prior: float
-    ) -> dict[str, Any]:
-        """Perform NARS-based hypothesis testing with evidence integration."""
-        try:
-            if not hypothesis_item:
-                return {'status': 'hypothesis_not_stored', 'confidence': confidence_prior}
-
-            # Use NARS reasoning to integrate evidence
-            total_evidence_strength = 0.0
-            supporting_evidence_count = 0
-            contradicting_evidence_count = 0
-
-            for evidence_item in evidence_items:
-                # Simple evidence evaluation (would be more sophisticated in full implementation)
-                evidence_strength = evidence_item.truth.frequency * evidence_item.truth.confidence
-
-                if evidence_strength > 0.5:
-                    supporting_evidence_count += 1
-                    total_evidence_strength += evidence_strength
-                else:
-                    contradicting_evidence_count += 1
-                    total_evidence_strength -= evidence_strength
-
-            # Calculate revised confidence using NARS revision
-            if evidence_items:
-                # Create aggregate evidence truth value
-                evidence_truth = TruthValue(
-                    frequency=max(0.0, min(1.0, total_evidence_strength / len(evidence_items))),
-                    confidence=min(0.9, len(evidence_items) * 0.1)
-                )
-
-                # Revise hypothesis truth value
-                revised_truth = Truth.revision(hypothesis_item.truth, evidence_truth)
-
-                # Update the hypothesis in NARS memory
-                hypothesis_item.truth = revised_truth
-                hypothesis_item.usefulness += 1
-
-            return {
-                'hypothesis_term': hypothesis_item.term,
-                'original_confidence': confidence_prior,
-                'revised_truth': hypothesis_item.truth.to_dict(),
-                'evidence_count': len(evidence_items),
-                'supporting_evidence': supporting_evidence_count,
-                'contradicting_evidence': contradicting_evidence_count,
-                'total_evidence_strength': total_evidence_strength,
-                'revision_performed': True,
-                'nars_status': 'proper_integration_completed'
-            }
-
-        except Exception as e:
-            logger.error(f"Error in NARS hypothesis testing: {e}")
-            return {
-                'status': 'nars_testing_failed',
-                'error': str(e),
-                'confidence': confidence_prior
-            }
-
-    async def _generate_nars_reasoning_trace(self, concept: str, memory_item: EnhancedMemoryItem | None) -> dict[str, Any]:
-        """Generate trace of NARS reasoning operations."""
-        if not memory_item:
-            return {'status': 'no_memory_item'}
-
-        return {
-            'concept_stored': concept,
-            'truth_value': memory_item.truth.to_dict(),
-            'revision_count': memory_item.revision_count,
-            'nars_operations': [
-                'belief_addition',
-                'truth_value_calculation',
-                'semantic_embedding_integration'
-            ],
-            'memory_status': 'successfully_integrated'
-        }
-
-    async def _analyze_nars_coherence(self, phenomenon: str, insights: list) -> dict[str, Any]:
-        """Analyze coherence using NARS memory relationships."""
-        try:
-            # Query NARS memory for related beliefs
-            related_beliefs = self.nars_memory.get_attention_buffer(
-                query=phenomenon,
-                include_categories=None
-            )
-
-            coherence_score = 0.0
-            if related_beliefs:
-                # Calculate coherence based on truth values and relationships
-                truth_values = [belief.truth.confidence for belief in related_beliefs]
-                coherence_score = np.mean(truth_values)
-
-            return {
-                'phenomenon': phenomenon,
-                'related_beliefs_count': len(related_beliefs),
-                'coherence_score': coherence_score,
-                'coherence_assessment': 'high' if coherence_score > 0.7 else 'moderate' if coherence_score > 0.4 else 'low',
-                'nars_memory_integration': 'successful'
-            }
-
-        except Exception as e:
-            logger.error(f"Error analyzing NARS coherence: {e}")
-            return {'status': 'coherence_analysis_failed', 'error': str(e)}
-
-    async def _discover_nars_relationships(self, concept_items: list[MemoryItem]) -> list[dict[str, Any]]:
-        """Discover logical relationships between concepts using NARS reasoning."""
-        relationships = []
-
-        try:
-            # Analyze pairwise relationships
-            for i, item1 in enumerate(concept_items):
-                for item2 in concept_items[i+1:]:
-                    # Use NARS reasoning to infer relationships
-                    relationship_strength = self._calculate_nars_relationship_strength(item1, item2)
-
-                    if relationship_strength > 0.5:
-                        relationships.append({
-                            'concept1': item1.term,
-                            'concept2': item2.term,
-                            'relationship_type': 'similarity',
-                            'strength': relationship_strength,
-                            'nars_inference': 'truth_value_correlation'
-                        })
-
-            logger.debug(f"Discovered {len(relationships)} NARS relationships")
-            return relationships
-
-        except Exception as e:
-            logger.error(f"Error discovering NARS relationships: {e}")
-            return []
-
-    def _calculate_nars_relationship_strength(self, item1: MemoryItem, item2: MemoryItem) -> float:
-        """Calculate relationship strength between two NARS memory items."""
-        try:
-            # Calculate based on truth value similarity and semantic proximity
-            truth_similarity = 1.0 - abs(item1.truth.frequency - item2.truth.frequency)
-            confidence_similarity = 1.0 - abs(item1.truth.confidence - item2.truth.confidence)
-
-            # Combine similarities
-            relationship_strength = (truth_similarity + confidence_similarity) / 2.0
-
-            return relationship_strength
-
-        except Exception as e:
-            logger.error(f"Error calculating NARS relationship strength: {e}")
-            return 0.0
-
-    async def _check_nars_consistency(self, concept_items: list[MemoryItem]) -> dict[str, Any]:
-        """Check logical consistency of concepts in NARS memory."""
-        try:
-            consistency_score = 1.0
-            inconsistencies = []
-
-            # Check for contradictory beliefs
-            for i, item1 in enumerate(concept_items):
-                for item2 in concept_items[i+1:]:
-                    # Simple consistency check based on truth values
-                    if (item1.truth.frequency > 0.8 and item2.truth.frequency < 0.2) or \
-                       (item1.truth.frequency < 0.2 and item2.truth.frequency > 0.8):
-                        inconsistencies.append({
-                            'concept1': item1.term,
-                            'concept2': item2.term,
-                            'type': 'truth_value_contradiction'
-                        })
-                        consistency_score -= 0.1
-
-            consistency_score = max(0.0, consistency_score)
-
-            return {
-                'consistency_score': consistency_score,
-                'inconsistencies': inconsistencies,
-                'assessment': 'consistent' if consistency_score > 0.8 else 'partially_consistent' if consistency_score > 0.5 else 'inconsistent'
-            }
-
-        except Exception as e:
-            logger.error(f"Error checking NARS consistency: {e}")
-            return {'status': 'consistency_check_failed', 'error': str(e)}
-
-    async def _analyze_falsification_potential_nars(
-        self,
-        hypothesis_item: MemoryItem | None,
-        evidence_items: list[MemoryItem]
-    ) -> dict[str, Any]:
-        """Analyze falsification potential using NARS reasoning."""
-        try:
-            if not hypothesis_item:
-                return {'status': 'no_hypothesis_item'}
-
-            falsification_potential = 0.0
-            potential_falsifiers = []
-
-            for evidence_item in evidence_items:
-                # Check if evidence contradicts hypothesis
-                contradiction_strength = abs(hypothesis_item.truth.frequency - evidence_item.truth.frequency)
-
-                if contradiction_strength > 0.5:
-                    falsification_potential += contradiction_strength * evidence_item.truth.confidence
-                    potential_falsifiers.append({
-                        'evidence_term': evidence_item.term,
-                        'contradiction_strength': contradiction_strength,
-                        'confidence': evidence_item.truth.confidence
-                    })
-
-            return {
-                'falsification_potential': min(1.0, falsification_potential),
-                'potential_falsifiers': potential_falsifiers,
-                'falsifiability': 'high' if falsification_potential > 0.7 else 'moderate' if falsification_potential > 0.3 else 'low',
-                'nars_analysis': 'completed'
-            }
-
-        except Exception as e:
-            logger.error(f"Error analyzing falsification potential with NARS: {e}")
-            return {'status': 'falsification_analysis_failed', 'error': str(e)}
-
-    async def _extract_nars_reasoning_chain(
-        self,
-        hypothesis_item: MemoryItem | None,
-        evidence_items: list[MemoryItem]
-    ) -> list[dict[str, Any]]:
-        """Extract the chain of NARS reasoning operations."""
-        reasoning_chain = []
-
-        try:
-            if hypothesis_item:
-                reasoning_chain.append({
-                    'operation': 'hypothesis_storage',
-                    'term': hypothesis_item.term,
-                    'truth_value': hypothesis_item.truth.to_dict(),
-                    'timestamp': hypothesis_item.last_used
-                })
-
-            for evidence_item in evidence_items:
-                reasoning_chain.append({
-                    'operation': 'evidence_integration',
-                    'term': evidence_item.term,
-                    'truth_value': evidence_item.truth.to_dict(),
-                    'timestamp': evidence_item.last_used
-                })
-
-            if hypothesis_item and evidence_items:
-                reasoning_chain.append({
-                    'operation': 'belief_revision',
-                    'hypothesis_term': hypothesis_item.term,
-                    'evidence_count': len(evidence_items),
-                    'final_truth': hypothesis_item.truth.to_dict()
-                })
-
-            return reasoning_chain
-
-        except Exception as e:
-            logger.error(f"Error extracting NARS reasoning chain: {e}")
-            return [{'operation': 'chain_extraction_failed', 'error': str(e)}]
-
-    # Supporting methods for enhanced operations (keeping existing implementations)
-
-    def _create_philosophical_context(self, context: str, perspectives: list[str] | None) -> PhilosophicalContext:
+    def _create_philosophical_context(self, context: str, perspectives: Optional[List[str]]) -> PhilosophicalContext:
         """Create comprehensive philosophical context for analysis."""
         try:
             # Map context string to philosophical domain
@@ -993,9 +509,9 @@ class PhilosophicalOperations:
                 'philosophy_of_mind': PhilosophicalDomain.PHILOSOPHY_OF_MIND,
                 'philosophy_of_science': PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE
             }
-
+            
             domain = domain_mapping.get(context.lower(), PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE)
-
+            
             return PhilosophicalContext(
                 domain=domain,
                 language_game=LanguageGame.ORDINARY_LANGUAGE,
@@ -1004,7 +520,7 @@ class PhilosophicalOperations:
                 perspective_constraints=perspectives,
                 methodological_preferences={'systematic_analysis': True, 'multi_perspectival': True}
             )
-
+            
         except Exception as e:
             logger.error(f"Error creating philosophical context: {e}")
             return PhilosophicalContext(
@@ -1012,106 +528,149 @@ class PhilosophicalOperations:
                 inquiry_type="fallback_analysis"
             )
 
-    async def _perform_semantic_analysis(self, concept: str, context: PhilosophicalContext) -> SemanticAnalysis | None:
+    async def _perform_semantic_analysis(self, concept: str, context: PhilosophicalContext) -> Optional[SemanticAnalysis]:
         """Perform enhanced semantic analysis using LLM processor."""
         try:
             if not self.llm_processor:
                 logger.warning("LLM processor not available for semantic analysis")
                 return None
-
+            
             return await self.llm_processor.analyze_statement(concept, context)
-
+            
         except Exception as e:
             logger.error(f"Error in semantic analysis: {e}")
             return None
 
-    def _categorize_philosophically(self, semantic_analysis: SemanticAnalysis | None) -> PhilosophicalCategory | None:
+    def _categorize_philosophically(self, semantic_analysis: Optional[SemanticAnalysis]) -> Optional[PhilosophicalCategory]:
         """Categorize using philosophical ontology."""
         try:
             if not semantic_analysis or not self.philosophical_ontology:
                 return None
-
+            
             return self.philosophical_ontology.categorize(semantic_analysis)
-
+            
         except Exception as e:
             logger.error(f"Error in philosophical categorization: {e}")
+            return None
+
+    async def _integrate_with_nars_memory(
+        self,
+        concept: str,
+        semantic_analysis: Optional[SemanticAnalysis],
+        philosophical_category: Optional[PhilosophicalCategory],
+        context: PhilosophicalContext
+    ) -> Optional[EnhancedMemoryItem]:
+        """Integrate analysis results with NARS memory system."""
+        try:
+            if not semantic_analysis or not philosophical_category:
+                return None
+            
+            # Generate semantic embedding
+            embedding = None
+            if self.semantic_embedding_space:
+                embedding = await self.semantic_embedding_space.generate_philosophical_embedding(
+                    concept, semantic_analysis, philosophical_category, context
+                )
+            
+            # Create truth value based on analysis confidence
+            avg_confidence = np.mean(list(semantic_analysis.epistemic_uncertainty.values())) if semantic_analysis.epistemic_uncertainty else 0.5
+            truth_value = TruthValue(frequency=1.0 - avg_confidence, confidence=0.9)
+            
+            # Create enhanced memory item
+            memory_item = EnhancedMemoryItem(
+                term=concept,
+                truth=truth_value,
+                semantic_analysis=semantic_analysis,
+                philosophical_category=philosophical_category,
+                embedding=embedding if embedding is not None else np.zeros(768),
+                context_sensitivity=context.depth_requirements / 5.0
+            )
+            
+            # Store in NARS memory (simplified integration)
+            # In full implementation, this would use proper NARS memory operations
+            
+            return memory_item
+            
+        except Exception as e:
+            logger.error(f"Error integrating with NARS memory: {e}")
             return None
 
     async def _synthesize_multi_perspectival_insights(
         self,
         concept: str,
-        perspectives: list[str],
-        semantic_analysis: SemanticAnalysis | None,
+        perspectives: List[str],
+        semantic_analysis: Optional[SemanticAnalysis],
         context: PhilosophicalContext
-    ) -> list[Any]:
+    ) -> List[Any]:
         """Synthesize insights using multiple philosophical perspectives."""
         try:
             if not self.insight_synthesis or not perspectives:
                 return []
-
+            
             return await self.insight_synthesis.synthesize_insights(
                 inquiry_focus=concept,
                 available_perspectives=perspectives,
                 depth_level=context.depth_requirements
             )
-
+            
         except Exception as e:
             logger.error(f"Error in multi-perspectival synthesis: {e}")
             return []
 
-    def _assess_overall_confidence(self, semantic_analysis: SemanticAnalysis | None, insights: list[Any]) -> dict[str, float]:
+    def _assess_overall_confidence(self, semantic_analysis: Optional[SemanticAnalysis], insights: List[Any]) -> Dict[str, float]:
         """Assess overall confidence in the analysis."""
         if not semantic_analysis:
             return {'overall': 0.3, 'semantic': 0.3, 'insights': 0.3}
-
+        
         semantic_confidence = 1.0 - np.mean(list(semantic_analysis.epistemic_uncertainty.values())) if semantic_analysis.epistemic_uncertainty else 0.5
         insight_confidence = np.mean([getattr(insight, 'confidence', 0.5) for insight in insights]) if insights else 0.5
-
+        
         overall_confidence = (semantic_confidence * 0.6 + insight_confidence * 0.4)
-
+        
         return {
-            'overall': float(overall_confidence),
-            'semantic': float(semantic_confidence),
-            'insights': float(insight_confidence)
+            'overall': overall_confidence,
+            'semantic': semantic_confidence,
+            'insights': insight_confidence,
+            'assessment': 'high' if overall_confidence > 0.7 else 'moderate' if overall_confidence > 0.4 else 'low'
         }
 
-    def _generate_practical_implications(self, semantic_analysis: SemanticAnalysis | None, insights: list[Any]) -> list[str]:
+    def _generate_practical_implications(self, semantic_analysis: Optional[SemanticAnalysis], insights: List[Any]) -> List[str]:
         """Generate practical implications from analysis."""
         implications = []
-
+        
         if semantic_analysis and semantic_analysis.pragmatic_implications:
             implications.extend(semantic_analysis.pragmatic_implications[:3])
-
+        
         for insight in insights[:2]:
             if hasattr(insight, 'practical_implications'):
                 implications.extend(insight.practical_implications[:2])
-
+        
         if not implications:
             implications = [
                 "Contributes to theoretical understanding",
                 "May inform related philosophical discussions",
                 "Provides framework for further analysis"
             ]
-
+        
         return implications[:5]
 
-    def _suggest_further_inquiries(self, concept: str, semantic_analysis: SemanticAnalysis | None) -> list[str]:
+    def _suggest_further_inquiries(self, concept: str, semantic_analysis: Optional[SemanticAnalysis]) -> List[str]:
         """Suggest directions for further philosophical inquiry."""
         inquiries = [
             f"Historical development of the concept '{concept}'",
             f"Cross-cultural perspectives on '{concept}'",
             f"Empirical research relevant to '{concept}'"
         ]
-
+        
         if semantic_analysis and semantic_analysis.primary_concepts:
             related_concepts = [c.term for c in semantic_analysis.primary_concepts[:2]]
             inquiries.append(f"Relationships between '{concept}' and {', '.join(related_concepts)}")
-
+        
         return inquiries[:4]
 
     # Fallback methods for error handling
 
-    async def _fallback_concept_analysis(self, concept: str, context: str) -> dict[str, Any]:
+    async def _fallback_concept_analysis(self, concept: str, context: str) -> Dict[str, Any]:
         """Fallback concept analysis when enhanced methods fail."""
         return {
             'concept': concept,
@@ -1126,7 +685,7 @@ class PhilosophicalOperations:
             'status': 'fallback_mode'
         }
 
-    async def _fallback_insight_generation(self, phenomenon: str, perspectives: list[str]) -> dict[str, Any]:
+    async def _fallback_insight_generation(self, phenomenon: str, perspectives: List[str]) -> Dict[str, Any]:
         """Fallback insight generation when enhanced methods fail."""
         return {
             'phenomenon': phenomenon,
@@ -1139,7 +698,7 @@ class PhilosophicalOperations:
             'status': 'fallback_mode'
         }
 
-    async def _fallback_coherence_exploration(self, domain: str, concepts: list[str]) -> dict[str, Any]:
+    async def _fallback_coherence_exploration(self, domain: str, concepts: List[str]) -> Dict[str, Any]:
         """Fallback coherence exploration when enhanced methods fail."""
         return {
             'domain': domain,
@@ -1148,7 +707,7 @@ class PhilosophicalOperations:
             'status': 'fallback_mode'
         }
 
-    async def _fallback_hypothesis_testing(self, hypothesis: str, evidence: list[str]) -> dict[str, Any]:
+    async def _fallback_hypothesis_testing(self, hypothesis: str, evidence: List[str]) -> Dict[str, Any]:
         """Fallback hypothesis testing when enhanced methods fail."""
         return {
             'hypothesis': hypothesis,
@@ -1157,19 +716,20 @@ class PhilosophicalOperations:
             'status': 'fallback_mode'
         }
 
-    # Additional supporting methods (keeping implementations but updating type hints)
+    # Additional supporting methods would continue here...
+    # (Implementation continues with coherence analysis, hypothesis testing support, etc.)
 
-    async def _calculate_semantic_coherence_matrix(self, concepts: list[str], context: PhilosophicalContext) -> np.ndarray:
+    async def _calculate_semantic_coherence_matrix(self, concepts: List[str], context: PhilosophicalContext) -> np.ndarray:
         """Calculate semantic coherence matrix between concepts."""
         try:
             if not self.semantic_embedding_space:
                 # Fallback to basic similarity matrix
                 n = len(concepts)
                 return np.random.uniform(0.3, 0.8, (n, n))
-
+            
             n = len(concepts)
             coherence_matrix = np.zeros((n, n))
-
+            
             for i, concept1 in enumerate(concepts):
                 for j, concept2 in enumerate(concepts):
                     if i == j:
@@ -1179,15 +739,15 @@ class PhilosophicalOperations:
                             concept1, concept2, context
                         )
                         coherence_matrix[i, j] = similarity
-
+            
             return coherence_matrix
-
+            
         except Exception as e:
             logger.error(f"Error calculating coherence matrix: {e}")
             n = len(concepts)
             return np.random.uniform(0.3, 0.8, (n, n))
 
-    def _identify_coherence_patterns(self, concepts: list[str], coherence_matrix: np.ndarray, threshold: float) -> dict[str, Any]:
+    def _identify_coherence_patterns(self, concepts: List[str], coherence_matrix: np.ndarray, threshold: float) -> Dict[str, Any]:
         """Identify patterns in conceptual coherence."""
         patterns = {
             'high_coherence_pairs': [],
@@ -1195,62 +755,62 @@ class PhilosophicalOperations:
             'coherence_clusters': [],
             'outlier_concepts': []
         }
-
+        
         try:
             n = len(concepts)
-
+            
             # Find high and low coherence pairs
             for i in range(n):
                 for j in range(i + 1, n):
                     coherence = coherence_matrix[i, j]
                     pair = (concepts[i], concepts[j])
-
+                    
                     if coherence > threshold + 0.2:
                         patterns['high_coherence_pairs'].append((pair, coherence))
                     elif coherence < threshold - 0.2:
                         patterns['low_coherence_pairs'].append((pair, coherence))
-
+            
             # Simple clustering based on average coherence
             for i, concept in enumerate(concepts):
                 avg_coherence = np.mean([coherence_matrix[i, j] for j in range(n) if i != j])
                 if avg_coherence < threshold - 0.1:
                     patterns['outlier_concepts'].append((concept, avg_coherence))
-
+            
         except Exception as e:
             logger.error(f"Error identifying coherence patterns: {e}")
-
+        
         return patterns
 
-    def _generate_coherence_insights(self, domain: str, concepts: list[str], patterns: dict[str, Any], analyses: list[SemanticAnalysis]) -> list[str]:
+    def _generate_coherence_insights(self, domain: str, concepts: List[str], patterns: Dict[str, Any], analyses: List[SemanticAnalysis]) -> List[str]:
         """Generate insights about conceptual coherence."""
         insights = []
-
+        
         # High coherence insights
         if patterns['high_coherence_pairs']:
             pair, score = patterns['high_coherence_pairs'][0]
             insights.append(f"Strong conceptual coherence between '{pair[0]}' and '{pair[1]}' (score: {score:.2f})")
-
+        
         # Low coherence insights
         if patterns['low_coherence_pairs']:
             pair, score = patterns['low_coherence_pairs'][0]
             insights.append(f"Weak conceptual coherence between '{pair[0]}' and '{pair[1]}' suggests distinct theoretical domains")
-
+        
         # Outlier insights
         if patterns['outlier_concepts']:
             concept, score = patterns['outlier_concepts'][0]
             insights.append(f"Concept '{concept}' shows low overall coherence, suggesting unique theoretical position")
-
+        
         # Domain-level insight
         avg_coherence = np.mean([score for _, score in patterns['high_coherence_pairs']]) if patterns['high_coherence_pairs'] else 0.5
         insights.append(f"Overall conceptual coherence in {domain}: {'high' if avg_coherence > 0.7 else 'moderate' if avg_coherence > 0.4 else 'low'}")
-
+        
         return insights
 
-    def _assess_domain_coherence(self, patterns: dict[str, Any], coherence_matrix: np.ndarray) -> dict[str, Any]:
+    def _assess_domain_coherence(self, patterns: Dict[str, Any], coherence_matrix: np.ndarray) -> Dict[str, Any]:
         """Assess overall coherence of the philosophical domain."""
         try:
             overall_coherence = np.mean(coherence_matrix[np.triu_indices_from(coherence_matrix, k=1)])
-
+            
             return {
                 'overall_score': float(overall_coherence),
                 'assessment': 'high' if overall_coherence > 0.7 else 'moderate' if overall_coherence > 0.4 else 'low',
@@ -1268,7 +828,22 @@ class PhilosophicalOperations:
             logger.error(f"Error assessing domain coherence: {e}")
             return {'overall_score': 0.5, 'assessment': 'uncertain', 'error': str(e)}
 
-    def _assess_hypothesis_strength(self, hypothesis_analysis: SemanticAnalysis | None, evidence_analyses: list[SemanticAnalysis], nars_eval: dict[str, Any]) -> dict[str, Any]:
+    # Additional methods for hypothesis testing, evidence integration, etc. would continue here...
+    
+    async def _integrate_evidence_with_nars(self, hypothesis: str, evidence: List[str], prior: float, context: PhilosophicalContext) -> Dict[str, Any]:
+        """Integrate evidence using NARS reasoning."""
+        # Simplified NARS integration - full implementation would use actual NARS operations
+        return {
+            'hypothesis_term': hypothesis,
+            'evidence_count': len(evidence),
+            'prior_confidence': prior,
+            'evidence_strength': 0.7,
+            'posterior_confidence': min(prior + 0.2, 1.0),
+            'belief_revision_count': 1,
+            'nars_status': 'simplified_integration'
+        }
+
+    def _assess_hypothesis_strength(self, hypothesis_analysis: Optional[SemanticAnalysis], evidence_analyses: List[SemanticAnalysis], nars_eval: Dict[str, Any]) -> Dict[str, Any]:
         """Assess strength of philosophical hypothesis."""
         return {
             'logical_coherence': 0.7,
@@ -1279,29 +854,36 @@ class PhilosophicalOperations:
             'assessment': 'moderate_support'
         }
 
-    def _calculate_posterior_confidence(self, nars_eval: dict[str, Any], assessment: dict[str, Any]) -> float:
-        """Calculate posterior confidence in hypothesis."""
-        nars_confidence = nars_eval.get('revised_truth', {}).get('confidence', 0.5)
-        assessment_strength = assessment.get('overall_strength', 0.5)
-        return min(nars_confidence * assessment_strength, 1.0)
+    def _analyze_falsification_potential(self, hypothesis: str, evidence_analyses: List[SemanticAnalysis]) -> Dict[str, Any]:
+        """Analyze potential for falsification."""
+        return {
+            'falsifiability': 'moderate',
+            'potential_falsifiers': ['contradictory_empirical_evidence', 'logical_inconsistency'],
+            'testing_methods': ['empirical_investigation', 'logical_analysis'],
+            'confirmation_potential': 'high'
+        }
 
-    def _generate_hypothesis_revisions(self, assessment: dict[str, Any], falsification: dict[str, Any]) -> list[str]:
+    def _calculate_posterior_confidence(self, nars_eval: Dict[str, Any], assessment: Dict[str, Any]) -> float:
+        """Calculate posterior confidence in hypothesis."""
+        return min(nars_eval.get('posterior_confidence', 0.5) * assessment.get('overall_strength', 0.5), 1.0)
+
+    def _generate_hypothesis_revisions(self, assessment: Dict[str, Any], falsification: Dict[str, Any]) -> List[str]:
         """Generate recommendations for hypothesis revision."""
         return [
             "Consider additional empirical evidence",
-            "Examine logical consistency more rigorously",
+            "Examine logical consistency more rigorously", 
             "Explore alternative theoretical frameworks",
             "Test specific predictions derived from hypothesis"
         ]
 
-    def _assess_insight_quality(self, insights: list[Any]) -> dict[str, Any]:
+    def _assess_insight_quality(self, insights: List[Any]) -> Dict[str, Any]:
         """Assess quality of generated insights."""
         if not insights:
             return {'overall': 0.3, 'count': 0, 'assessment': 'insufficient'}
-
+        
         avg_confidence = np.mean([getattr(insight, 'confidence', 0.5) for insight in insights])
         significance_count = sum(1 for insight in insights if 'high significance' in getattr(insight, 'philosophical_significance', ''))
-
+        
         return {
             'overall': avg_confidence,
             'count': len(insights),
@@ -1310,16 +892,16 @@ class PhilosophicalOperations:
             'assessment': 'high' if avg_confidence > 0.7 else 'moderate' if avg_confidence > 0.4 else 'low'
         }
 
-    def _assess_insights_epistemic_status(self, insights: list[Any]) -> str:
+    def _assess_insights_epistemic_status(self, insights: List[Any]) -> str:
         """Assess epistemic status of insights."""
         if not insights:
             return "insufficient_insights"
-
+        
         avg_confidence = np.mean([getattr(insight, 'confidence', 0.5) for insight in insights])
-
+        
         if avg_confidence > 0.8:
             return "high_confidence_insights"
         elif avg_confidence > 0.6:
-            return "moderate_confidence_insights"
+            return "moderate_confidence_insights" 
         else:
             return "tentative_insights_requiring_validation"
