@@ -536,7 +536,17 @@ class PhilosophicalOntology:
         # Analyze concepts for domain indicators
         for concept in semantic_analysis.primary_concepts:
             if hasattr(concept, 'domain') and concept.domain:
-                domain_scores[concept.domain] += concept.confidence_level
+                # Ensure we handle both enum values and strings
+                if isinstance(concept.domain, PhilosophicalDomain):
+                    domain_scores[concept.domain] += concept.confidence_level
+                elif isinstance(concept.domain, str):
+                    # Try to convert string to enum
+                    try:
+                        domain_enum = PhilosophicalDomain(concept.domain)
+                        domain_scores[domain_enum] += concept.confidence_level
+                    except ValueError:
+                        # If string doesn't match enum, skip
+                        continue
 
         # Analyze statement content for domain-specific terms
         for domain, indicators in self.domain_indicators.items():
@@ -558,7 +568,18 @@ class PhilosophicalOntology:
         # Find domain with highest score
         if domain_scores:
             primary_domain = max(domain_scores, key=lambda k: domain_scores[k])
-            return primary_domain
+            # Ensure we return a PhilosophicalDomain enum
+            if isinstance(primary_domain, PhilosophicalDomain):
+                return primary_domain
+            elif isinstance(primary_domain, str):
+                try:
+                    return PhilosophicalDomain(primary_domain)
+                except ValueError:
+                    # If conversion fails, use default
+                    return PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE
+            else:
+                # If it's neither string nor enum, use default
+                return PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE
 
         # Default fallback
         return PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE

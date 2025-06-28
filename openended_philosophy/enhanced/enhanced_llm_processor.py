@@ -1,7 +1,6 @@
 """
 Enhanced LLM-Based Philosophical Semantic Processor
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-from ..semantic.llm_semantic_processor import LLMSemanticProcessor
 
 ### Implementation of Deep LLM Integration for Philosophical Analysis
 
@@ -448,9 +447,15 @@ class EnhancedLLMPhilosophicalProcessor(LLMSemanticProcessor):
         statement_lower = statement.lower()
         for concept_term, concept_info in concept_indicators.items():
             if concept_term in statement_lower:
+                # Convert string domain to enum
+                try:
+                    domain_enum = PhilosophicalDomain(concept_info['domain'])
+                except ValueError:
+                    domain_enum = PhilosophicalDomain.PHILOSOPHY_OF_MIND  # fallback
+                
                 concept = PhilosophicalConcept(
                     term=concept_term,
-                    domain=concept_info['domain'],
+                    domain=domain_enum,
                     definition=concept_info['definition'],
                     attributes={
                         'abstractness': 0.8,

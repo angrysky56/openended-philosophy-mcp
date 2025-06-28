@@ -1,0 +1,109 @@
+{
+  "enhanced_llm_processor": {
+    "test_passed": true,
+    "analysis_confidence": 0.7333333333333334,
+    "concepts_extracted": 4,
+    "semantic_relations": 3,
+    "philosophical_frameworks": [
+      "philosophy_of_mind",
+      "neurophilosophy"
+    ],
+    "uncertainty_levels": {
+      "epistemic": 0.30000000000000004,
+      "relational": 0.19999999999999984,
+      "methodological": 0.4,
+      "overall": 0.3
+    },
+    "practical_implications": 5,
+    "revision_triggers": 1,
+    "analysis_metadata": {
+      "analysis_timestamp": "2025-06-28T05:01:39.454616",
+      "context_domain": "philosophy_of_mind",
+      "depth_level": 3,
+      "perspective_analyses": [
+        {
+          "perspective": "analytic",
+          "confidence": 0.7,
+          "insights_count": 2
+        },
+        {
+          "perspective": "continental",
+          "confidence": 0.7,
+          "insights_count": 2
+        },
+        {
+          "perspective": "pragmatist",
+          "confidence": 0.7,
+          "insights_count": 2
+        },
+        {
+          "perspective": "phenomenological",
+          "confidence": 0.7,
+          "insights_count": 2
+        }
+      ]
+    },
+    "sophistication_check": "PASSED"
+  },
+  "recursive_self_analysis": {
+    "test_passed": true,
+    "meta_analysis_present": true,
+    "immediate_reflection": true,
+    "framework_assessment": true,
+    "improvement_recommendations": 4,
+    "recursive_insights": 3,
+    "epistemic_status": "Moderate-confidence meta-analysis with framework assessment",
+    "quality_assessment": {
+      "meta_analysis_depth": 2,
+      "systematic_rigor": "high",
+      "self_awareness_level": "developing",
+      "improvement_orientation": 4
+    },
+    "meta_sophistication": "PASSED"
+  },
+  "enhanced_insight_synthesis": {
+    "test_passed": true,
+    "insights_generated": 0,
+    "perspectives_used": [
+      "materialist",
+      "phenomenological",
+      "enactivist",
+      "pragmatist"
+    ],
+    "insight_details": [],
+    "multi_perspectival_check": "FAILED"
+  },
+  "system_integration": {
+    "test_passed": false,
+    "error": "LanguageGameProcessor.__init__() missing 2 required positional arguments: 'game_type' and 'grammatical_rules'"
+  },
+  "performance_improvements": {
+    "test_passed": true,
+    "enhanced_analysis_time": 0.000247,
+    "concepts_extracted": 0,
+    "relations_identified": 0,
+    "frameworks_applied": 1,
+    "uncertainty_quantified": true,
+    "practical_implications": 1,
+    "analysis_depth": 4,
+    "performance_metrics": {
+      "concepts_per_second": 0.0,
+      "analysis_completeness": 0.2666666666666666,
+      "feature_richness": 1
+    },
+    "performance_check": "NEEDS_OPTIMIZATION"
+  },
+  "final_report": {
+    "test_summary": {
+      "total_tests": 5,
+      "passed_tests": 4,
+      "success_rate": 80.0,
+      "total_duration": 0.015714
+    },
+    "implementation_plan_verification": {
+      "phase_1_nars_integration": "PARTIAL",
+      "phase_2_insight_synthesis": "PARTIAL",
+      "phase_3_recursive_analysis": "COMPLETED",
+      "phase_4_integration": "PARTIAL"
+    },
+    "detailed_results": 

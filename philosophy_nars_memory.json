@@ -1,5 +1,23 @@
 {
-  "memory": {},
+  "memory": {
+    "('consciousness', 'eternal')": {
+      "term": "consciousness",
+      "truth": {
+        "frequency": 0.6,
+        "confidence": 0.9,
+        "expectation": 0.59,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "phenomenological",
+      "last_used": 1751108577.460415,
+      "usefulness": 0,
+      "semantic_context": {}
+    }
+  },
   "current_time": 1,
   "atoms": {}
 }

@@ -502,7 +502,7 @@ class OpenEndedPhilosophyServer:
                     elif name == "test_philosophical_hypothesis":
                         return await self.operations.test_philosophical_hypothesis(**arguments)
                     elif name == "recursive_self_analysis":
-                        return await self.operations.analyze_own_reasoning_process(**arguments)
+                        return await self.operations.recursive_self_analysis(**arguments)
                     else:
                         raise ValueError(f"Unknown philosophical operation: {name}")
 

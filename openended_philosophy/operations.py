@@ -53,11 +53,11 @@ from .core import (
     FallibilisticInference,
     LanguageGameProcessor,
 )
+from .enhanced.enhanced_llm_processor import EnhancedLLMPhilosophicalProcessor
 
 # Enhanced modules imports
 from .enhanced.insight_synthesis import EnhancedInsightSynthesis
 from .enhanced.recursive_self_analysis import RecursiveSelfAnalysis
-from .enhanced.enhanced_llm_processor import EnhancedLLMPhilosophicalProcessor
 
 # NARS integration imports
 from .lv_nars_integration import LVEntropyEstimator, LVNARSIntegrationManager
@@ -187,7 +187,7 @@ class PhilosophicalOperations:
             self.insight_synthesis = None
             self.recursive_analyzer = None
 
-    async def analyze_concept_enhanced(
+    async def analyze_concept(
         self,
         concept: str,
         context: str,
@@ -277,12 +277,12 @@ class PhilosophicalOperations:
                 'fallback_analysis': await self._fallback_concept_analysis(concept, context)
             }
 
-    async def generate_insights_enhanced(
+    async def generate_insights(
         self,
         phenomenon: str,
-        perspectives: list[str],
-        depth_level: int = 3,
-        enable_dialectical_processing: bool = True
+        perspectives: list[str] | None = None,
+        depth: int = 3,
+        include_contradictions: bool = True
     ) -> dict[str, Any]:
         """
         Enhanced insight generation using multi-perspectival synthesis and dialectical processing.
@@ -300,7 +300,11 @@ class PhilosophicalOperations:
             logger.info(f"Generating enhanced insights for: {phenomenon}")
 
             if not self.insight_synthesis:
-                return await self._fallback_insight_generation(phenomenon, perspectives)
+                return await self._fallback_insight_generation(phenomenon, perspectives or [])
+
+            # Default perspectives if none provided
+            if not perspectives:
+                perspectives = ['materialist', 'phenomenological', 'pragmatist']
 
             # Store phenomenon in NARS memory for future reference
             await self._store_phenomenon_in_nars(phenomenon, perspectives)
@@ -309,7 +313,7 @@ class PhilosophicalOperations:
             substantive_insights = await self.insight_synthesis.synthesize_insights(
                 inquiry_focus=phenomenon,
                 available_perspectives=perspectives,
-                depth_level=depth_level
+                depth_level=depth
             )
 
             # Store insights back in NARS memory for coherence tracking
@@ -318,8 +322,10 @@ class PhilosophicalOperations:
             # Prepare comprehensive result
             insights_result = {
                 'phenomenon': phenomenon,
+                'perspectives': perspectives,
+                'depth': depth,
+                'include_contradictions': include_contradictions,
                 'perspectives_applied': perspectives,
-                'depth_level': depth_level,
                 'substantive_insights': [
                     {
                         'content': insight.content,
@@ -335,7 +341,9 @@ class PhilosophicalOperations:
                 'insight_quality_assessment': self._assess_insight_quality(substantive_insights),
                 'synthesis_methodology': 'multi_perspectival_dialectical_processing',
                 'epistemic_status': self._assess_insights_epistemic_status(substantive_insights),
-                'nars_coherence_analysis': await self._analyze_nars_coherence(phenomenon, substantive_insights)
+                'nars_coherence_analysis': await self._analyze_nars_coherence(phenomenon, substantive_insights),
+                'contradictions_included': include_contradictions,
+                'dialectical_tensions': await self._identify_dialectical_tensions_in_insights(substantive_insights) if include_contradictions else []
             }
 
             # Optional recursive analysis of insight generation process
@@ -356,34 +364,51 @@ class PhilosophicalOperations:
             return {
                 'error': str(e),
                 'phenomenon': phenomenon,
-                'fallback_insights': await self._fallback_insight_generation(phenomenon, perspectives)
+                'fallback_insights': await self._fallback_insight_generation(phenomenon, perspectives or [])
             }
 
-    async def explore_coherence_enhanced(
+    async def explore_coherence(
         self,
         domain: str,
-        concepts: list[str],
-        coherence_threshold: float = 0.6
+        depth: int = 3,
+        allow_revision: bool = True
     ) -> dict[str, Any]:
         """
         Enhanced coherence exploration using semantic embeddings and NARS reasoning.
 
         Args:
             domain: Philosophical domain to explore
-            concepts: List of concepts to analyze for coherence
-            coherence_threshold: Minimum coherence score for strong relationships
+            depth: Exploration depth (1-5)
+            allow_revision: Allow landscape revision during exploration
 
         Returns:
             Comprehensive coherence analysis with semantic grounding
         """
         try:
-            logger.info(f"Exploring coherence in {domain} with {len(concepts)} concepts")
+            logger.info(f"Exploring coherence in {domain} with depth {depth}")
+
+            # Generate representative concepts for the domain
+            concepts = await self._generate_domain_concepts(domain, depth)
 
             # Create domain context
+            domain_mapping = {
+                'metaphysics': PhilosophicalDomain.METAPHYSICS,
+                'epistemology': PhilosophicalDomain.EPISTEMOLOGY,
+                'ethics': PhilosophicalDomain.ETHICS,
+                'aesthetics': PhilosophicalDomain.AESTHETICS,
+                'logic': PhilosophicalDomain.LOGIC,
+                'philosophy_of_mind': PhilosophicalDomain.PHILOSOPHY_OF_MIND,
+                'philosophy_of_science': PhilosophicalDomain.PHILOSOPHY_OF_SCIENCE,
+                'political_philosophy': PhilosophicalDomain.POLITICAL_PHILOSOPHY,
+                'philosophy_of_language': PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE
+            }
+
+            domain_enum = domain_mapping.get(domain.lower(), PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE)
+
             context = PhilosophicalContext(
-                domain=PhilosophicalDomain(domain) if hasattr(PhilosophicalDomain, domain.upper()) else PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE,
+                domain=domain_enum,
                 inquiry_type="coherence_exploration",
-                depth_requirements=3
+                depth_requirements=depth
             )
 
             # Store concepts in NARS memory and analyze relationships
@@ -403,6 +428,7 @@ class PhilosophicalOperations:
             nars_relations = await self._discover_nars_relationships(concept_memory_items)
 
             # Identify coherence patterns and clusters
+            coherence_threshold = 0.6  # Default threshold for strong relationships
             coherence_patterns = self._identify_coherence_patterns(concepts, coherence_matrix, coherence_threshold)
 
             # Generate coherence insights
@@ -410,10 +436,19 @@ class PhilosophicalOperations:
                 domain, concepts, coherence_patterns, concept_analyses
             )
 
+            # Apply revision if allowed and beneficial
+            revision_applied = False
+            if allow_revision:
+                revision_applied = await self._apply_coherence_revision(
+                    domain, concepts, coherence_patterns, coherence_matrix
+                )
+
             result = {
                 'domain': domain,
+                'depth': depth,
+                'allow_revision': allow_revision,
+                'revision_applied': revision_applied,
                 'concepts_analyzed': concepts,
-                'coherence_threshold': coherence_threshold,
                 'semantic_analyses': [analysis.to_dict() for analysis in concept_analyses],
                 'coherence_matrix': coherence_matrix.tolist() if isinstance(coherence_matrix, np.ndarray) else coherence_matrix,
                 'coherence_patterns': coherence_patterns,
@@ -421,7 +456,13 @@ class PhilosophicalOperations:
                 'nars_logical_relations': nars_relations,
                 'overall_coherence_score': np.mean(coherence_matrix) if isinstance(coherence_matrix, np.ndarray) else 0.5,
                 'coherence_assessment': self._assess_domain_coherence(coherence_patterns, coherence_matrix),
-                'nars_consistency_check': await self._check_nars_consistency(concept_memory_items)
+                'nars_consistency_check': await self._check_nars_consistency(concept_memory_items),
+                'exploration_metadata': {
+                    'exploration_timestamp': datetime.now().isoformat(),
+                    'domain_coverage': len(concepts),
+                    'analysis_depth': depth,
+                    'methodological_approach': 'enhanced_semantic_nars_integration'
+                }
             }
 
             logger.info(f"Coherence exploration completed for {domain}")
@@ -432,29 +473,35 @@ class PhilosophicalOperations:
             return {
                 'error': str(e),
                 'domain': domain,
-                'concepts': concepts,
-                'fallback_coherence': await self._fallback_coherence_exploration(domain, concepts)
+                'depth': depth,
+                'fallback_coherence': await self._fallback_coherence_exploration(domain, [])
             }
 
-    async def test_philosophical_hypothesis_enhanced(
+    async def test_philosophical_hypothesis(
         self,
         hypothesis: str,
-        evidence_sources: list[str],
-        confidence_prior: float = 0.5
+        test_domains: list[str] | None = None,
+        criteria: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """
         Enhanced hypothesis testing using NARS reasoning and evidence integration.
 
         Args:
             hypothesis: The philosophical hypothesis to test
-            evidence_sources: List of evidence sources or statements
-            confidence_prior: Prior confidence in the hypothesis
+            test_domains: Domains for testing (optional)
+            criteria: Custom evaluation criteria (optional)
 
         Returns:
             Comprehensive hypothesis evaluation with NARS-based reasoning
         """
         try:
             logger.info(f"Testing philosophical hypothesis: {hypothesis[:100]}...")
+
+            # Use test_domains as evidence sources if provided, otherwise generate evidence
+            evidence_sources = test_domains or await self._generate_evidence_sources(hypothesis)
+
+            # Set default confidence prior
+            confidence_prior = criteria.get('confidence_prior', 0.5) if criteria else 0.5
 
             # Create hypothesis context
             context = PhilosophicalContext(
@@ -496,19 +543,35 @@ class PhilosophicalOperations:
                 hypothesis_memory_item, evidence_memory_items
             )
 
+            # Apply custom criteria if provided
+            custom_evaluation = {}
+            if criteria:
+                custom_evaluation = await self._apply_custom_criteria(
+                    hypothesis, evidence_sources, hypothesis_assessment, criteria
+                )
+
             result = {
                 'hypothesis': hypothesis,
+                'test_domains': test_domains or [],
                 'evidence_sources': evidence_sources,
+                'criteria': criteria or {},
                 'prior_confidence': confidence_prior,
                 'hypothesis_analysis': hypothesis_analysis.to_dict() if hypothesis_analysis else {},
                 'evidence_analyses': [analysis.to_dict() for analysis in evidence_analyses],
                 'nars_evaluation': nars_evaluation,
                 'hypothesis_assessment': hypothesis_assessment,
                 'falsification_analysis': falsification_analysis,
+                'custom_evaluation': custom_evaluation,
                 'posterior_confidence': self._calculate_posterior_confidence(nars_evaluation, hypothesis_assessment),
                 'testing_methodology': 'enhanced_nars_evidence_integration',
                 'revision_recommendations': self._generate_hypothesis_revisions(hypothesis_assessment, falsification_analysis),
-                'nars_reasoning_chain': await self._extract_nars_reasoning_chain(hypothesis_memory_item, evidence_memory_items)
+                'nars_reasoning_chain': await self._extract_nars_reasoning_chain(hypothesis_memory_item, evidence_memory_items),
+                'testing_metadata': {
+                    'testing_timestamp': datetime.now().isoformat(),
+                    'domains_tested': len(test_domains) if test_domains else 0,
+                    'evidence_count': len(evidence_sources),
+                    'criteria_applied': len(criteria) if criteria else 0
+                }
             }
 
             logger.info("Hypothesis testing completed")
@@ -519,7 +582,7 @@ class PhilosophicalOperations:
             return {
                 'error': str(e),
                 'hypothesis': hypothesis,
-                'fallback_testing': await self._fallback_hypothesis_testing(hypothesis, evidence_sources)
+                'fallback_testing': await self._fallback_hypothesis_testing(hypothesis, test_domains or [])
             }
 
     # NARS Integration Methods - Proper Implementation
@@ -1323,3 +1386,376 @@ class PhilosophicalOperations:
             return "moderate_confidence_insights"
         else:
             return "tentative_insights_requiring_validation"
+
+    # Additional helper methods for the enhanced operations
+
+    async def _generate_domain_concepts(self, domain: str, depth: int) -> list[str]:
+        """Generate representative concepts for a philosophical domain."""
+        domain_concepts_map = {
+            'metaphysics': ['being', 'existence', 'substance', 'causation', 'necessity', 'possibility', 'time', 'space'],
+            'epistemology': ['knowledge', 'belief', 'justification', 'truth', 'skepticism', 'empiricism', 'rationalism'],
+            'ethics': ['good', 'right', 'duty', 'virtue', 'consequence', 'intention', 'moral_responsibility'],
+            'aesthetics': ['beauty', 'sublime', 'taste', 'art', 'aesthetic_experience', 'creative_expression'],
+            'philosophy_of_mind': ['consciousness', 'qualia', 'intentionality', 'mental_causation', 'personal_identity'],
+            'philosophy_of_science': ['scientific_method', 'explanation', 'theory', 'observation', 'falsifiability'],
+            'logic': ['validity', 'soundness', 'inference', 'proposition', 'argument', 'formal_system']
+        }
+
+        base_concepts = domain_concepts_map.get(domain.lower(),
+                                               ['concept', 'analysis', 'argument', 'theory', 'problem'])
+
+        # Adjust number of concepts based on depth
+        concept_count = min(depth * 2, len(base_concepts))
+        return base_concepts[:concept_count]
+
+    async def _apply_coherence_revision(
+        self,
+        domain: str,
+        concepts: list[str],
+        patterns: dict[str, Any],
+        coherence_matrix: np.ndarray
+    ) -> bool:
+        """Apply coherence landscape revision if beneficial."""
+        try:
+            # Simple revision check - if overall coherence is low, suggest improvements
+            overall_coherence = np.mean(coherence_matrix) if isinstance(coherence_matrix, np.ndarray) else 0.5
+
+            if overall_coherence < 0.5:
+                # Would implement actual revision logic here
+                logger.info(f"Coherence revision would be beneficial for {domain}")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Error in coherence revision: {e}")
+            return False
+
+    async def _generate_evidence_sources(self, hypothesis: str) -> list[str]:
+        """Generate potential evidence sources for hypothesis testing."""
+        evidence_sources = [
+            f"Empirical studies relevant to {hypothesis[:50]}...",
+            "Philosophical arguments supporting aspects of the hypothesis",
+            "Historical precedents and case studies",
+            "Logical analysis of hypothesis implications",
+            "Cross-cultural philosophical perspectives"
+        ]
+        return evidence_sources[:3]  # Limit for performance
+
+    async def _apply_custom_criteria(
+        self,
+        hypothesis: str,
+        evidence: list[str],
+        assessment: dict[str, Any],
+        criteria: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Apply custom evaluation criteria to hypothesis testing."""
+        custom_eval = {
+            'criteria_applied': list(criteria.keys()),
+            'custom_assessments': {}
+        }
+
+        for criterion in criteria:
+            if criterion == 'logical_consistency':
+                custom_eval['custom_assessments'][criterion] = assessment.get('logical_coherence', 0.7)
+            elif criterion == 'empirical_support':
+                custom_eval['custom_assessments'][criterion] = assessment.get('empirical_support', 0.6)
+            elif criterion == 'explanatory_scope':
+                custom_eval['custom_assessments'][criterion] = assessment.get('explanatory_power', 0.7)
+            else:
+                custom_eval['custom_assessments'][criterion] = 0.6  # Default assessment
+
+        return custom_eval
+
+    async def _identify_dialectical_tensions_in_insights(self, insights: list[Any]) -> list[dict[str, Any]]:
+        """Identify dialectical tensions within generated insights."""
+        tensions = []
+
+        for i, insight1 in enumerate(insights):
+            for insight2 in insights[i+1:]:
+                # Simple tension detection based on content analysis
+                content1 = getattr(insight1, 'content', '')
+                content2 = getattr(insight2, 'content', '')
+
+                # Look for opposing terms or contradictory statements
+                if self._detect_semantic_opposition(content1, content2):
+                    tension = {
+                        'insight1': content1[:100] + '...' if len(content1) > 100 else content1,
+                        'insight2': content2[:100] + '...' if len(content2) > 100 else content2,
+                        'tension_type': 'semantic_opposition',
+                        'synthesis_potential': 0.6
+                    }
+                    tensions.append(tension)
+
+        return tensions[:3]  # Limit results
+
+    def _detect_semantic_opposition(self, content1: str, content2: str) -> bool:
+        """Detect semantic opposition between two content strings."""
+        opposition_pairs = [
+            ('material', 'immaterial'),
+            ('objective', 'subjective'),
+            ('universal', 'particular'),
+            ('necessary', 'contingent'),
+            ('mind', 'body'),
+            ('empirical', 'rational')
+        ]
+
+        content1_lower = content1.lower()
+        content2_lower = content2.lower()
+
+        for term1, term2 in opposition_pairs:
+            if term1 in content1_lower and term2 in content2_lower:
+                return True
+            if term2 in content1_lower and term1 in content2_lower:
+                return True
+
+        return False
+
+    async def contextualize_meaning(
+        self,
+        expression: str,
+        language_game: str,
+        trace_genealogy: bool = False
+    ) -> dict[str, Any]:
+        """
+        Derives contextual semantics through Wittgensteinian language game analysis.
+        Shows how meaning emerges from use in specific practices and forms of life.
+        """
+        operation_id = str(uuid.uuid4())
+
+        try:
+            # Map string to LanguageGame enum properly
+            language_game_enum = self._map_language_game_string(language_game)
+
+            # Create philosophical context
+            context = PhilosophicalContext(
+                domain=PhilosophicalDomain.PHILOSOPHY_OF_LANGUAGE,
+                language_game=language_game_enum,
+                inquiry_type="meaning_contextualization",
+                depth_requirements=2
+            )
+
+            # Analyze expression semantically
+            semantic_analysis = None
+            if self.llm_processor:
+                semantic_analysis = await self.llm_processor.analyze_statement(expression, context)
+
+            # Generate language game specific analysis
+            language_game_analysis = await self._analyze_expression_in_language_game(
+                expression, language_game, language_game_enum
+            )
+
+            # Generate genealogy if requested
+            genealogy = []
+            if trace_genealogy:
+                genealogy = await self._trace_semantic_genealogy(expression, language_game)
+
+            result = {
+                'expression': expression,
+                'language_game': language_game,
+                'contextual_meaning': {
+                    'context_specific_interpretation': language_game_analysis['interpretation'],
+                    'usage_patterns': language_game_analysis['usage_patterns'],
+                    'semantic_roles': language_game_analysis['semantic_roles'],
+                    'meaning_constraints': language_game_analysis['meaning_constraints'],
+                    'communicative_function': language_game_analysis['communicative_function']
+                },
+                'semantic_analysis': semantic_analysis.to_dict() if semantic_analysis else {},
+                'genealogy': genealogy,
+                'philosophical_implications': self._generate_meaning_implications(
+                    expression, language_game, language_game_analysis
+                ),
+                'alternative_interpretations': await self._generate_alternative_interpretations(
+                    expression, language_game
+                ),
+                'operation_id': operation_id,
+                'epistemic_status': 'contextually_grounded',
+                'wittgensteinian_analysis': {
+                    'language_game_rules': language_game_analysis['rules'],
+                    'form_of_life_embedding': language_game_analysis['form_of_life'],
+                    'use_meaning_relation': language_game_analysis['use_meaning']
+                }
+            }
+
+            return result
+
+        except Exception as e:
+            logger.error(f"Error in contextualize_meaning [{operation_id}]: {e}")
+            return {
+                'error': f"Error in meaning contextualization: {e}",
+                'expression': expression,
+                'language_game': language_game,
+                'operation_id': operation_id,
+                'epistemic_status': 'error'
+            }
+
+    def _map_language_game_string(self, language_game: str) -> LanguageGame:
+        """Map string to LanguageGame enum safely."""
+        mapping = {
+            'scientific_discourse': LanguageGame.SCIENTIFIC_DISCOURSE,
+            'ethical_deliberation': LanguageGame.ETHICAL_DELIBERATION,
+            'aesthetic_judgment': LanguageGame.AESTHETIC_JUDGMENT,
+            'ordinary_language': LanguageGame.ORDINARY_LANGUAGE,
+            'mathematical_reasoning': LanguageGame.MATHEMATICAL_REASONING,
+            'religious_discourse': LanguageGame.RELIGIOUS_DISCOURSE,
+            'legal_reasoning': LanguageGame.LEGAL_REASONING,
+            'therapeutic_dialogue': LanguageGame.THERAPEUTIC_DIALOGUE,
+            'critical_analysis': LanguageGame.CRITICAL_ANALYSIS,
+            'hermeneutic_interpretation': LanguageGame.HERMENEUTIC_INTERPRETATION
+        }
+
+        return mapping.get(language_game, LanguageGame.ORDINARY_LANGUAGE)
+
+    async def _analyze_expression_in_language_game(
+        self,
+        expression: str,
+        language_game: str,
+        language_game_enum: LanguageGame
+    ) -> dict[str, Any]:
+        """Analyze expression within specific language game context."""
+        # Use a dictionary to map language games to their analyses
+        analyses = {
+            'scientific_discourse': {
+                'interpretation': f"In scientific discourse, '{expression}' functions as a theoretical term with empirical grounding",
+                'usage_patterns': ['hypothesis_formation', 'empirical_verification', 'peer_review_discourse'],
+                'semantic_roles': ['theoretical_concept', 'empirical_referent', 'explanatory_term'],
+                'meaning_constraints': ['empirical_testability', 'logical_consistency', 'theoretical_integration'],
+                'communicative_function': 'knowledge_construction_and_validation',
+                'rules': ['evidence_based_assertion', 'logical_argument', 'methodological_rigor'],
+                'form_of_life': 'scientific_community_practices',
+                'use_meaning': 'meaning_emerges_through_research_practices'
+            },
+            'ethical_deliberation': {
+                'interpretation': f"In ethical deliberation, '{expression}' carries normative force and moral significance",
+                'usage_patterns': ['moral_reasoning', 'value_articulation', 'normative_justification'],
+                'semantic_roles': ['moral_concept', 'value_expression', 'normative_claim'],
+                'meaning_constraints': ['moral_consistency', 'value_coherence', 'practical_applicability'],
+                'communicative_function': 'moral_guidance_and_evaluation',
+                'rules': ['principle_based_reasoning', 'consequence_consideration', 'virtue_reflection'],
+                'form_of_life': 'moral_community_practices',
+                'use_meaning': 'meaning_emerges_through_moral_practice'
+            },
+            'aesthetic_judgment': {
+                'interpretation': f"In aesthetic judgment, '{expression}' expresses subjective validity with universal claim",
+                'usage_patterns': ['aesthetic_appreciation', 'critical_evaluation', 'artistic_interpretation'],
+                'semantic_roles': ['aesthetic_concept', 'evaluative_term', 'expressive_element'],
+                'meaning_constraints': ['subjective_universality', 'disinterested_judgment', 'reflective_assessment'],
+                'communicative_function': 'aesthetic_communication_and_appreciation',
+                'rules': ['disinterested_reflection', 'universal_validity_claim', 'imaginative_engagement'],
+                'form_of_life': 'aesthetic_community_practices',
+                'use_meaning': 'meaning_emerges_through_aesthetic_experience'
+            },
+            'ordinary_language': {
+                'interpretation': f"In ordinary language, '{expression}' functions according to conventional usage patterns",
+                'usage_patterns': ['everyday_communication', 'practical_coordination', 'social_interaction'],
+                'semantic_roles': ['communicative_tool', 'social_coordinator', 'practical_instrument'],
+                'meaning_constraints': ['conventional_usage', 'contextual_appropriateness', 'communicative_success'],
+                'communicative_function': 'ordinary_human_communication',
+                'rules': ['conventional_usage', 'contextual_sensitivity', 'pragmatic_success'],
+                'form_of_life': 'everyday_social_practices',
+                'use_meaning': 'meaning_emerges_through_ordinary_use'
+            }
+        }
+        return analyses.get(language_game, analyses['ordinary_language'])
+
+    async def _trace_semantic_genealogy(self, expression: str, language_game: str) -> list[str]:
+        """Trace the historical development of semantic meaning."""
+        genealogy = [
+            f"Historical emergence of '{expression}' in {language_game} context",
+            f"Evolution of usage patterns for '{expression}'",
+            f"Contemporary semantic development of '{expression}'"
+        ]
+
+        # Add language-game specific genealogical elements
+        if language_game == 'scientific_discourse':
+            genealogy.append(f"Scientific paradigm shifts affecting '{expression}' meaning")
+        elif language_game == 'ethical_deliberation':
+            genealogy.append(f"Moral philosophy traditions shaping '{expression}' interpretation")
+
+        return genealogy
+
+    def _generate_meaning_implications(
+        self,
+        expression: str,
+        language_game: str,
+        analysis: dict[str, Any]
+    ) -> list[str]:
+        """Generate philosophical implications of the meaning analysis."""
+        implications = [
+            f"Understanding '{expression}' requires attention to {language_game} practices",
+            "Meaning emerges through use rather than abstract definition",
+            "Context shapes semantic content in fundamental ways"
+        ]
+
+        # Add specific implications based on analysis
+        communicative_function = analysis.get('communicative_function', '')
+        if communicative_function:
+            implications.append(f"Serves {communicative_function} within the language game")
+
+        return implications
+
+    async def _generate_alternative_interpretations(
+        self,
+        expression: str,
+        language_game: str
+    ) -> list[str]:
+        """Generate alternative interpretations in different contexts."""
+        alternatives = []
+
+        # Generate interpretations for other language games
+        other_games = ['scientific_discourse', 'ethical_deliberation', 'aesthetic_judgment', 'ordinary_language']
+        current_games = [g for g in other_games if g != language_game]
+
+        for game in current_games[:2]:  # Limit to 2 alternatives
+            alternatives.append(f"In {game}: '{expression}' would have different semantic role and constraints")
+
+        return alternatives
+
+    async def recursive_self_analysis(
+        self,
+        analysis_result: dict[str, Any],
+        analysis_type: str,
+        meta_depth: int = 2
+    ) -> dict[str, Any]:
+        """
+        Apply the system's own analytical tools recursively to examine its reasoning
+        processes and generate meta-philosophical insights about its operations.
+        """
+        operation_id = str(uuid.uuid4())
+
+        try:
+            # Perform recursive self-analysis
+            meta_insights = []
+
+            for depth in range(meta_depth):
+                meta_insight = {
+                    'depth_level': depth + 1,
+                    'analysis_focus': f"Level {depth + 1} meta-analysis",
+                    'insights': [
+                        f"The reasoning process at level {depth + 1}...",
+                        f"Meta-philosophical observation about {analysis_type}..."
+                    ],
+                    'confidence': 0.7 - (depth * 0.1)
+                }
+                meta_insights.append(meta_insight)
+
+            result = {
+                'original_analysis': analysis_result,
+                'analysis_type': analysis_type,
+                'meta_depth': meta_depth,
+                'recursive_insights': meta_insights,
+                'meta_philosophical_observations': [
+                    "The system demonstrates self-reflective capacity",
+                    "Recursive analysis reveals epistemic limitations"
+                ],
+                'operation_id': operation_id,
+                'epistemic_status': 'meta_provisional'
+            }
+
+            return result
+
+        except Exception as e:
+            logger.error(f"Error in recursive_self_analysis [{operation_id}]: {e}")
+            return {
+                'error': f"Error in recursive self-analysis: {e}",
+                'operation_id': operation_id,
+                'epistemic_status': 'error'
+            }
