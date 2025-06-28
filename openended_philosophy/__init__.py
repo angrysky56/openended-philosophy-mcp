@@ -39,6 +39,13 @@ from .core import (
     MetaLearningEngine,
     SemanticPattern,
 )
+from .lv_nars_integration import (
+    LVEntropyEstimator,
+    LVNARSEcosystem,
+    LVNARSIntegrationManager,
+    LVReasoningCandidate,
+    LVTruthFunctions,
+)
 from .server import OpenEndedPhilosophyServer, PhilosophicalContext
 from .utils import (
     calculate_epistemic_uncertainty,
@@ -68,6 +75,13 @@ __all__ = [
     # Server components
     "OpenEndedPhilosophyServer",
     "PhilosophicalContext",
+
+    # LV-NARS Integration
+    "LVNARSEcosystem",
+    "LVNARSIntegrationManager",
+    "LVReasoningCandidate",
+    "LVEntropyEstimator",
+    "LVTruthFunctions",
 
     # Utilities
     "setup_logging",

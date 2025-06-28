@@ -10,38 +10,16 @@ epistemic uncertainty quantification.
 # import asyncio
 import contextlib
 import logging
-from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
 
 from .nars_manager import NARSManager
-from .nars_memory import MemoryItem, NARSMemory
-from .truth_functions import Truth, TruthValue
+from .nars_memory import NARSMemory
+from .truth_functions import Truth
+from .types import MemoryItem, ReasoningResult, TruthValue
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class ReasoningResult:
-    """Result of NARS reasoning process."""
-    conclusion: str
-    truth: TruthValue
-    evidence: list[MemoryItem]
-    inference_path: list[str]
-    uncertainty_factors: dict[str, float]
-    philosophical_implications: list[str]
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary format."""
-        return {
-            "conclusion": self.conclusion,
-            "truth": self.truth.to_dict(),
-            "evidence": [e.term for e in self.evidence],
-            "inference_path": self.inference_path,
-            "uncertainty_factors": self.uncertainty_factors,
-            "philosophical_implications": self.philosophical_implications
-        }
 
 
 class NARSReasoning:

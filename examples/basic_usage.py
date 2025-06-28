@@ -36,10 +36,10 @@ async def analyze_consciousness():
             'term': 'consciousness',
             'domain': 'philosophy_of_mind',
             'features': ['awareness', 'subjective_experience', 'intentionality'],
-            'contexts': ['neuroscience', 'phenomenology', 'cognitive_science']
+            'contexts': ['neuroscience', 'phenomenology', 'cognitive_science'],
+            'context_sensitivity': 0.9  # Highly context-sensitive concept
         },
         confidence=0.6,  # Moderate initial confidence
-        context_sensitivity=0.9  # Highly context-sensitive concept
     )
 
     # 2. Set up language games
@@ -137,11 +137,17 @@ async def analyze_consciousness():
     )
 
     for i, insight in enumerate(insights, 1):
-        print(f"\nInsight {i}:")
-        print(f"Content: {insight.content}")
-        print(f"Confidence: {insight.confidence:.2f}")
-        print(f"Limitations: {', '.join(insight.identified_limitations[:2])}")
-        print(f"Revision Triggers: {insight.revision_triggers[0]}")
+        insight_data = {
+            "Insight #": i,
+            "Content": insight.content,
+            "Confidence": f"{insight.confidence:.2f}",
+            "Limitations": ", ".join(insight.identified_limitations[:2]),
+            "Revision Trigger": insight.revision_triggers[0],
+        }
+        print(format_philosophical_output(
+            result=insight_data,
+            style='text'
+        ))
 
     # 7. Calculate overall epistemic uncertainty
     landscape = CoherenceLandscape()
@@ -159,8 +165,12 @@ async def analyze_consciousness():
     )
 
     print("\n### Epistemic Assessment")
-    print(f"Overall Uncertainty: {uncertainty:.2f}")
-    print(f"Recommendation: {'High confidence' if uncertainty < 0.5 else 'Proceed with caution'}")
+    assessment_data = {
+        "Overall Uncertainty": f"{uncertainty:.2f}",
+        "Global Coherence": f"{landscape_state.global_coherence:.2f}",
+        "Recommendation": 'High confidence' if uncertainty < 0.5 else 'Proceed with caution'
+    }
+    print(format_philosophical_output(result=assessment_data, style='text'))
 
 def main():
     """Run examples."""

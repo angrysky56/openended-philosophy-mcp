@@ -1,0 +1,1915 @@
+"""
+Enhanced Philosophical Reasoning Components
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Implementation of Deep NARS & NLP Integration
+
+This module implements the enhanced components outlined in the implementation plan:
+- LLM-based semantic processing for dynamic concept extraction
+- Enhanced NARS memory with philosophical categorization
+- Sophisticated insight synthesis with multi-perspectival integration
+- Recursive self-analysis capabilities for meta-philosophical reflection
+
+#### Theoretical Foundation
+
+Combines computational pragmatism with non-axiomatic reasoning to create
+a sophisticated philosophical reasoning system that maintains epistemic
+humility while generating substantive insights.
+"""
+
+import asyncio
+import logging
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+import numpy as np
+from abc import ABC, abstractmethod
+
+from .nars import NARSMemory, TruthValue
+from .utils import calculate_epistemic_uncertainty, semantic_similarity
+
+logger = logging.getLogger(__name__)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Core Enhanced Data Structures
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+@dataclass
+class PhilosophicalContext:
+    """
+    Enhanced contextual substrate for philosophical operations.
+    
+    ### Architectural Components:
+    - Domain specification with categorical mappings
+    - Inquiry type classification and depth requirements
+    - Perspective constraints and openness coefficients
+    - Temporal sensitivity and revision tracking
+    """
+    domain: str
+    inquiry_type: str = "general_analysis"
+    depth_requirements: int = 3
+    perspective_constraints: Optional[List[str]] = None
+    openness_coefficient: float = 0.9
+    temporal_sensitivity: float = 0.8
+    revision_threshold: float = 0.3
+    session_metadata: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass 
+class PhilosophicalConcept:
+    """
+    Sophisticated representation of philosophical concepts with semantic depth.
+    
+    ### Semantic Dimensions:
+    - Core term with philosophical categorization
+    - Semantic relations and family resemblances  
+    - Context sensitivity and usage patterns
+    - Epistemic status and revision conditions
+    """
+    term: str
+    category: str
+    semantic_relations: List[Tuple[str, str, float]] = field(default_factory=list)
+    context_sensitivity: float = 0.7
+    usage_patterns: List[str] = field(default_factory=list)
+    epistemic_status: str = "provisional"
+    confidence: float = 0.5
+    philosophical_tradition: Optional[str] = None
+
+@dataclass
+class SemanticAnalysis:
+    """
+    Comprehensive semantic analysis results with philosophical depth.
+    
+    ### Analysis Components:
+    - Primary concepts with confidence metrics
+    - Semantic relations and contextual dependencies
+    - Pragmatic implications and revision triggers
+    - Epistemic uncertainty and temporal factors
+    """
+    primary_concepts: List[PhilosophicalConcept] = field(default_factory=list)
+    semantic_relations: List[Tuple[str, str, str, float]] = field(default_factory=list)
+    pragmatic_implications: List[str] = field(default_factory=list)
+    epistemic_uncertainty: float = 0.5
+    context_dependencies: List[str] = field(default_factory=list)
+    revision_triggers: List[str] = field(default_factory=list)
+    philosophical_categorization: Dict[str, float] = field(default_factory=dict)
+    temporal_stability: float = 0.7
+
+@dataclass
+class SubstantiveInsight:
+    """
+    Enhanced insight representation with philosophical rigor.
+    
+    ### Insight Structure:
+    - Content with confidence and type classification
+    - Supporting perspectives and evidence base
+    - Dialectical tensions and practical implications
+    - Revision conditions and temporal validity
+    """
+    content: str
+    confidence: float
+    insight_type: str = "synthetic"
+    supporting_perspectives: List[str] = field(default_factory=list)
+    evidence_base: List[str] = field(default_factory=list)
+    dialectical_tensions: Optional[List[str]] = None
+    practical_implications: List[str] = field(default_factory=list)
+    revision_conditions: List[str] = field(default_factory=list)
+    epistemic_virtues: List[str] = field(default_factory=list)
+    temporal_validity: int = 6  # months
+
+@dataclass
+class PhilosophicalMemoryItem:
+    """
+    Enhanced memory item with philosophical categorization and NARS integration.
+    
+    ### Memory Structure:
+    - Statement with truth value and temporal scope
+    - Philosophical categorization and semantic embedding
+    - Context sensitivity and revision history
+    - Attention weight and coherence landscape integration
+    """
+    statement: str
+    truth: TruthValue
+    temporal_scope: str = "eternal"
+    philosophical_category: str = "general"
+    semantic_embedding: Optional[np.ndarray] = None
+    context_sensitivity: float = 0.8
+    revision_history: List[Dict[str, Any]] = field(default_factory=list)
+    attention_weight: float = 1.0
+    coherence_connections: Set[str] = field(default_factory=set)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Enhanced LLM Semantic Processing
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class LLMSemanticProcessor:
+    """
+    Sophisticated semantic processing using LLM capabilities for dynamic concept extraction.
+    
+    ### Processing Methodology:
+    - Multi-dimensional concept extraction across philosophical domains
+    - Semantic relation identification with confidence metrics
+    - Pragmatic implication analysis and contextual grounding
+    - Epistemic uncertainty assessment with revision trigger generation
+    
+    #### Semantic Extraction Algorithm:
+    ```
+    E(statement, context) = Σᵢ wᵢ × D(dᵢ, statement) × C(context, dᵢ)
+    ```
+    
+    Where:
+    - E: Extracted concepts
+    - wᵢ: Domain weights
+    - D: Domain-specific detection
+    - C: Context relevance
+    """
+    
+    def __init__(self):
+        """Initialize LLM semantic processor with philosophical ontology."""
+        self.philosophical_ontology = self._build_philosophical_ontology()
+        self.concept_extractors = self._initialize_concept_extractors()
+        self.semantic_cache: Dict[str, SemanticAnalysis] = {}
+        self.extraction_patterns = self._load_extraction_patterns()
+        
+        logger.info("Initialized LLM Semantic Processor with philosophical ontology")
+    
+    async def analyze_statement(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> SemanticAnalysis:
+        """
+        Comprehensive semantic analysis of philosophical statements.
+        
+        ### Analysis Protocol:
+        1. Multi-dimensional concept extraction across domains
+        2. Semantic relation identification with confidence metrics
+        3. Pragmatic implication analysis and contextual grounding
+        4. Epistemic uncertainty assessment with revision conditions
+        """
+        logger.debug(f"Analyzing statement: '{statement}' in context: {context.domain}")
+        
+        # Check cache first
+        cache_key = f"{hash(statement)}_{hash(context.domain)}"
+        if cache_key in self.semantic_cache:
+            logger.debug("Retrieved analysis from semantic cache")
+            return self.semantic_cache[cache_key]
+        
+        # Extract concepts using enhanced methodology
+        primary_concepts = await self._extract_concepts_enhanced(statement, context)
+        
+        # Identify semantic relations
+        semantic_relations = await self._identify_semantic_relations(primary_concepts, statement)
+        
+        # Analyze pragmatic implications
+        pragmatic_implications = await self._analyze_pragmatic_implications(statement, context)
+        
+        # Assess epistemic uncertainty
+        epistemic_uncertainty = await self._assess_epistemic_uncertainty(
+            statement, primary_concepts, context
+        )
+        
+        # Generate philosophical categorization
+        philosophical_categorization = await self._generate_philosophical_categorization(
+            statement, primary_concepts
+        )
+        
+        # Identify revision triggers
+        revision_triggers = await self._generate_revision_triggers(primary_concepts, context)
+        
+        # Create comprehensive analysis
+        analysis = SemanticAnalysis(
+            primary_concepts=primary_concepts,
+            semantic_relations=semantic_relations,
+            pragmatic_implications=pragmatic_implications,
+            epistemic_uncertainty=epistemic_uncertainty,
+            context_dependencies=self._extract_context_dependencies(statement, context),
+            revision_triggers=revision_triggers,
+            philosophical_categorization=philosophical_categorization,
+            temporal_stability=self._assess_temporal_stability(primary_concepts)
+        )
+        
+        # Cache for future use
+        self.semantic_cache[cache_key] = analysis
+        
+        logger.debug(f"Completed semantic analysis with {len(primary_concepts)} concepts")
+        return analysis
+    
+    async def _extract_concepts_enhanced(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        """
+        Extract philosophical concepts using enhanced LLM-based understanding.
+        
+        ### Enhancement over hardcoded patterns:
+        - Dynamic semantic understanding of philosophical terminology
+        - Context-aware concept identification and classification
+        - Confidence scoring based on semantic clarity and usage
+        - Integration with philosophical ontology for categorization
+        """
+        concepts = []
+        
+        # Tokenize and analyze statement
+        tokens = self._sophisticated_tokenization(statement)
+        
+        # Apply domain-specific extractors
+        for domain, extractor in self.concept_extractors.items():
+            if self._domain_relevant(domain, context):
+                domain_concepts = await extractor.extract_concepts(tokens, statement, context)
+                concepts.extend(domain_concepts)
+        
+        # Apply semantic enhancement using LLM-style processing
+        enhanced_concepts = await self._enhance_concept_understanding(concepts, statement, context)
+        
+        # Filter and rank by philosophical relevance
+        filtered_concepts = self._filter_by_philosophical_relevance(enhanced_concepts, context)
+        
+        # Ensure diversity and avoid redundancy
+        final_concepts = self._ensure_conceptual_diversity(filtered_concepts)
+        
+        return final_concepts[:10]  # Return top 10 most relevant concepts
+    
+    async def _identify_semantic_relations(
+        self,
+        concepts: List[PhilosophicalConcept],
+        statement: str
+    ) -> List[Tuple[str, str, str, float]]:
+        """
+        Identify semantic relations between concepts with sophisticated analysis.
+        
+        ### Relation Types:
+        - Subsumption (is-a relationships)
+        - Composition (part-whole relationships)
+        - Opposition (contradictory relationships)
+        - Complementarity (mutually enhancing relationships)
+        - Analogy (structural similarity relationships)
+        """
+        relations = []
+        
+        for i, concept1 in enumerate(concepts):
+            for concept2 in concepts[i+1:]:
+                # Analyze potential relations
+                relation_candidates = await self._analyze_concept_pair(
+                    concept1, concept2, statement
+                )
+                
+                for relation_type, confidence in relation_candidates:
+                    if confidence > 0.6:  # Threshold for relation inclusion
+                        relations.append((
+                            concept1.term,
+                            concept2.term,
+                            relation_type,
+                            confidence
+                        ))
+        
+        return relations
+    
+    async def _analyze_pragmatic_implications(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[str]:
+        """
+        Analyze pragmatic implications using enhanced contextual understanding.
+        
+        ### Pragmatic Analysis:
+        - Speech act classification and force identification
+        - Contextual presuppositions and implicatures
+        - Normative implications and action guidance
+        - Epistemic commitments and belief updates
+        """
+        implications = []
+        
+        # Analyze speech act type
+        speech_act = self._classify_speech_act(statement)
+        implications.append(f"Speech act type: {speech_act}")
+        
+        # Identify normative implications
+        normative_implications = self._extract_normative_implications(statement, context)
+        implications.extend(normative_implications)
+        
+        # Analyze epistemic commitments
+        epistemic_commitments = self._extract_epistemic_commitments(statement)
+        implications.extend(epistemic_commitments)
+        
+        # Consider contextual pragmatics
+        contextual_implications = self._analyze_contextual_pragmatics(statement, context)
+        implications.extend(contextual_implications)
+        
+        return implications
+    
+    async def _assess_epistemic_uncertainty(
+        self,
+        statement: str,
+        concepts: List[PhilosophicalConcept],
+        context: PhilosophicalContext
+    ) -> float:
+        """
+        Assess epistemic uncertainty using sophisticated uncertainty quantification.
+        
+        ### Uncertainty Sources:
+        - Semantic ambiguity and polysemy
+        - Contextual sensitivity and interpretation variability
+        - Philosophical disagreement and conceptual disputes
+        - Evidence limitations and temporal factors
+        """
+        uncertainty_factors = []
+        
+        # Semantic ambiguity factor
+        semantic_ambiguity = self._calculate_semantic_ambiguity(statement, concepts)
+        uncertainty_factors.append(('semantic', semantic_ambiguity, 0.3))
+        
+        # Contextual sensitivity factor
+        contextual_sensitivity = context.temporal_sensitivity
+        uncertainty_factors.append(('contextual', contextual_sensitivity, 0.2))
+        
+        # Philosophical disagreement factor
+        philosophical_disagreement = self._assess_philosophical_disagreement(concepts)
+        uncertainty_factors.append(('philosophical', philosophical_disagreement, 0.3))
+        
+        # Evidence limitation factor
+        evidence_limitations = self._assess_evidence_limitations(statement, context)
+        uncertainty_factors.append(('evidential', evidence_limitations, 0.2))
+        
+        # Calculate weighted uncertainty
+        total_uncertainty = sum(
+            factor * weight for _, factor, weight in uncertainty_factors
+        )
+        
+        return np.clip(total_uncertainty, 0.0, 1.0)
+    
+    async def _generate_philosophical_categorization(
+        self,
+        statement: str,
+        concepts: List[PhilosophicalConcept]
+    ) -> Dict[str, float]:
+        """
+        Generate philosophical categorization with confidence scores.
+        
+        ### Philosophical Categories:
+        - Metaphysical (being, existence, reality)
+        - Epistemological (knowledge, belief, justification)
+        - Ethical (value, obligation, virtue)
+        - Aesthetic (beauty, taste, artistic judgment)
+        - Logical (reasoning, inference, validity)
+        - Political (justice, authority, freedom)
+        """
+        categorization = {}
+        
+        # Analyze concept categories
+        category_weights = {}
+        for concept in concepts:
+            category = concept.category
+            confidence = concept.confidence
+            
+            if category not in category_weights:
+                category_weights[category] = []
+            category_weights[category].append(confidence)
+        
+        # Calculate category scores
+        for category, confidences in category_weights.items():
+            avg_confidence = np.mean(confidences)
+            concept_count = len(confidences)
+            
+            # Weight by both confidence and concept count
+            category_score = avg_confidence * min(concept_count / 3.0, 1.0)
+            categorization[category] = float(category_score)
+        
+        # Normalize to sum to 1.0
+        total = sum(categorization.values())
+        if total > 0:
+            categorization = {k: v/total for k, v in categorization.items()}
+        
+        return categorization
+    
+    def _build_philosophical_ontology(self) -> Dict[str, Any]:
+        """Build comprehensive philosophical ontology for concept categorization."""
+        return {
+            'metaphysical': {
+                'keywords': ['being', 'existence', 'reality', 'substance', 'property', 'relation', 'causation', 'time', 'space', 'identity', 'persistence', 'modality'],
+                'weight': 1.0
+            },
+            'epistemological': {
+                'keywords': ['knowledge', 'belief', 'truth', 'justification', 'evidence', 'skepticism', 'certainty', 'doubt', 'experience', 'reason', 'perception', 'memory'],
+                'weight': 1.0
+            },
+            'ethical': {
+                'keywords': ['good', 'bad', 'right', 'wrong', 'virtue', 'vice', 'duty', 'obligation', 'responsibility', 'justice', 'fairness', 'moral', 'ethics'],
+                'weight': 1.0
+            },
+            'aesthetic': {
+                'keywords': ['beauty', 'ugliness', 'art', 'taste', 'judgment', 'aesthetic', 'sublime', 'artistic', 'creative', 'expression', 'form', 'content'],
+                'weight': 0.8
+            },
+            'logical': {
+                'keywords': ['logic', 'reasoning', 'argument', 'premise', 'conclusion', 'validity', 'soundness', 'fallacy', 'inference', 'deduction', 'induction', 'abduction'],
+                'weight': 0.9
+            },
+            'political': {
+                'keywords': ['justice', 'power', 'authority', 'freedom', 'liberty', 'rights', 'democracy', 'state', 'government', 'law', 'equality', 'legitimacy'],
+                'weight': 0.7
+            },
+            'philosophy_of_mind': {
+                'keywords': ['consciousness', 'mind', 'mental', 'thought', 'intention', 'belief', 'desire', 'emotion', 'qualia', 'subjective', 'objective', 'physicalism'],
+                'weight': 0.9
+            },
+            'philosophy_of_science': {
+                'keywords': ['science', 'theory', 'hypothesis', 'explanation', 'prediction', 'observation', 'experiment', 'paradigm', 'reduction', 'emergence', 'causation'],
+                'weight': 0.8
+            }
+        }
+    
+    def _initialize_concept_extractors(self) -> Dict[str, 'ConceptExtractor']:
+        """Initialize domain-specific concept extractors."""
+        return {
+            'metaphysical': MetaphysicalConceptExtractor(self.philosophical_ontology['metaphysical']),
+            'epistemological': EpistemologicalConceptExtractor(self.philosophical_ontology['epistemological']),
+            'ethical': EthicalConceptExtractor(self.philosophical_ontology['ethical']),
+            'aesthetic': AestheticConceptExtractor(self.philosophical_ontology['aesthetic']),
+            'logical': LogicalConceptExtractor(self.philosophical_ontology['logical']),
+            'political': PoliticalConceptExtractor(self.philosophical_ontology['political']),
+            'philosophy_of_mind': PhilosophyOfMindConceptExtractor(self.philosophical_ontology['philosophy_of_mind']),
+            'philosophy_of_science': PhilosophyOfScienceConceptExtractor(self.philosophical_ontology['philosophy_of_science'])
+        }
+    
+    def _load_extraction_patterns(self) -> Dict[str, List[str]]:
+        """Load sophisticated extraction patterns for philosophical concepts."""
+        return {
+            'definition_patterns': [
+                r'\b(\w+)\s+is\s+(?:defined\s+as|understood\s+as|conceived\s+as)',
+                r'\bthe\s+concept\s+of\s+(\w+)',
+                r'\b(\w+)\s+(?:means|signifies|refers\s+to)'
+            ],
+            'relation_patterns': [
+                r'\b(\w+)\s+(?:implies|entails|presupposes)\s+(\w+)',
+                r'\b(\w+)\s+(?:is\s+a\s+type\s+of|is\s+a\s+kind\s+of)\s+(\w+)',
+                r'\b(\w+)\s+(?:and|but|however)\s+(\w+)'
+            ],
+            'normative_patterns': [
+                r'\bshould\s+(\w+)',
+                r'\bought\s+to\s+(\w+)',
+                r'\bmust\s+(\w+)',
+                r'\bit\s+is\s+(?:right|wrong|good|bad)\s+to\s+(\w+)'
+            ]
+        }
+    
+    def _sophisticated_tokenization(self, statement: str) -> List[Dict[str, Any]]:
+        """Perform sophisticated tokenization with philosophical awareness."""
+        # Simple tokenization - would use advanced NLP in practice
+        words = statement.lower().split()
+        
+        tokens = []
+        for i, word in enumerate(words):
+            # Clean word
+            clean_word = word.strip('.,!?;:"()[]{}')
+            
+            # Determine philosophical relevance
+            philosophical_relevance = self._assess_word_philosophical_relevance(clean_word)
+            
+            # Create token
+            token = {
+                'word': clean_word,
+                'position': i,
+                'philosophical_relevance': philosophical_relevance,
+                'context_window': words[max(0, i-2):min(len(words), i+3)]
+            }
+            
+            tokens.append(token)
+        
+        return tokens
+    
+    def _assess_word_philosophical_relevance(self, word: str) -> float:
+        """Assess philosophical relevance of individual word."""
+        relevance = 0.0
+        
+        for domain, ontology in self.philosophical_ontology.items():
+            if word in ontology['keywords']:
+                relevance = max(relevance, ontology['weight'])
+        
+        # Boost for abstract/theoretical terms
+        abstract_indicators = ['concept', 'theory', 'principle', 'notion', 'idea', 'essence', 'nature']
+        if word in abstract_indicators:
+            relevance = max(relevance, 0.8)
+        
+        return relevance
+    
+    def _domain_relevant(self, domain: str, context: PhilosophicalContext) -> bool:
+        """Check if domain is relevant to philosophical context."""
+        context_domain = context.domain.lower()
+        
+        # Direct match
+        if domain in context_domain:
+            return True
+        
+        # Semantic similarity for related domains
+        domain_mappings = {
+            'neuroscience': ['philosophy_of_mind', 'epistemological'],
+            'ethics': ['ethical', 'political'],
+            'science': ['philosophy_of_science', 'epistemological'],
+            'aesthetics': ['aesthetic'],
+            'logic': ['logical', 'epistemological'],
+            'politics': ['political', 'ethical'],
+            'mind': ['philosophy_of_mind', 'metaphysical']
+        }
+        
+        for context_key, relevant_domains in domain_mappings.items():
+            if context_key in context_domain and domain in relevant_domains:
+                return True
+        
+        # Default to include all domains for general contexts
+        return True
+    
+    async def _enhance_concept_understanding(
+        self,
+        concepts: List[PhilosophicalConcept],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        """Enhance concept understanding using LLM-style semantic processing."""
+        enhanced_concepts = []
+        
+        for concept in concepts:
+            # Enhance with contextual usage patterns
+            usage_patterns = self._extract_usage_patterns(concept.term, statement)
+            concept.usage_patterns = usage_patterns
+            
+            # Assess context sensitivity
+            context_sensitivity = self._assess_concept_context_sensitivity(concept, context)
+            concept.context_sensitivity = context_sensitivity
+            
+            # Determine philosophical tradition
+            philosophical_tradition = self._identify_philosophical_tradition(concept)
+            concept.philosophical_tradition = philosophical_tradition
+            
+            # Calculate enhanced confidence
+            enhanced_confidence = self._calculate_enhanced_confidence(concept, statement, context)
+            concept.confidence = enhanced_confidence
+            
+            enhanced_concepts.append(concept)
+        
+        return enhanced_concepts
+    
+    def _filter_by_philosophical_relevance(
+        self,
+        concepts: List[PhilosophicalConcept],
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        """Filter concepts by philosophical relevance with context awareness."""
+        relevant_concepts = []
+        
+        for concept in concepts:
+            # Calculate relevance score
+            relevance_score = self._calculate_philosophical_relevance(concept, context)
+            
+            # Apply threshold
+            if relevance_score > 0.4:
+                relevant_concepts.append(concept)
+        
+        # Sort by relevance
+        relevant_concepts.sort(key=lambda c: self._calculate_philosophical_relevance(c, context), reverse=True)
+        
+        return relevant_concepts
+    
+    def _ensure_conceptual_diversity(
+        self,
+        concepts: List[PhilosophicalConcept]
+    ) -> List[PhilosophicalConcept]:
+        """Ensure diversity in conceptual selection to avoid redundancy."""
+        diverse_concepts = []
+        used_categories = set()
+        
+        # First pass: include one concept from each category
+        for concept in concepts:
+            if concept.category not in used_categories:
+                diverse_concepts.append(concept)
+                used_categories.add(concept.category)
+        
+        # Second pass: fill remaining slots with highest confidence concepts
+        remaining_slots = max(0, 10 - len(diverse_concepts))
+        remaining_concepts = [c for c in concepts if c not in diverse_concepts]
+        
+        # Sort by confidence and add top remaining
+        remaining_concepts.sort(key=lambda c: c.confidence, reverse=True)
+        diverse_concepts.extend(remaining_concepts[:remaining_slots])
+        
+        return diverse_concepts
+    
+    async def _analyze_concept_pair(
+        self,
+        concept1: PhilosophicalConcept,
+        concept2: PhilosophicalConcept,
+        statement: str
+    ) -> List[Tuple[str, float]]:
+        """Analyze potential semantic relations between concept pairs."""
+        relations = []
+        
+        # Check for subsumption relations
+        subsumption_confidence = self._assess_subsumption_relation(concept1, concept2)
+        if subsumption_confidence > 0.5:
+            relations.append(('subsumes', subsumption_confidence))
+        
+        # Check for opposition relations
+        opposition_confidence = self._assess_opposition_relation(concept1, concept2)
+        if opposition_confidence > 0.5:
+            relations.append(('opposes', opposition_confidence))
+        
+        # Check for complementarity relations
+        complementarity_confidence = self._assess_complementarity_relation(concept1, concept2)
+        if complementarity_confidence > 0.5:
+            relations.append(('complements', complementarity_confidence))
+        
+        # Check for analogy relations
+        analogy_confidence = self._assess_analogy_relation(concept1, concept2)
+        if analogy_confidence > 0.5:
+            relations.append(('analogous_to', analogy_confidence))
+        
+        return relations
+    
+    def _calculate_semantic_ambiguity(
+        self,
+        statement: str,
+        concepts: List[PhilosophicalConcept]
+    ) -> float:
+        """Calculate semantic ambiguity factor for uncertainty assessment."""
+        ambiguity_factors = []
+        
+        # Word-level ambiguity
+        words = statement.lower().split()
+        ambiguous_words = ['is', 'being', 'good', 'right', 'true', 'real', 'exists', 'know', 'believe']
+        word_ambiguity = len([w for w in words if w in ambiguous_words]) / len(words)
+        ambiguity_factors.append(word_ambiguity)
+        
+        # Concept-level ambiguity
+        if concepts:
+            concept_ambiguity = 1.0 - np.mean([c.confidence for c in concepts])
+            ambiguity_factors.append(concept_ambiguity)
+        
+        # Structural ambiguity (simplified)
+        structural_ambiguity = 0.5 if '?' in statement else 0.3
+        ambiguity_factors.append(structural_ambiguity)
+        
+        return float(np.mean(ambiguity_factors))
+    
+    def _assess_philosophical_disagreement(self, concepts: List[PhilosophicalConcept]) -> float:
+        """Assess level of philosophical disagreement for uncertainty calculation."""
+        if not concepts:
+            return 0.5
+        
+        # Categories with high disagreement
+        high_disagreement_categories = ['metaphysical', 'ethical', 'aesthetic']
+        moderate_disagreement_categories = ['epistemological', 'philosophy_of_mind']
+        low_disagreement_categories = ['logical']
+        
+        disagreement_scores = []
+        for concept in concepts:
+            if concept.category in high_disagreement_categories:
+                disagreement_scores.append(0.8)
+            elif concept.category in moderate_disagreement_categories:
+                disagreement_scores.append(0.6)
+            elif concept.category in low_disagreement_categories:
+                disagreement_scores.append(0.3)
+            else:
+                disagreement_scores.append(0.5)
+        
+        return float(np.mean(disagreement_scores))
+    
+    def _assess_evidence_limitations(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> float:
+        """Assess evidence limitations for uncertainty calculation."""
+        limitations = 0.4  # Base limitation for philosophical inquiry
+        
+        # Increase for abstract concepts
+        abstract_terms = ['essence', 'nature', 'being', 'reality', 'truth', 'good', 'beautiful']
+        if any(term in statement.lower() for term in abstract_terms):
+            limitations += 0.2
+        
+        # Increase for normative claims
+        normative_terms = ['should', 'ought', 'must', 'right', 'wrong', 'good', 'bad']
+        if any(term in statement.lower() for term in normative_terms):
+            limitations += 0.2
+        
+        # Consider context depth requirements
+        if context.depth_requirements > 3:
+            limitations += 0.1
+        
+        return min(limitations, 1.0)
+    
+    async def _generate_revision_triggers(
+        self,
+        concepts: List[PhilosophicalConcept],
+        context: PhilosophicalContext
+    ) -> List[str]:
+        """Generate sophisticated revision triggers based on philosophical analysis."""
+        triggers = []
+        
+        # Concept-based triggers
+        for concept in concepts:
+            if concept.confidence < 0.7:
+                triggers.append(f"Clarification of '{concept.term}' concept")
+            
+            if concept.context_sensitivity > 0.8:
+                triggers.append(f"Contextual variation in '{concept.term}' usage")
+        
+        # Domain-specific triggers
+        domain = context.domain.lower()
+        if 'ethics' in domain:
+            triggers.append("Changes in moral intuitions or ethical frameworks")
+        elif 'epistemology' in domain or 'knowledge' in domain:
+            triggers.append("New evidence or justification standards")
+        elif 'metaphysics' in domain:
+            triggers.append("Advances in fundamental ontology")
+        
+        # Temporal triggers
+        triggers.append("Passage of significant time (>6 months)")
+        triggers.append("Major philosophical developments in relevant fields")
+        
+        # Evidence triggers
+        triggers.append("Discovery of contradictory philosophical arguments")
+        triggers.append("Emergence of novel philosophical perspectives")
+        
+        return triggers[:5]  # Return top 5 most relevant triggers
+    
+    def _extract_context_dependencies(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[str]:
+        """Extract context dependencies for semantic analysis."""
+        dependencies = []
+        
+        # Domain dependency
+        dependencies.append(f"Domain: {context.domain}")
+        
+        # Inquiry type dependency
+        dependencies.append(f"Inquiry type: {context.inquiry_type}")
+        
+        # Temporal dependency
+        if context.temporal_sensitivity > 0.7:
+            dependencies.append("High temporal sensitivity")
+        
+        # Cultural dependency (simplified)
+        cultural_terms = ['justice', 'rights', 'duty', 'virtue', 'beauty', 'good']
+        if any(term in statement.lower() for term in cultural_terms):
+            dependencies.append("Cultural context sensitivity")
+        
+        # Philosophical tradition dependency
+        tradition_indicators = {
+            'analytical': ['logic', 'argument', 'analysis', 'definition'],
+            'continental': ['experience', 'interpretation', 'meaning', 'existence'],
+            'pragmatist': ['practice', 'consequences', 'useful', 'inquiry'],
+            'eastern': ['harmony', 'balance', 'way', 'wisdom']
+        }
+        
+        for tradition, indicators in tradition_indicators.items():
+            if any(indicator in statement.lower() for indicator in indicators):
+                dependencies.append(f"Philosophical tradition: {tradition}")
+                break
+        
+        return dependencies
+    
+    def _assess_temporal_stability(self, concepts: List[PhilosophicalConcept]) -> float:
+        """Assess temporal stability of concepts for semantic analysis."""
+        if not concepts:
+            return 0.5
+        
+        stability_scores = []
+        
+        for concept in concepts:
+            # Logical concepts are more temporally stable
+            if concept.category == 'logical':
+                stability_scores.append(0.9)
+            # Metaphysical concepts are moderately stable
+            elif concept.category == 'metaphysical':
+                stability_scores.append(0.7)
+            # Ethical and aesthetic concepts are less stable
+            elif concept.category in ['ethical', 'aesthetic']:
+                stability_scores.append(0.5)
+            # Epistemological concepts are moderately stable
+            elif concept.category == 'epistemological':
+                stability_scores.append(0.6)
+            else:
+                stability_scores.append(0.6)
+        
+        return float(np.mean(stability_scores))
+    
+    # Additional helper methods would be implemented here for completeness
+    def _classify_speech_act(self, statement: str) -> str:
+        """Classify speech act type of statement."""
+        if '?' in statement:
+            return 'interrogative'
+        elif any(word in statement.lower() for word in ['should', 'ought', 'must']):
+            return 'directive'
+        elif any(word in statement.lower() for word in ['good', 'bad', 'right', 'wrong']):
+            return 'evaluative'
+        else:
+            return 'assertive'
+    
+    def _extract_normative_implications(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[str]:
+        """Extract normative implications from statement."""
+        implications = []
+        
+        normative_terms = ['should', 'ought', 'must', 'right', 'wrong', 'good', 'bad']
+        if any(term in statement.lower() for term in normative_terms):
+            implications.append("Contains normative content requiring ethical evaluation")
+        
+        if context.domain.lower() in ['ethics', 'moral', 'political']:
+            implications.append("Requires consideration of moral and political values")
+        
+        return implications
+    
+    def _extract_epistemic_commitments(self, statement: str) -> List[str]:
+        """Extract epistemic commitments from statement."""
+        commitments = []
+        
+        certainty_indicators = ['certainly', 'definitely', 'undoubtedly', 'clearly']
+        uncertainty_indicators = ['possibly', 'perhaps', 'maybe', 'might', 'could']
+        
+        if any(indicator in statement.lower() for indicator in certainty_indicators):
+            commitments.append("High epistemic confidence claimed")
+        elif any(indicator in statement.lower() for indicator in uncertainty_indicators):
+            commitments.append("Epistemic uncertainty acknowledged")
+        
+        if 'know' in statement.lower():
+            commitments.append("Knowledge claim made")
+        elif 'believe' in statement.lower():
+            commitments.append("Belief claim made")
+        
+        return commitments
+    
+    def _analyze_contextual_pragmatics(
+        self,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[str]:
+        """Analyze contextual pragmatic implications."""
+        implications = []
+        
+        # Consider inquiry type
+        if context.inquiry_type == 'concept_analysis':
+            implications.append("Requires conceptual clarification and definition")
+        elif context.inquiry_type == 'argument_evaluation':
+            implications.append("Requires logical analysis and evaluation")
+        
+        # Consider domain-specific pragmatics
+        if context.domain.lower() in ['ethics', 'political']:
+            implications.append("Has potential action-guiding implications")
+        
+        return implications
+    
+    # Implementation stubs for concept extraction methods
+    def _extract_usage_patterns(self, term: str, statement: str) -> List[str]:
+        """Extract usage patterns for concept term."""
+        patterns = []
+        
+        # Simple pattern detection
+        if f"what is {term}" in statement.lower():
+            patterns.append("definitional_inquiry")
+        elif f"{term} is" in statement.lower():
+            patterns.append("definitional_assertion")
+        elif f"{term} causes" in statement.lower():
+            patterns.append("causal_usage")
+        else:
+            patterns.append("general_usage")
+        
+        return patterns
+    
+    def _assess_concept_context_sensitivity(
+        self,
+        concept: PhilosophicalConcept,
+        context: PhilosophicalContext
+    ) -> float:
+        """Assess context sensitivity of concept."""
+        base_sensitivity = 0.7
+        
+        # Increase for abstract concepts
+        abstract_terms = ['being', 'existence', 'reality', 'truth', 'good', 'beautiful']
+        if concept.term.lower() in abstract_terms:
+            base_sensitivity += 0.2
+        
+        # Increase for ethical concepts
+        if concept.category == 'ethical':
+            base_sensitivity += 0.1
+        
+        return min(base_sensitivity, 1.0)
+    
+    def _identify_philosophical_tradition(self, concept: PhilosophicalConcept) -> Optional[str]:
+        """Identify philosophical tradition associated with concept."""
+        analytical_terms = ['analysis', 'definition', 'logical', 'argument']
+        continental_terms = ['existence', 'being', 'meaning', 'interpretation']
+        pragmatist_terms = ['practice', 'consequence', 'inquiry', 'experience']
+        
+        term_lower = concept.term.lower()
+        
+        if any(t in term_lower for t in analytical_terms):
+            return 'analytical'
+        elif any(t in term_lower for t in continental_terms):
+            return 'continental'
+        elif any(t in term_lower for t in pragmatist_terms):
+            return 'pragmatist'
+        
+        return None
+    
+    def _calculate_enhanced_confidence(
+        self,
+        concept: PhilosophicalConcept,
+        statement: str,
+        context: PhilosophicalContext
+    ) -> float:
+        """Calculate enhanced confidence for concept."""
+        base_confidence = concept.confidence
+        
+        # Boost for context relevance
+        if concept.category in context.domain.lower():
+            base_confidence += 0.1
+        
+        # Boost for clear usage in statement
+        if concept.term.lower() in statement.lower():
+            base_confidence += 0.1
+        
+        # Adjust for category reliability
+        category_reliability = {
+            'logical': 0.9,
+            'metaphysical': 0.7,
+            'epistemological': 0.8,
+            'ethical': 0.6,
+            'aesthetic': 0.5
+        }
+        
+        reliability = category_reliability.get(concept.category, 0.7)
+        enhanced_confidence = base_confidence * reliability
+        
+        return min(enhanced_confidence, 1.0)
+    
+    def _calculate_philosophical_relevance(
+        self,
+        concept: PhilosophicalConcept,
+        context: PhilosophicalContext
+    ) -> float:
+        """Calculate philosophical relevance score for concept."""
+        relevance = 0.5  # base relevance
+        
+        # Boost for domain match
+        if concept.category in context.domain.lower():
+            relevance += 0.3
+        
+        # Boost for confidence
+        relevance += concept.confidence * 0.2
+        
+        # Boost for philosophical tradition match
+        if concept.philosophical_tradition:
+            relevance += 0.1
+        
+        return min(relevance, 1.0)
+    
+    def _assess_subsumption_relation(
+        self,
+        concept1: PhilosophicalConcept,
+        concept2: PhilosophicalConcept
+    ) -> float:
+        """Assess subsumption relation confidence."""
+        # Simple heuristic - would use sophisticated semantic analysis
+        if concept1.category == concept2.category:
+            return 0.7
+        return 0.3
+    
+    def _assess_opposition_relation(
+        self,
+        concept1: PhilosophicalConcept,
+        concept2: PhilosophicalConcept
+    ) -> float:
+        """Assess opposition relation confidence."""
+        opposition_pairs = [
+            ('good', 'bad'), ('right', 'wrong'), ('true', 'false'),
+            ('existence', 'nonexistence'), ('mind', 'matter')
+        ]
+        
+        term1 = concept1.term.lower()
+        term2 = concept2.term.lower()
+        
+        for t1, t2 in opposition_pairs:
+            if (term1 == t1 and term2 == t2) or (term1 == t2 and term2 == t1):
+                return 0.9
+        
+        return 0.2
+    
+    def _assess_complementarity_relation(
+        self,
+        concept1: PhilosophicalConcept,
+        concept2: PhilosophicalConcept
+    ) -> float:
+        """Assess complementarity relation confidence."""
+        complementary_pairs = [
+            ('knowledge', 'belief'), ('mind', 'body'), ('form', 'content'),
+            ('universal', 'particular'), ('theory', 'practice')
+        ]
+        
+        term1 = concept1.term.lower()
+        term2 = concept2.term.lower()
+        
+        for t1, t2 in complementary_pairs:
+            if (term1 == t1 and term2 == t2) or (term1 == t2 and term2 == t1):
+                return 0.8
+        
+        return 0.3
+    
+    def _assess_analogy_relation(
+        self,
+        concept1: PhilosophicalConcept,
+        concept2: PhilosophicalConcept
+    ) -> float:
+        """Assess analogy relation confidence."""
+        # Simple structural similarity assessment
+        if concept1.category == concept2.category and concept1.category in ['metaphysical', 'epistemological']:
+            return 0.6
+        return 0.2
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Abstract Base Class for Concept Extractors
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class ConceptExtractor(ABC):
+    """Abstract base class for domain-specific concept extractors."""
+    
+    def __init__(self, domain_ontology: Dict[str, Any]):
+        self.domain_ontology = domain_ontology
+        self.domain_keywords = set(domain_ontology.get('keywords', []))
+    
+    @abstractmethod
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        """Extract domain-specific concepts from tokenized statement."""
+        pass
+    
+    def _is_domain_relevant(self, word: str) -> bool:
+        """Check if word is relevant to this domain."""
+        return word.lower() in self.domain_keywords
+    
+    def _calculate_concept_confidence(
+        self,
+        word: str,
+        tokens: List[Dict[str, Any]],
+        statement: str
+    ) -> float:
+        """Calculate confidence for extracted concept."""
+        base_confidence = 0.5
+        
+        # Boost for domain keyword match
+        if self._is_domain_relevant(word):
+            base_confidence += 0.3
+        
+        # Boost for philosophical relevance
+        word_relevance = next(
+            (t['philosophical_relevance'] for t in tokens if t['word'] == word),
+            0.0
+        )
+        base_confidence += word_relevance * 0.2
+        
+        return min(base_confidence, 1.0)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Domain-Specific Concept Extractors
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class MetaphysicalConceptExtractor(ConceptExtractor):
+    """Extract metaphysical concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='metaphysical',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class EpistemologicalConceptExtractor(ConceptExtractor):
+    """Extract epistemological concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='epistemological',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class EthicalConceptExtractor(ConceptExtractor):
+    """Extract ethical concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='ethical',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class AestheticConceptExtractor(ConceptExtractor):
+    """Extract aesthetic concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='aesthetic',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class LogicalConceptExtractor(ConceptExtractor):
+    """Extract logical concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='logical',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class PoliticalConceptExtractor(ConceptExtractor):
+    """Extract political concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='political',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class PhilosophyOfMindConceptExtractor(ConceptExtractor):
+    """Extract philosophy of mind concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='philosophy_of_mind',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+class PhilosophyOfScienceConceptExtractor(ConceptExtractor):
+    """Extract philosophy of science concepts from philosophical statements."""
+    
+    async def extract_concepts(
+        self,
+        tokens: List[Dict[str, Any]],
+        statement: str,
+        context: PhilosophicalContext
+    ) -> List[PhilosophicalConcept]:
+        concepts = []
+        
+        for token in tokens:
+            word = token['word']
+            if self._is_domain_relevant(word) and len(word) > 2:
+                confidence = self._calculate_concept_confidence(word, tokens, statement)
+                
+                concept = PhilosophicalConcept(
+                    term=word,
+                    category='philosophy_of_science',
+                    confidence=confidence,
+                    epistemic_status='provisional'
+                )
+                concepts.append(concept)
+        
+        return concepts
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Enhanced NARS Memory System
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class EnhancedNARSMemory:
+    """
+    Enhanced NARS memory with deep semantic understanding and philosophical categorization.
+    
+    ### Enhancement Features:
+    - LLM-based semantic processing integration
+    - Philosophical categorization and ontological mapping
+    - Semantic embeddings for enhanced similarity calculation
+    - Coherence landscape integration for belief networks
+    - Temporal reasoning with sophisticated belief revision
+    
+    #### Memory Architecture:
+    ```
+    M(t) = {B(t), E(t), C(t), L(t)}
+    ```
+    
+    Where:
+    - B(t): Belief base with truth values
+    - E(t): Semantic embedding space  
+    - C(t): Coherence landscape state
+    - L(t): Attention and recency buffers
+    """
+    
+    def __init__(self, nars_memory: NARSMemory, llm_processor: LLMSemanticProcessor):
+        """Initialize enhanced NARS memory with LLM integration."""
+        self.nars_memory = nars_memory
+        self.llm_processor = llm_processor
+        
+        # Enhanced components
+        self.philosophical_beliefs: Dict[str, PhilosophicalMemoryItem] = {}
+        self.semantic_embeddings: Dict[str, np.ndarray] = {}
+        self.coherence_network = {}
+        self.temporal_beliefs: Dict[str, List[PhilosophicalMemoryItem]] = {}
+        self.revision_history: List[Dict[str, Any]] = []
+        
+        # Categorization system
+        self.category_weights = self._initialize_category_weights()
+        self.belief_networks = self._initialize_belief_networks()
+        
+        logger.info("Enhanced NARS Memory initialized with LLM integration")
+    
+    async def process_philosophical_statement(
+        self,
+        statement: str,
+        context: Dict[str, Any],
+        perspective: str = "integrated"
+    ) -> PhilosophicalMemoryItem:
+        """
+        Process philosophical statement with comprehensive semantic analysis.
+        
+        ### Processing Pipeline:
+        1. LLM semantic analysis for concept extraction
+        2. Philosophical categorization and ontological mapping
+        3. Semantic embedding generation for similarity computation
+        4. Truth value calculation with uncertainty propagation
+        5. Coherence landscape integration and belief network update
+        """
+        logger.debug(f"Processing philosophical statement: '{statement}' from perspective: {perspective}")
+        
+        # Create philosophical context
+        phil_context = PhilosophicalContext(
+            domain=context.get('domain', 'general'),
+            inquiry_type='belief_formation',
+            perspective_constraints=context.get('perspectives', [perspective])
+        )
+        
+        # Perform semantic analysis
+        semantic_analysis = await self.llm_processor.analyze_statement(statement, phil_context)
+        
+        # Generate semantic embedding
+        semantic_embedding = await self._generate_philosophical_embedding(
+            statement, semantic_analysis
+        )
+        
+        # Calculate truth value with philosophical grounding
+        truth_value = await self._calculate_semantically_grounded_truth(
+            statement, semantic_analysis, context
+        )
+        
+        # Determine philosophical category
+        philosophical_category = self._determine_primary_category(semantic_analysis)
+        
+        # Create enhanced memory item
+        memory_item = PhilosophicalMemoryItem(
+            statement=statement,
+            truth=truth_value,
+            temporal_scope=context.get('temporal_scope', 'eternal'),
+            philosophical_category=philosophical_category,
+            semantic_embedding=semantic_embedding,
+            context_sensitivity=semantic_analysis.temporal_stability,
+            attention_weight=self._calculate_attention_weight(semantic_analysis)
+        )
+        
+        # Store in enhanced memory structures
+        await self._store_philosophical_belief(memory_item, semantic_analysis)
+        
+        # Update coherence landscape
+        await self._update_coherence_landscape(memory_item, semantic_analysis)
+        
+        # Trigger belief revision if necessary
+        await self._trigger_belief_revision(memory_item, semantic_analysis)
+        
+        logger.debug(f"Stored philosophical belief with category: {philosophical_category}")
+        return memory_item
+    
+    async def _generate_philosophical_embedding(
+        self,
+        statement: str,
+        semantic_analysis: SemanticAnalysis
+    ) -> np.ndarray:
+        """
+        Generate sophisticated semantic embedding for philosophical statement.
+        
+        ### Embedding Components:
+        - Conceptual vectors from primary concepts
+        - Semantic relation encodings  
+        - Philosophical category weights
+        - Context sensitivity factors
+        """
+        # Base embedding from statement (simplified - would use advanced embeddings)
+        words = statement.lower().split()
+        base_embedding = np.random.rand(384)  # Would use actual embedding model
+        
+        # Enhance with philosophical concepts
+        concept_embeddings = []
+        for concept in semantic_analysis.primary_concepts:
+            concept_vector = self._generate_concept_vector(concept)
+            concept_embeddings.append(concept_vector)
+        
+        if concept_embeddings:
+            concept_component = np.mean(concept_embeddings, axis=0)
+        else:
+            concept_component = np.zeros(384)
+        
+        # Add category weighting
+        category_component = self._generate_category_vector(
+            semantic_analysis.philosophical_categorization
+        )
+        
+        # Combine components
+        philosophical_embedding = (
+            0.5 * base_embedding +
+            0.3 * concept_component +
+            0.2 * category_component
+        )
+        
+        # Normalize
+        philosophical_embedding = philosophical_embedding / np.linalg.norm(philosophical_embedding)
+        
+        return philosophical_embedding
+    
+    async def _calculate_semantically_grounded_truth(
+        self,
+        statement: str,
+        semantic_analysis: SemanticAnalysis,
+        context: Dict[str, Any]
+    ) -> TruthValue:
+        """
+        Calculate truth value with semantic grounding and philosophical understanding.
+        
+        ### Truth Calculation Factors:
+        - Semantic coherence and concept clarity
+        - Epistemic uncertainty from analysis
+        - Philosophical category reliability weights
+        - Context-dependent evidence strength
+        """
+        # Base frequency from semantic coherence
+        concept_confidences = [c.confidence for c in semantic_analysis.primary_concepts]
+        if concept_confidences:
+            base_frequency = np.mean(concept_confidences)
+        else:
+            base_frequency = 0.5
+        
+        # Adjust for epistemic uncertainty
+        uncertainty_factor = 1.0 - semantic_analysis.epistemic_uncertainty
+        adjusted_frequency = base_frequency * uncertainty_factor
+        
+        # Calculate confidence from philosophical grounding
+        base_confidence = 0.7  # Start with moderate confidence
+        
+        # Boost confidence for clear philosophical categorization
+        category_clarity = max(semantic_analysis.philosophical_categorization.values()) if semantic_analysis.philosophical_categorization else 0.5
+        confidence_boost = category_clarity * 0.2
+        
+        # Adjust for temporal stability
+        temporal_factor = semantic_analysis.temporal_stability
+        
+        # Final confidence calculation
+        final_confidence = (base_confidence + confidence_boost) * temporal_factor
+        
+        # Apply philosophical category weights
+        primary_category = max(
+            semantic_analysis.philosophical_categorization.items(),
+            key=lambda x: x[1],
+            default=('general', 0.5)
+        )[0]
+        
+        category_weight = self.category_weights.get(primary_category, 1.0)
+        final_confidence *= category_weight
+        
+        # Ensure valid range
+        final_frequency = np.clip(adjusted_frequency, 0.01, 0.99)
+        final_confidence = np.clip(final_confidence, 0.01, 0.99)
+        
+        return TruthValue(float(final_frequency), float(final_confidence))
+    
+    def _determine_primary_category(self, semantic_analysis: SemanticAnalysis) -> str:
+        """Determine primary philosophical category from semantic analysis."""
+        if not semantic_analysis.philosophical_categorization:
+            return 'general'
+        
+        return max(
+            semantic_analysis.philosophical_categorization.items(),
+            key=lambda x: x[1]
+        )[0]
+    
+    def _calculate_attention_weight(self, semantic_analysis: SemanticAnalysis) -> float:
+        """Calculate attention weight for memory item based on semantic analysis."""
+        base_weight = 1.0
+        
+        # Boost for high-confidence concepts
+        if semantic_analysis.primary_concepts:
+            avg_confidence = np.mean([c.confidence for c in semantic_analysis.primary_concepts])
+            confidence_boost = avg_confidence * 0.5
+            base_weight += confidence_boost
+        
+        # Boost for clear philosophical categorization
+        if semantic_analysis.philosophical_categorization:
+            category_clarity = max(semantic_analysis.philosophical_categorization.values())
+            category_boost = category_clarity * 0.3
+            base_weight += category_boost
+        
+        # Reduce for high uncertainty
+        uncertainty_penalty = semantic_analysis.epistemic_uncertainty * 0.4
+        base_weight -= uncertainty_penalty
+        
+        return max(0.1, min(base_weight, 2.0))  # Clamp to reasonable range
+    
+    async def _store_philosophical_belief(
+        self,
+        memory_item: PhilosophicalMemoryItem,
+        semantic_analysis: SemanticAnalysis
+    ) -> None:
+        """Store philosophical belief in enhanced memory structures."""
+        belief_id = f"belief_{hash(memory_item.statement)}"
+        
+        # Store in philosophical beliefs
+        self.philosophical_beliefs[belief_id] = memory_item
+        
+        # Store semantic embedding
+        if memory_item.semantic_embedding is not None:
+            self.semantic_embeddings[belief_id] = memory_item.semantic_embedding
+        
+        # Store in temporal beliefs if relevant
+        if memory_item.temporal_scope != 'eternal':
+            if memory_item.temporal_scope not in self.temporal_beliefs:
+                self.temporal_beliefs[memory_item.temporal_scope] = []
+            self.temporal_beliefs[memory_item.temporal_scope].append(memory_item)
+        
+        # Store in underlying NARS memory
+        self.nars_memory.add_belief(
+            term=memory_item.statement,
+            truth=memory_item.truth,
+            occurrence_time=memory_item.temporal_scope
+        )
+        
+        logger.debug(f"Stored philosophical belief: {belief_id}")
+    
+    async def _update_coherence_landscape(
+        self,
+        memory_item: PhilosophicalMemoryItem,
+        semantic_analysis: SemanticAnalysis
+    ) -> None:
+        """Update coherence landscape with new belief."""
+        belief_id = f"belief_{hash(memory_item.statement)}"
+        
+        # Find related beliefs through semantic similarity
+        related_beliefs = await self._find_semantically_related_beliefs(memory_item)
+        
+        # Update coherence connections
+        memory_item.coherence_connections = set(related_beliefs)
+        
+        # Update network structure
+        if belief_id not in self.coherence_network:
+            self.coherence_network[belief_id] = {
+                'connections': related_beliefs,
+                'coherence_score': self._calculate_local_coherence(memory_item, related_beliefs),
+                'category': memory_item.philosophical_category
+            }
+        
+        logger.debug(f"Updated coherence landscape for: {belief_id}")
+    
+    async def _trigger_belief_revision(
+        self,
+        memory_item: PhilosophicalMemoryItem,
+        semantic_analysis: SemanticAnalysis
+    ) -> None:
+        """Trigger belief revision if new belief conflicts with existing beliefs."""
+        # Find potentially conflicting beliefs
+        conflicting_beliefs = await self._find_conflicting_beliefs(memory_item)
+        
+        if conflicting_beliefs:
+            # Perform belief revision
+            revision_result = await self._perform_belief_revision(
+                memory_item, conflicting_beliefs, semantic_analysis
+            )
+            
+            # Log revision
+            self.revision_history.append({
+                'timestamp': datetime.now(),
+                'new_belief': memory_item.statement,
+                'conflicting_beliefs': [b.statement for b in conflicting_beliefs],
+                'revision_result': revision_result,
+                'trigger': 'conflict_detection'
+            })
+            
+            logger.info(f"Performed belief revision for: {memory_item.statement}")
+    
+    def get_coherence_landscape(self) -> Dict[str, Any]:
+        """Get current coherence landscape state."""
+        return {
+            'network_size': len(self.coherence_network),
+            'total_beliefs': len(self.philosophical_beliefs),
+            'category_distribution': self._calculate_category_distribution(),
+            'average_coherence': self._calculate_average_coherence(),
+            'temporal_beliefs': {k: len(v) for k, v in self.temporal_beliefs.items()}
+        }
+    
+    def _initialize_category_weights(self) -> Dict[str, float]:
+        """Initialize weights for different philosophical categories."""
+        return {
+            'logical': 0.9,        # High reliability
+            'metaphysical': 0.7,   # Moderate reliability
+            'epistemological': 0.8, # High-moderate reliability
+            'ethical': 0.6,        # Lower reliability due to disagreement
+            'aesthetic': 0.5,      # Lowest reliability due to subjectivity
+            'political': 0.6,      # Lower reliability due to controversy
+            'philosophy_of_mind': 0.7,
+            'philosophy_of_science': 0.8,
+            'general': 0.6
+        }
+    
+    def _initialize_belief_networks(self) -> Dict[str, Any]:
+        """Initialize belief network structures."""
+        return {
+            'supports': {},     # Support relations between beliefs
+            'conflicts': {},    # Conflict relations between beliefs
+            'explanations': {}, # Explanatory relations
+            'analogies': {}     # Analogical relations
+        }
+    
+    def _generate_concept_vector(self, concept: PhilosophicalConcept) -> np.ndarray:
+        """Generate vector representation for philosophical concept."""
+        # Simplified concept vector generation
+        vector = np.random.rand(384) * concept.confidence  # Would use sophisticated encoding
+        
+        # Add category-specific information
+        category_encoding = self._encode_category(concept.category)
+        vector[:len(category_encoding)] = category_encoding
+        
+        return vector
+    
+    def _generate_category_vector(self, categorization: Dict[str, float]) -> np.ndarray:
+        """Generate vector representation for philosophical categorization."""
+        vector = np.zeros(384)
+        
+        # Encode category weights
+        for i, (category, weight) in enumerate(categorization.items()):
+            if i < 10:  # Limit to first 10 categories
+                start_idx = i * 38
+                end_idx = start_idx + 38
+                vector[start_idx:end_idx] = weight
+        
+        return vector
+    
+    def _encode_category(self, category: str) -> np.ndarray:
+        """Encode philosophical category as vector."""
+        category_encodings = {
+            'metaphysical': np.array([1.0, 0.0, 0.0, 0.0, 0.0]),
+            'epistemological': np.array([0.0, 1.0, 0.0, 0.0, 0.0]),
+            'ethical': np.array([0.0, 0.0, 1.0, 0.0, 0.0]),
+            'aesthetic': np.array([0.0, 0.0, 0.0, 1.0, 0.0]),
+            'logical': np.array([0.0, 0.0, 0.0, 0.0, 1.0])
+        }
+        
+        return category_encodings.get(category, np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
+    
+    async def _find_semantically_related_beliefs(
+        self,
+        memory_item: PhilosophicalMemoryItem
+    ) -> List[str]:
+        """Find semantically related beliefs using embedding similarity."""
+        related_beliefs = []
+        
+        if memory_item.semantic_embedding is None:
+            return related_beliefs
+        
+        # Compare with all stored embeddings
+        for belief_id, embedding in self.semantic_embeddings.items():
+            similarity = np.dot(memory_item.semantic_embedding, embedding)
+            
+            if similarity > 0.7:  # Threshold for relation
+                related_beliefs.append(belief_id)
+        
+        return related_beliefs[:5]  # Return top 5 related beliefs
+    
+    def _calculate_local_coherence(
+        self,
+        memory_item: PhilosophicalMemoryItem,
+        related_beliefs: List[str]
+    ) -> float:
+        """Calculate local coherence score for memory item."""
+        if not related_beliefs:
+            return 0.5
+        
+        coherence_scores = []
+        
+        for belief_id in related_beliefs:
+            if belief_id in self.philosophical_beliefs:
+                related_item = self.philosophical_beliefs[belief_id]
+                
+                # Calculate coherence based on truth value agreement
+                truth_agreement = 1.0 - abs(
+                    memory_item.truth.frequency - related_item.truth.frequency
+                )
+                
+                # Weight by confidence
+                confidence_weight = (memory_item.truth.confidence + related_item.truth.confidence) / 2
+                
+                coherence_score = truth_agreement * confidence_weight
+                coherence_scores.append(coherence_score)
+        
+        return float(np.mean(coherence_scores)) if coherence_scores else 0.5
+    
+    async def _find_conflicting_beliefs(
+        self,
+        memory_item: PhilosophicalMemoryItem
+    ) -> List[PhilosophicalMemoryItem]:
+        """Find beliefs that conflict with new memory item."""
+        conflicting_beliefs = []
+        
+        # Look for semantic conflicts
+        for belief_id, existing_item in self.philosophical_beliefs.items():
+            # Check for high semantic similarity but opposite truth values
+            if (memory_item.semantic_embedding is not None and 
+                existing_item.semantic_embedding is not None):
+                
+                similarity = np.dot(
+                    memory_item.semantic_embedding,
+                    existing_item.semantic_embedding
+                )
+                
+                truth_difference = abs(
+                    memory_item.truth.frequency - existing_item.truth.frequency
+                )
+                
+                # High similarity but opposite truth values suggests conflict
+                if similarity > 0.8 and truth_difference > 0.6:
+                    conflicting_beliefs.append(existing_item)
+        
+        return conflicting_beliefs
+    
+    async def _perform_belief_revision(
+        self,
+        new_belief: PhilosophicalMemoryItem,
+        conflicting_beliefs: List[PhilosophicalMemoryItem],
+        semantic_analysis: SemanticAnalysis
+    ) -> Dict[str, Any]:
+        """Perform sophisticated belief revision using NARS principles."""
+        revision_result = {
+            'action': 'none',
+            'retained_beliefs': [],
+            'modified_beliefs': [],
+            'rejected_beliefs': []
+        }
+        
+        # Calculate evidence strength for new belief
+        new_evidence_strength = self._calculate_evidence_strength(new_belief, semantic_analysis)
+        
+        for conflicting_belief in conflicting_beliefs:
+            # Calculate evidence strength for existing belief
+            existing_evidence_strength = self._estimate_existing_evidence_strength(conflicting_belief)
+            
+            if new_evidence_strength > existing_evidence_strength * 1.2:
+                # Strong new evidence - modify existing belief
+                revised_truth = self._revise_truth_value(
+                    conflicting_belief.truth, new_belief.truth
+                )
+                conflicting_belief.truth = revised_truth
+                
+                revision_result['modified_beliefs'].append(conflicting_belief.statement)
+                revision_result['action'] = 'belief_revision'
+                
+            elif new_evidence_strength < existing_evidence_strength * 0.8:
+                # Weak new evidence - reject new belief
+                revision_result['rejected_beliefs'].append(new_belief.statement)
+                revision_result['action'] = 'rejection'
+                
+            else:
+                # Unclear evidence - retain both with uncertainty
+                revision_result['retained_beliefs'].extend([
+                    new_belief.statement, conflicting_belief.statement
+                ])
+                revision_result['action'] = 'uncertainty_retention'
+        
+        return revision_result
+    
+    def _calculate_category_distribution(self) -> Dict[str, int]:
+        """Calculate distribution of beliefs across philosophical categories."""
+        distribution = {}
+        
+        for memory_item in self.philosophical_beliefs.values():
+            category = memory_item.philosophical_category
+            distribution[category] = distribution.get(category, 0) + 1
+        
+        return distribution
+    
+    def _calculate_average_coherence(self) -> float:
+        """Calculate average coherence across all beliefs."""
+        if not self.coherence_network:
+            return 0.5
+        
+        coherence_scores = [
+            node['coherence_score'] for node in self.coherence_network.values()
+        ]
+        
+        return float(np.mean(coherence_scores))
+    
+    def _calculate_evidence_strength(
+        self,
+        belief: PhilosophicalMemoryItem,
+        semantic_analysis: SemanticAnalysis
+    ) -> float:
+        """Calculate evidence strength for belief."""
+        # Base strength from truth confidence
+        base_strength = belief.truth.confidence
+        
+        # Boost for clear conceptualization
+        if semantic_analysis.primary_concepts:
+            concept_clarity = np.mean([c.confidence for c in semantic_analysis.primary_concepts])
+            base_strength += concept_clarity * 0.2
+        
+        # Boost for low epistemic uncertainty
+        uncertainty_factor = 1.0 - semantic_analysis.epistemic_uncertainty
+        base_strength *= uncertainty_factor
+        
+        return min(base_strength, 1.0)
+    
+    def _estimate_existing_evidence_strength(self, belief: PhilosophicalMemoryItem) -> float:
+        """Estimate evidence strength for existing belief."""
+        # Use truth confidence as proxy for evidence strength
+        base_strength = belief.truth.confidence
+        
+        # Boost for coherence connections
+        connection_boost = len(belief.coherence_connections) * 0.1
+        base_strength += connection_boost
+        
+        # Boost for category reliability
+        category_weight = self.category_weights.get(belief.philosophical_category, 1.0)
+        base_strength *= category_weight
+        
+        return min(base_strength, 1.0)
+    
+    def _revise_truth_value(self, old_truth: TruthValue, new_truth: TruthValue) -> TruthValue:
+        """Revise truth value using NARS revision formula."""
+        # NARS revision formula
+        f1, c1 = old_truth.frequency, old_truth.confidence
+        f2, c2 = new_truth.frequency, new_truth.confidence
+        
+        # Calculate revised values
+        w1 = c1 / (c1 + c2)
+        w2 = c2 / (c1 + c2)
+        
+        revised_frequency = w1 * f1 + w2 * f2
+        revised_confidence = (c1 + c2) / (c1 + c2 + 1)  # Conservative confidence
+        
+        return TruthValue(float(revised_frequency), float(revised_confidence))

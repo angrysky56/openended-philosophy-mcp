@@ -20,9 +20,7 @@ inquiry, following the Model Context Protocol specification for prompts.
 - Meaning Contextualization Guides
 """
 
-import json
-from datetime import datetime
-from typing import Any, Dict, List
+from __future__ import annotations
 
 import mcp.types as types
 
@@ -256,7 +254,7 @@ def generate_concept_analysis_prompt(
     context: str,
     perspectives: str | None = None,
     confidence_threshold: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for philosophical concept analysis."""
 
     # Parse parameters
@@ -331,7 +329,7 @@ def generate_coherence_exploration_prompt(
     domain: str,
     depth: str | None = None,
     focus_area: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for coherence landscape exploration."""
 
     depth_level = int(depth) if depth else 3
@@ -404,7 +402,7 @@ def generate_insight_generation_prompt(
     perspectives: str | None = None,
     include_contradictions: str | None = None,
     analysis_depth: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for multi-perspective insight generation."""
 
     depth = int(analysis_depth) if analysis_depth else 3
@@ -490,7 +488,7 @@ def generate_hypothesis_testing_prompt(
     hypothesis: str,
     test_domains: str | None = None,
     evaluation_criteria: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for philosophical hypothesis testing."""
 
     domains_guidance = ""
@@ -584,7 +582,7 @@ def generate_meaning_contextualization_prompt(
     expression: str,
     language_game: str,
     trace_genealogy: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for meaning contextualization analysis."""
 
     genealogy = trace_genealogy == "true" if trace_genealogy else False
@@ -671,7 +669,7 @@ def generate_socratic_inquiry_prompt(
     initial_claim: str,
     inquiry_depth: str | None = None,
     focus_assumptions: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for Socratic inquiry framework."""
 
     depth = int(inquiry_depth) if inquiry_depth else 3
@@ -757,7 +755,7 @@ def generate_dialectical_synthesis_prompt(
     thesis: str,
     antithesis: str,
     domain: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for dialectical synthesis workshop."""
 
     domain_context = f" within the domain of {domain}" if domain else ""
@@ -860,7 +858,7 @@ def generate_case_study_prompt(
     case_description: str,
     philosophical_issues: str,
     analytical_frameworks: str | None = None
-) -> List[types.PromptMessage]:
+) -> list[types.PromptMessage]:
     """Generate messages for philosophical case study analysis."""
 
     frameworks_guidance = ""
@@ -988,11 +986,11 @@ Let's proceed with this systematic philosophical examination of the case, bringi
 # Prompt Handler Functions
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-def list_available_prompts() -> List[types.Prompt]:
+def list_available_prompts() -> list[types.Prompt]:
     """Return list of all available philosophical prompts."""
     return list(PHILOSOPHICAL_PROMPTS.values())
 
-def get_prompt_by_name(name: str, arguments: Dict[str, str] | None = None) -> types.GetPromptResult:
+def get_prompt_by_name(name: str, arguments: dict[str, str] | None = None) -> types.GetPromptResult:
     """Get specific prompt with processed arguments."""
 
     if name not in PHILOSOPHICAL_PROMPTS:

@@ -9,7 +9,6 @@ providing semantic embeddings, attention buffer, and evidence tracking.
 import json
 import logging
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -18,41 +17,10 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .truth_functions import Truth, TruthValue
+from .truth_functions import Truth
+from .types import MemoryItem, TruthValue
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class MemoryItem:
-    """
-    Represents a belief or concept in NARS memory.
-
-    Combines NARS-style truth maintenance with semantic embeddings
-    for philosophical coherence analysis.
-    """
-    term: str
-    truth: TruthValue
-    occurrence_time: str  # "eternal" or timestamp
-    stamp: list[int]  # Evidence base IDs
-    embedding: np.ndarray | None = None
-    last_used: float = field(default_factory=lambda: datetime.now().timestamp())
-    usefulness: int = 0
-    semantic_context: dict[str, Any] = field(default_factory=dict)
-    philosophical_category: str | None = None
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to serializable dictionary."""
-        return {
-            "term": self.term,
-            "truth": self.truth.to_dict(),
-            "occurrence_time": self.occurrence_time,
-            "stamp": self.stamp,
-            "last_used": self.last_used,
-            "usefulness": self.usefulness,
-            "semantic_context": self.semantic_context,
-            "philosophical_category": self.philosophical_category
-        }
 
 
 class NARSMemory:

@@ -94,12 +94,13 @@ class NARSManager:
             # Try to find the installed ONA executable
             ona_module_path = Path(ona.__file__).parent
             possible_paths = [
+                ona_module_path / "NAR" / "NARexe",  # The actual executable name
                 ona_module_path / "NAR",
                 ona_module_path / "bin" / "NAR",
                 ona_module_path.parent / "bin" / "NAR",
             ]
             for path in possible_paths:
-                if path.exists():
+                if path.exists() and (path.is_file() if path.name in ["NAR", "NARexe"] else False):
                     logger.info(f"Using pip-installed ONA: {path}")
                     return path
         except ImportError:
@@ -147,17 +148,20 @@ class NARSManager:
         self.cleanup()
         sys.exit(0)
 
-    async def start(self) -> None:
+    async def start(self) -> bool:
         """
         Starts the ONA subprocess with proper configuration.
 
         Implements idempotent startup with configuration based on
         environment variables for maximum flexibility.
+        
+        Returns:
+            bool: True if process started successfully, False otherwise
         """
         async with self.process_lock:
             if self.process and self.process.poll() is None:
                 logger.debug("ONA process already running")
-                return
+                return True
 
             logger.info("Starting ONA subprocess...")
             try:
@@ -180,11 +184,12 @@ class NARSManager:
                 await self._send_command("*reset")
 
                 logger.info(f"ONA process started with PID: {self.process.pid}")
+                return True
 
             except Exception as e:
                 logger.error(f"Failed to start ONA process: {e}")
                 self.process = None
-                raise
+                return False
 
     async def stop(self) -> None:
         """
@@ -277,51 +282,98 @@ class NARSManager:
         """
         async with self.process_lock:
             if not self.process or self.process.poll() is not None:
-                await self.start()
+                success = await self.start()
+                if not success:
+                    return {"error": "Failed to start NARS process", "answers": [], "derivations": []}
 
             try:
+                logger.debug(f"Sending query to ONA: {narsese}")
                 await self._send_command(narsese)
+                
+                # Give ONA a moment to process
+                await asyncio.sleep(0.1)
+                
+                # Trigger inference cycle
+                await self._send_command("1")
+                
                 output_lines = await asyncio.wait_for(
                     self._get_output(),
                     timeout=timeout
                 )
-                return self._parse_output(output_lines)
+                
+                logger.debug(f"Received {len(output_lines)} lines of output")
+                result = self._parse_output(output_lines)
+                logger.debug(f"Parsed result: {result}")
+                return result
 
             except asyncio.TimeoutError:
                 logger.warning(f"ONA query timeout for: {narsese}")
-                return {"error": "timeout", "answers": [], "derivations": []}
+                return {"error": "timeout", "answers": [], "derivations": [], "raw": ""}
 
             except Exception as e:
                 logger.error(f"Error during ONA query: {e}", exc_info=True)
-                return {"error": str(e), "answers": [], "derivations": []}
+                return {"error": str(e), "answers": [], "derivations": [], "raw": ""}
 
     async def _get_output(self) -> list[str]:
         """
-        Reads output from ONA until completion marker.
+        Reads output from ONA with improved timeout and completion detection.
 
-        Implements line-by-line reading with proper EOF handling
-        and inference step detection.
+        Implements line-by-line reading with proper EOF handling,
+        multiple completion markers, and timeout protection.
         """
         if not self.process or not self.process.stdout:
             raise RuntimeError("NARS process not available for output")
 
-        # Trigger output flush in ONA
-        await self._send_command("0")
-
         lines = []
-        while True:
-            line = await asyncio.to_thread(self.process.stdout.readline)
+        completion_markers = [
+            "done with 0 additional inference steps.",
+            "done with",
+            "NAR>",
+            ""  # Empty line can also indicate completion
+        ]
+        
+        # Read lines with timeout protection
+        start_time = asyncio.get_event_loop().time()
+        max_wait_time = 2.0  # Maximum wait time for output
+        
+        try:
+            while True:
+                # Check timeout
+                if asyncio.get_event_loop().time() - start_time > max_wait_time:
+                    logger.debug("Output reading timeout reached")
+                    break
+                
+                # Try to read a line with timeout
+                try:
+                    line = await asyncio.wait_for(
+                        asyncio.to_thread(self.process.stdout.readline),
+                        timeout=0.5
+                    )
+                except asyncio.TimeoutError:
+                    # No more output available
+                    break
+                
+                if not line:  # EOF
+                    break
 
-            if not line:  # EOF
-                break
+                line = line.strip()
+                
+                # Check for completion markers
+                if any(marker in line for marker in completion_markers if marker):
+                    if line:  # Add the completion line if it's not empty
+                        lines.append(line)
+                    break
 
-            line = line.strip()
-            if line and "done with 0 additional inference steps." in line:
-                break
+                if line:  # Skip empty lines but add non-empty ones
+                    lines.append(line)
+                    
+                # If we have some output and see an empty line, might be done
+                if not line and lines:
+                    break
 
-            if line:  # Skip empty lines
-                lines.append(line)
-
+        except Exception as e:
+            logger.warning(f"Error reading ONA output: {e}")
+            
         return lines
 
     def _parse_output(self, lines: list[str]) -> dict[str, Any]:

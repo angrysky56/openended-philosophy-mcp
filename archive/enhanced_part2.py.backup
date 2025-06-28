@@ -1,0 +1,1492 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Enhanced Insight Synthesis Engine
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class EnhancedInsightSynthesis:
+    """
+    Sophisticated insight synthesis engine for generating substantive philosophical conclusions.
+    
+    ### Synthesis Methodology:
+    - Multi-perspectival integration with dialectical processing
+    - Coherence maximization through constraint satisfaction
+    - Emergent pattern recognition and novel insight generation
+    - Uncertainty quantification with revision condition specification
+    
+    #### Synthesis Algorithm:
+    ```
+    S(insights) = Coherence(P₁, P₂, ..., Pₙ) × Novelty(insights) × Confidence(evidence)
+    ```
+    
+    Where:
+    - S: Synthesis quality score
+    - P: Perspectives integrated
+    - Coherence: Cross-perspectival coherence measure
+    - Novelty: Emergent insight generation
+    - Confidence: Evidence base strength
+    """
+    
+    def __init__(self, enhanced_memory: EnhancedNARSMemory, llm_processor: LLMSemanticProcessor):
+        """Initialize enhanced insight synthesis engine."""
+        self.enhanced_memory = enhanced_memory
+        self.llm_processor = llm_processor
+        
+        # Synthesis components
+        self.dialectical_processor = DialecticalProcessor()
+        self.coherence_maximizer = CoherenceMaximizer()
+        self.perspective_integrator = PerspectiveIntegrator()
+        self.novelty_detector = NoveltyDetector()
+        
+        # Synthesis strategies
+        self.synthesis_strategies = {
+            'convergent': self._convergent_synthesis,
+            'dialectical': self._dialectical_synthesis,
+            'emergent': self._emergent_synthesis,
+            'complementary': self._complementary_synthesis,
+            'auto': self._auto_strategy_selection
+        }
+        
+        logger.info("Enhanced Insight Synthesis Engine initialized")
+    
+    async def synthesize_insights(
+        self,
+        inquiry_focus: str,
+        available_perspectives: List[str],
+        depth_level: int = 3,
+        synthesis_strategy: str = "auto"
+    ) -> List[SubstantiveInsight]:
+        """
+        Generate substantive insights through multi-perspectival synthesis.
+        
+        ### Synthesis Process:
+        1. Perspective application and interpretation generation
+        2. Dialectical tension identification and analysis
+        3. Coherence maximization through constraint satisfaction
+        4. Emergent pattern recognition and insight generation
+        5. Uncertainty quantification and revision condition specification
+        """
+        logger.debug(f"Synthesizing insights for: '{inquiry_focus}' using {len(available_perspectives)} perspectives")
+        
+        # Retrieve relevant beliefs from enhanced memory
+        relevant_beliefs = await self._retrieve_relevant_beliefs(inquiry_focus, depth_level)
+        
+        # Apply multiple perspectives
+        perspectival_analyses = await self._apply_multiple_perspectives(
+            relevant_beliefs, available_perspectives, inquiry_focus
+        )
+        
+        # Identify dialectical tensions
+        dialectical_tensions = await self.dialectical_processor.identify_tensions(
+            perspectival_analyses
+        )
+        
+        # Apply synthesis strategy
+        strategy_function = self.synthesis_strategies.get(synthesis_strategy, self._auto_strategy_selection)
+        synthesis_results = await strategy_function(
+            inquiry_focus, perspectival_analyses, dialectical_tensions
+        )
+        
+        # Generate substantive insights
+        substantive_insights = await self._generate_substantive_insights(
+            inquiry_focus, synthesis_results, available_perspectives
+        )
+        
+        # Apply quality filtering and ranking
+        filtered_insights = await self._filter_and_rank_insights(substantive_insights)
+        
+        logger.debug(f"Generated {len(filtered_insights)} substantive insights")
+        return filtered_insights
+    
+    async def _retrieve_relevant_beliefs(
+        self,
+        inquiry_focus: str,
+        depth_level: int
+    ) -> List[PhilosophicalMemoryItem]:
+        """Retrieve relevant beliefs from enhanced memory with semantic similarity."""
+        # Get semantic analysis of inquiry focus
+        context = PhilosophicalContext(domain='general', inquiry_type='insight_generation')
+        focus_analysis = await self.llm_processor.analyze_statement(inquiry_focus, context)
+        
+        # Generate embedding for inquiry focus
+        focus_embedding = await self.enhanced_memory._generate_philosophical_embedding(
+            inquiry_focus, focus_analysis
+        )
+        
+        # Find semantically similar beliefs
+        relevant_beliefs = []
+        similarity_threshold = 0.5 - (depth_level * 0.1)  # Lower threshold for deeper search
+        
+        for belief_id, belief in self.enhanced_memory.philosophical_beliefs.items():
+            if belief.semantic_embedding is not None:
+                similarity = np.dot(focus_embedding, belief.semantic_embedding)
+                
+                if similarity > similarity_threshold:
+                    relevant_beliefs.append(belief)
+        
+        # Sort by relevance and limit by depth
+        relevant_beliefs.sort(
+            key=lambda b: np.dot(focus_embedding, b.semantic_embedding) if b.semantic_embedding is not None else 0,
+            reverse=True
+        )
+        
+        max_beliefs = depth_level * 10  # Scale with depth
+        return relevant_beliefs[:max_beliefs]
+    
+    async def _apply_multiple_perspectives(
+        self,
+        beliefs: List[PhilosophicalMemoryItem],
+        perspectives: List[str],
+        inquiry_focus: str
+    ) -> List['PerspectivalAnalysis']:
+        """Apply multiple philosophical perspectives to belief sets."""
+        analyses = []
+        
+        for perspective in perspectives:
+            # Get perspective framework
+            framework = await self.perspective_integrator.get_perspective_framework(perspective)
+            
+            # Filter beliefs relevant to this perspective
+            relevant_beliefs = framework.filter_relevant_beliefs(beliefs)
+            
+            # Apply perspective-specific interpretation
+            interpretation = await framework.interpret_beliefs(relevant_beliefs, inquiry_focus)
+            
+            # Assess perspective confidence
+            confidence = await framework.assess_confidence(interpretation, relevant_beliefs)
+            
+            # Generate perspective insights
+            insights = await framework.generate_insights(interpretation, relevant_beliefs)
+            
+            analysis = PerspectivalAnalysis(
+                perspective=perspective,
+                interpretation=interpretation,
+                confidence=confidence,
+                supporting_beliefs=relevant_beliefs,
+                insights=insights,
+                methodological_commitments=framework.get_commitments(),
+                limitations=framework.identify_limitations(inquiry_focus)
+            )
+            
+            analyses.append(analysis)
+        
+        return analyses
+    
+    async def _convergent_synthesis(
+        self,
+        inquiry_focus: str,
+        perspectival_analyses: List['PerspectivalAnalysis'],
+        dialectical_tensions: List['DialecticalTension']
+    ) -> 'SynthesisResult':
+        """Perform convergent synthesis focusing on agreements."""
+        agreements = []
+        converging_insights = []
+        
+        # Find agreements across perspectives
+        for i, analysis1 in enumerate(perspectival_analyses):
+            for analysis2 in perspectival_analyses[i+1:]:
+                agreement_areas = await self._identify_agreement_areas(analysis1, analysis2)
+                agreements.extend(agreement_areas)
+        
+        # Extract convergent insights
+        for agreement in agreements:
+            if agreement['strength'] > 0.7:
+                insight = await self._create_convergent_insight(agreement, inquiry_focus)
+                converging_insights.append(insight)
+        
+        return SynthesisResult(
+            type='convergent',
+            primary_insights=converging_insights,
+            synthesis_confidence=self._calculate_convergence_confidence(agreements),
+            supporting_perspectives=[a.perspective for a in perspectival_analyses],
+            dialectical_tensions=dialectical_tensions
+        )
+    
+    async def _dialectical_synthesis(
+        self,
+        inquiry_focus: str,
+        perspectival_analyses: List['PerspectivalAnalysis'],
+        dialectical_tensions: List['DialecticalTension']
+    ) -> 'SynthesisResult':
+        """Perform dialectical synthesis through tension resolution."""
+        dialectical_insights = []
+        
+        for tension in dialectical_tensions:
+            if tension.dialectical_potential > 0.6:
+                # Attempt synthesis through tension
+                synthesis_insight = await self._synthesize_through_tension(
+                    tension, inquiry_focus, perspectival_analyses
+                )
+                if synthesis_insight:
+                    dialectical_insights.append(synthesis_insight)
+        
+        return SynthesisResult(
+            type='dialectical',
+            primary_insights=dialectical_insights,
+            synthesis_confidence=self._calculate_dialectical_confidence(dialectical_tensions),
+            supporting_perspectives=[a.perspective for a in perspectival_analyses],
+            dialectical_tensions=dialectical_tensions
+        )
+    
+    async def _emergent_synthesis(
+        self,
+        inquiry_focus: str,
+        perspectival_analyses: List['PerspectivalAnalysis'],
+        dialectical_tensions: List['DialecticalTension']
+    ) -> 'SynthesisResult':
+        """Perform emergent synthesis generating novel insights."""
+        emergent_patterns = await self.novelty_detector.detect_emergent_patterns(
+            perspectival_analyses, dialectical_tensions
+        )
+        
+        emergent_insights = []
+        for pattern in emergent_patterns:
+            if pattern['novelty_score'] > 0.6:
+                insight = await self._create_emergent_insight(pattern, inquiry_focus)
+                emergent_insights.append(insight)
+        
+        return SynthesisResult(
+            type='emergent',
+            primary_insights=emergent_insights,
+            synthesis_confidence=self._calculate_emergence_confidence(emergent_patterns),
+            supporting_perspectives=[a.perspective for a in perspectival_analyses],
+            dialectical_tensions=dialectical_tensions
+        )
+    
+    async def _complementary_synthesis(
+        self,
+        inquiry_focus: str,
+        perspectival_analyses: List['PerspectivalAnalysis'],
+        dialectical_tensions: List['DialecticalTension']
+    ) -> 'SynthesisResult':
+        """Perform complementary synthesis integrating diverse perspectives."""
+        complementary_relations = await self._identify_complementary_relations(
+            perspectival_analyses
+        )
+        
+        complementary_insights = []
+        for relation in complementary_relations:
+            insight = await self._create_complementary_insight(relation, inquiry_focus)
+            complementary_insights.append(insight)
+        
+        return SynthesisResult(
+            type='complementary',
+            primary_insights=complementary_insights,
+            synthesis_confidence=self._calculate_complementarity_confidence(complementary_relations),
+            supporting_perspectives=[a.perspective for a in perspectival_analyses],
+            dialectical_tensions=dialectical_tensions
+        )
+    
+    async def _auto_strategy_selection(
+        self,
+        inquiry_focus: str,
+        perspectival_analyses: List['PerspectivalAnalysis'],
+        dialectical_tensions: List['DialecticalTension']
+    ) -> 'SynthesisResult':
+        """Automatically select best synthesis strategy based on analysis."""
+        strategy_scores = {}
+        
+        # Score convergent potential
+        agreements = await self._count_agreements(perspectival_analyses)
+        strategy_scores['convergent'] = len(agreements) / len(perspectival_analyses)
+        
+        # Score dialectical potential  
+        strong_tensions = [t for t in dialectical_tensions if t.dialectical_potential > 0.6]
+        strategy_scores['dialectical'] = len(strong_tensions) / max(len(dialectical_tensions), 1)
+        
+        # Score emergent potential
+        diversity_score = await self._calculate_perspective_diversity(perspectival_analyses)
+        strategy_scores['emergent'] = diversity_score
+        
+        # Score complementary potential
+        complementary_pairs = await self._count_complementary_pairs(perspectival_analyses)
+        strategy_scores['complementary'] = complementary_pairs / max(len(perspectival_analyses), 1)
+        
+        # Select best strategy
+        best_strategy = max(strategy_scores.items(), key=lambda x: x[1])[0]
+        
+        logger.debug(f"Auto-selected synthesis strategy: {best_strategy}")
+        return await self.synthesis_strategies[best_strategy](
+            inquiry_focus, perspectival_analyses, dialectical_tensions
+        )
+    
+    async def _generate_substantive_insights(
+        self,
+        inquiry_focus: str,
+        synthesis_result: 'SynthesisResult',
+        perspectives: List[str]
+    ) -> List[SubstantiveInsight]:
+        """Generate substantive insights from synthesis results."""
+        insights = []
+        
+        for raw_insight in synthesis_result.primary_insights:
+            # Enhance with philosophical rigor
+            enhanced_insight = await self._enhance_insight_substance(
+                raw_insight, inquiry_focus, perspectives
+            )
+            
+            # Add meta-philosophical reflection
+            meta_reflection = await self._generate_meta_reflection(
+                enhanced_insight, synthesis_result
+            )
+            
+            # Create substantive insight
+            substantive_insight = SubstantiveInsight(
+                content=enhanced_insight['content'],
+                confidence=enhanced_insight['confidence'],
+                insight_type=enhanced_insight.get('type', 'synthetic'),
+                supporting_perspectives=perspectives,
+                evidence_base=enhanced_insight.get('evidence', []),
+                dialectical_tensions=synthesis_result.dialectical_tensions,
+                practical_implications=enhanced_insight.get('implications', []),
+                revision_conditions=await self._generate_insight_revision_conditions(enhanced_insight),
+                epistemic_virtues=self._identify_epistemic_virtues(enhanced_insight)
+            )
+            
+            insights.append(substantive_insight)
+        
+        return insights
+    
+    async def _filter_and_rank_insights(
+        self,
+        insights: List[SubstantiveInsight]
+    ) -> List[SubstantiveInsight]:
+        """Filter and rank insights by philosophical quality."""
+        # Filter by minimum quality threshold
+        quality_threshold = 0.6
+        quality_insights = []
+        
+        for insight in insights:
+            quality_score = await self._assess_insight_quality(insight)
+            if quality_score > quality_threshold:
+                insight.quality_score = quality_score
+                quality_insights.append(insight)
+        
+        # Rank by multiple criteria
+        ranked_insights = sorted(
+            quality_insights,
+            key=lambda i: (
+                i.confidence * 0.4 +
+                i.quality_score * 0.3 +
+                len(i.supporting_perspectives) * 0.1 +
+                len(i.epistemic_virtues) * 0.2
+            ),
+            reverse=True
+        )
+        
+        return ranked_insights[:10]  # Return top 10 insights
+    
+    # Additional helper methods for synthesis
+    async def _identify_agreement_areas(
+        self,
+        analysis1: 'PerspectivalAnalysis',
+        analysis2: 'PerspectivalAnalysis'
+    ) -> List[Dict[str, Any]]:
+        """Identify areas of agreement between two analyses."""
+        agreements = []
+        
+        # Compare insights
+        for insight1 in analysis1.insights:
+            for insight2 in analysis2.insights:
+                similarity = await self._calculate_insight_similarity(insight1, insight2)
+                if similarity > 0.7:
+                    agreements.append({
+                        'content': f"Agreement on: {insight1.get('content', 'unspecified')}",
+                        'strength': similarity,
+                        'perspectives': [analysis1.perspective, analysis2.perspective],
+                        'supporting_insights': [insight1, insight2]
+                    })
+        
+        return agreements
+    
+    async def _synthesize_through_tension(
+        self,
+        tension: 'DialecticalTension',
+        inquiry_focus: str,
+        analyses: List['PerspectivalAnalysis']
+    ) -> Optional[Dict[str, Any]]:
+        """Synthesize insight through dialectical tension."""
+        # Find the two perspectives in tension
+        perspective1_analysis = next(
+            (a for a in analyses if a.perspective == tension.perspective1), None
+        )
+        perspective2_analysis = next(
+            (a for a in analyses if a.perspective == tension.perspective2), None
+        )
+        
+        if not perspective1_analysis or not perspective2_analysis:
+            return None
+        
+        # Attempt Hegelian synthesis
+        thesis = perspective1_analysis.interpretation
+        antithesis = perspective2_analysis.interpretation
+        
+        synthesis_content = await self._generate_hegelian_synthesis(
+            thesis, antithesis, inquiry_focus
+        )
+        
+        return {
+            'content': synthesis_content,
+            'type': 'dialectical',
+            'confidence': 0.7,  # Moderate confidence for dialectical insights
+            'evidence': [thesis, antithesis],
+            'implications': [f"Resolves tension between {tension.perspective1} and {tension.perspective2}"]
+        }
+    
+    async def _create_emergent_insight(
+        self,
+        pattern: Dict[str, Any],
+        inquiry_focus: str
+    ) -> Dict[str, Any]:
+        """Create insight from emergent pattern."""
+        return {
+            'content': f"Emergent pattern suggests: {pattern.get('description', 'Novel insight')}",
+            'type': 'emergent',
+            'confidence': pattern.get('confidence', 0.6),
+            'evidence': pattern.get('supporting_evidence', []),
+            'implications': [f"Opens new avenue for understanding {inquiry_focus}"]
+        }
+    
+    def _calculate_convergence_confidence(self, agreements: List[Dict[str, Any]]) -> float:
+        """Calculate confidence in convergent synthesis."""
+        if not agreements:
+            return 0.3
+        
+        strength_scores = [a['strength'] for a in agreements]
+        return float(np.mean(strength_scores))
+    
+    def _calculate_dialectical_confidence(self, tensions: List['DialecticalTension']) -> float:
+        """Calculate confidence in dialectical synthesis."""
+        if not tensions:
+            return 0.3
+        
+        potential_scores = [t.dialectical_potential for t in tensions]
+        return float(np.mean(potential_scores))
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Enhanced NARS Reasoning with Philosophical Integration  
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class PhilosophicalNARSReasoning:
+    """
+    Enhanced NARS reasoning with deep philosophical integration.
+    
+    ### Integration Features:
+    - Philosophical categorization in reasoning processes
+    - LLM-enhanced semantic understanding for query processing
+    - Sophisticated belief revision with philosophical context
+    - Multi-modal reasoning combining NARS with philosophical frameworks
+    
+    #### Reasoning Architecture:
+    ```
+    R(query, context) = NARS(query) ∘ Philosophical(context) ∘ LLM(semantics)
+    ```
+    
+    Where:
+    - R: Reasoning result
+    - NARS: Non-axiomatic reasoning system
+    - Philosophical: Philosophical framework application
+    - LLM: Semantic processing enhancement
+    - ∘: Function composition
+    """
+    
+    def __init__(
+        self,
+        nars_manager,
+        enhanced_memory: EnhancedNARSMemory,
+        llm_processor: LLMSemanticProcessor
+    ):
+        """Initialize philosophical NARS reasoning system."""
+        self.nars_manager = nars_manager
+        self.enhanced_memory = enhanced_memory
+        self.llm_processor = llm_processor
+        
+        # Reasoning components
+        self.query_processor = PhilosophicalQueryProcessor(llm_processor)
+        self.context_integrator = ContextualReasoningIntegrator()
+        self.result_interpreter = ReasoningResultInterpreter()
+        
+        logger.info("Philosophical NARS Reasoning system initialized")
+    
+    async def philosophical_inference(
+        self,
+        query: str,
+        context: Dict[str, Any],
+        reasoning_type: str = "mixed"
+    ) -> Dict[str, Any]:
+        """
+        Perform philosophical inference using enhanced NARS reasoning.
+        
+        ### Inference Process:
+        1. Philosophical query analysis and semantic processing
+        2. Context-aware belief retrieval and priming
+        3. NARS reasoning with philosophical categorization
+        4. Result interpretation and philosophical enhancement
+        5. Uncertainty quantification and revision condition generation
+        """
+        logger.debug(f"Performing philosophical inference for query: '{query}'")
+        
+        # Process query philosophically
+        processed_query = await self.query_processor.process_philosophical_query(
+            query, context
+        )
+        
+        # Retrieve and prime relevant beliefs
+        relevant_beliefs = await self._retrieve_contextual_beliefs(processed_query, context)
+        await self._prime_nars_with_beliefs(relevant_beliefs)
+        
+        # Perform NARS reasoning
+        nars_results = await self._execute_nars_reasoning(
+            processed_query, reasoning_type
+        )
+        
+        # Integrate philosophical context
+        contextualized_results = await self.context_integrator.integrate_context(
+            nars_results, context, processed_query
+        )
+        
+        # Interpret results philosophically
+        interpreted_results = await self.result_interpreter.interpret_reasoning_results(
+            contextualized_results, query, context
+        )
+        
+        # Add meta-philosophical reflection
+        meta_reflection = await self._generate_meta_philosophical_reflection(
+            interpreted_results, query, context
+        )
+        
+        return {
+            'query': query,
+            'processed_query': processed_query,
+            'reasoning_results': interpreted_results,
+            'meta_reflection': meta_reflection,
+            'philosophical_context': context,
+            'reasoning_confidence': self._calculate_reasoning_confidence(interpreted_results),
+            'revision_triggers': await self._generate_reasoning_revision_triggers(interpreted_results),
+            'epistemic_status': self._assess_result_epistemic_status(interpreted_results)
+        }
+    
+    async def _retrieve_contextual_beliefs(
+        self,
+        processed_query: Dict[str, Any],
+        context: Dict[str, Any]
+    ) -> List[PhilosophicalMemoryItem]:
+        """Retrieve contextually relevant beliefs for reasoning."""
+        # Get semantic embedding for query
+        query_text = processed_query.get('enhanced_query', processed_query['original_query'])
+        
+        phil_context = PhilosophicalContext(
+            domain=context.get('domain', 'general'),
+            inquiry_type='reasoning'
+        )
+        
+        query_analysis = await self.llm_processor.analyze_statement(query_text, phil_context)
+        query_embedding = await self.enhanced_memory._generate_philosophical_embedding(
+            query_text, query_analysis
+        )
+        
+        # Find semantically similar beliefs
+        relevant_beliefs = []
+        for belief_id, belief in self.enhanced_memory.philosophical_beliefs.items():
+            if belief.semantic_embedding is not None:
+                similarity = np.dot(query_embedding, belief.semantic_embedding)
+                
+                if similarity > 0.4:  # Lower threshold for reasoning
+                    relevant_beliefs.append(belief)
+        
+        # Sort by relevance and return top beliefs
+        relevant_beliefs.sort(
+            key=lambda b: np.dot(query_embedding, b.semantic_embedding) if b.semantic_embedding is not None else 0,
+            reverse=True
+        )
+        
+        return relevant_beliefs[:20]  # Return top 20 relevant beliefs
+    
+    async def _prime_nars_with_beliefs(
+        self,
+        beliefs: List[PhilosophicalMemoryItem]
+    ) -> None:
+        """Prime NARS system with relevant philosophical beliefs."""
+        for belief in beliefs:
+            # Convert to NARS format
+            narsese_statement = self._convert_to_narsese(belief)
+            
+            try:
+                # Input belief into NARS
+                await self.nars_manager.query(narsese_statement, timeout=0.5)
+            except Exception as e:
+                logger.debug(f"Failed to prime NARS with belief: {e}")
+                continue
+    
+    async def _execute_nars_reasoning(
+        self,
+        processed_query: Dict[str, Any],
+        reasoning_type: str
+    ) -> List[Dict[str, Any]]:
+        """Execute NARS reasoning with philosophical enhancement."""
+        nars_queries = processed_query.get('nars_queries', [])
+        results = []
+        
+        for query in nars_queries:
+            try:
+                # Execute NARS query
+                nars_result = await self.nars_manager.query(query, timeout=3.0)
+                
+                if nars_result and nars_result.get('answers'):
+                    for answer in nars_result['answers']:
+                        results.append({
+                            'query': query,
+                            'answer': answer,
+                            'reasoning_type': reasoning_type,
+                            'nars_confidence': answer.get('truth', {}).get('confidence', 0.5)
+                        })
+            
+            except Exception as e:
+                logger.debug(f"NARS reasoning failed for query '{query}': {e}")
+                continue
+        
+        return results
+    
+    def _convert_to_narsese(self, belief: PhilosophicalMemoryItem) -> str:
+        """Convert philosophical belief to NARS format."""
+        # Simplified conversion - would be more sophisticated in practice
+        statement = belief.statement
+        frequency = belief.truth.frequency
+        confidence = belief.truth.confidence
+        
+        # Basic NARS format: statement. {frequency confidence}
+        return f"{statement}. {{{frequency:.2f} {confidence:.2f}}}"
+    
+    def _calculate_reasoning_confidence(self, results: Dict[str, Any]) -> float:
+        """Calculate overall confidence in reasoning results."""
+        if not results or 'conclusions' not in results:
+            return 0.3
+        
+        confidences = []
+        for conclusion in results['conclusions']:
+            confidences.append(conclusion.get('confidence', 0.5))
+        
+        if confidences:
+            return float(np.mean(confidences))
+        return 0.3
+    
+    async def _generate_reasoning_revision_triggers(
+        self,
+        results: Dict[str, Any]
+    ) -> List[str]:
+        """Generate revision triggers for reasoning results."""
+        triggers = []
+        
+        # Confidence-based triggers
+        avg_confidence = self._calculate_reasoning_confidence(results)
+        if avg_confidence < 0.6:
+            triggers.append("Low confidence reasoning results")
+        
+        # Evidence-based triggers
+        evidence_count = len(results.get('supporting_evidence', []))
+        if evidence_count < 3:
+            triggers.append("Limited supporting evidence")
+        
+        # Philosophical triggers
+        triggers.extend([
+            "New philosophical arguments or counterexamples",
+            "Advances in relevant philosophical methodology",
+            "Changes in underlying conceptual frameworks"
+        ])
+        
+        return triggers
+    
+    def _assess_result_epistemic_status(self, results: Dict[str, Any]) -> str:
+        """Assess epistemic status of reasoning results."""
+        confidence = self._calculate_reasoning_confidence(results)
+        evidence_count = len(results.get('supporting_evidence', []))
+        
+        if confidence > 0.8 and evidence_count > 5:
+            return "well_supported"
+        elif confidence > 0.6 and evidence_count > 3:
+            return "moderately_supported"
+        elif confidence > 0.4:
+            return "provisional"
+        else:
+            return "speculative"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Supporting Classes and Data Structures
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+@dataclass
+class PerspectivalAnalysis:
+    """Analysis from a specific philosophical perspective."""
+    perspective: str
+    interpretation: Dict[str, Any]
+    confidence: float
+    supporting_beliefs: List[PhilosophicalMemoryItem]
+    insights: List[Dict[str, Any]]
+    methodological_commitments: Dict[str, Any]
+    limitations: List[str]
+
+@dataclass
+class DialecticalTension:
+    """Represents a dialectical tension between perspectives."""
+    perspective1: str
+    perspective2: str
+    tension_description: str
+    dialectical_potential: float
+    synthesis_pathways: List[Dict[str, Any]] = field(default_factory=list)
+
+@dataclass 
+class SynthesisResult:
+    """Results of insight synthesis process."""
+    type: str
+    primary_insights: List[Dict[str, Any]]
+    synthesis_confidence: float
+    supporting_perspectives: List[str]
+    dialectical_tensions: List[DialecticalTension]
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Helper Classes for Synthesis and Reasoning
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class DialecticalProcessor:
+    """Process dialectical tensions between philosophical perspectives."""
+    
+    async def identify_tensions(
+        self,
+        perspectival_analyses: List[PerspectivalAnalysis]
+    ) -> List[DialecticalTension]:
+        """Identify productive dialectical tensions between perspectives."""
+        tensions = []
+        
+        for i, analysis1 in enumerate(perspectival_analyses):
+            for analysis2 in perspectival_analyses[i+1:]:
+                tension = await self._analyze_perspective_tension(analysis1, analysis2)
+                if tension and tension.dialectical_potential > 0.5:
+                    tensions.append(tension)
+        
+        return tensions
+    
+    async def _analyze_perspective_tension(
+        self,
+        analysis1: PerspectivalAnalysis,
+        analysis2: PerspectivalAnalysis
+    ) -> Optional[DialecticalTension]:
+        """Analyze tension between two perspectival analyses."""
+        # Compare interpretations for conflicts
+        interpretation_conflict = self._assess_interpretation_conflict(
+            analysis1.interpretation, analysis2.interpretation
+        )
+        
+        # Compare methodological commitments
+        methodological_conflict = self._assess_methodological_conflict(
+            analysis1.methodological_commitments, analysis2.methodological_commitments
+        )
+        
+        # Calculate dialectical potential
+        dialectical_potential = (interpretation_conflict + methodological_conflict) / 2
+        
+        if dialectical_potential > 0.5:
+            return DialecticalTension(
+                perspective1=analysis1.perspective,
+                perspective2=analysis2.perspective,
+                tension_description=f"Tension between {analysis1.perspective} and {analysis2.perspective}",
+                dialectical_potential=dialectical_potential
+            )
+        
+        return None
+    
+    def _assess_interpretation_conflict(
+        self,
+        interpretation1: Dict[str, Any],
+        interpretation2: Dict[str, Any]
+    ) -> float:
+        """Assess level of conflict between interpretations."""
+        # Simplified conflict assessment
+        if 'conclusion' in interpretation1 and 'conclusion' in interpretation2:
+            # Check for opposite conclusions
+            conclusion1 = str(interpretation1['conclusion']).lower()
+            conclusion2 = str(interpretation2['conclusion']).lower()
+            
+            opposition_indicators = [
+                ('true', 'false'), ('good', 'bad'), ('right', 'wrong'),
+                ('exists', 'not exist'), ('necessary', 'contingent')
+            ]
+            
+            for term1, term2 in opposition_indicators:
+                if (term1 in conclusion1 and term2 in conclusion2) or \
+                   (term2 in conclusion1 and term1 in conclusion2):
+                    return 0.8
+        
+        return 0.3  # Default moderate conflict
+    
+    def _assess_methodological_conflict(
+        self,
+        commitments1: Dict[str, Any],
+        commitments2: Dict[str, Any]
+    ) -> float:
+        """Assess methodological conflict between commitment sets."""
+        conflicting_pairs = [
+            ('empirical', 'rationalist'), ('objective', 'subjective'),
+            ('reductive', 'holistic'), ('formal', 'informal')
+        ]
+        
+        for method1, method2 in conflicting_pairs:
+            if (commitments1.get(method1) and commitments2.get(method2)) or \
+               (commitments1.get(method2) and commitments2.get(method1)):
+                return 0.7
+        
+        return 0.2  # Default low conflict
+
+class CoherenceMaximizer:
+    """Maximize coherence in insight synthesis."""
+    
+    async def maximize_coherence(
+        self,
+        insights: List[Dict[str, Any]],
+        constraints: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """Maximize coherence among insights through constraint satisfaction."""
+        # Simplified coherence maximization
+        coherent_insights = []
+        
+        for insight in insights:
+            if self._satisfies_constraints(insight, constraints):
+                coherent_insights.append(insight)
+        
+        # Sort by coherence score
+        coherent_insights.sort(
+            key=lambda i: i.get('coherence_score', 0.5),
+            reverse=True
+        )
+        
+        return coherent_insights
+    
+    def _satisfies_constraints(
+        self,
+        insight: Dict[str, Any],
+        constraints: List[Dict[str, Any]]
+    ) -> bool:
+        """Check if insight satisfies coherence constraints."""
+        # Simplified constraint checking
+        confidence = insight.get('confidence', 0.5)
+        return confidence > 0.4  # Basic confidence threshold
+
+class PerspectiveIntegrator:
+    """Integrate multiple philosophical perspectives."""
+    
+    async def get_perspective_framework(self, perspective: str) -> 'PerspectiveFramework':
+        """Get framework for specific philosophical perspective."""
+        return PerspectiveFramework(perspective)
+
+class NoveltyDetector:
+    """Detect emergent patterns and novel insights."""
+    
+    async def detect_emergent_patterns(
+        self,
+        analyses: List[PerspectivalAnalysis],
+        tensions: List[DialecticalTension]
+    ) -> List[Dict[str, Any]]:
+        """Detect emergent patterns from perspectival analyses."""
+        patterns = []
+        
+        # Look for unexpected combinations
+        if len(analyses) >= 3:
+            combination_pattern = {
+                'description': f"Unexpected convergence across {len(analyses)} perspectives",
+                'novelty_score': 0.7,
+                'supporting_evidence': [a.perspective for a in analyses],
+                'confidence': 0.6
+            }
+            patterns.append(combination_pattern)
+        
+        # Look for tension resolutions
+        for tension in tensions:
+            if tension.dialectical_potential > 0.7:
+                resolution_pattern = {
+                    'description': f"Novel synthesis opportunity from {tension.perspective1}-{tension.perspective2} tension",
+                    'novelty_score': 0.8,
+                    'supporting_evidence': [tension.tension_description],
+                    'confidence': 0.5
+                }
+                patterns.append(resolution_pattern)
+        
+        return patterns
+
+class PerspectiveFramework:
+    """Framework for applying philosophical perspectives."""
+    
+    def __init__(self, perspective: str):
+        self.perspective = perspective
+        self.commitments = self._load_perspective_commitments(perspective)
+    
+    def filter_relevant_beliefs(
+        self,
+        beliefs: List[PhilosophicalMemoryItem]
+    ) -> List[PhilosophicalMemoryItem]:
+        """Filter beliefs relevant to this perspective."""
+        relevant_beliefs = []
+        
+        for belief in beliefs:
+            if self._is_relevant_to_perspective(belief):
+                relevant_beliefs.append(belief)
+        
+        return relevant_beliefs
+    
+    async def interpret_beliefs(
+        self,
+        beliefs: List[PhilosophicalMemoryItem],
+        inquiry_focus: str
+    ) -> Dict[str, Any]:
+        """Interpret beliefs from this perspective."""
+        return {
+            'perspective': self.perspective,
+            'focus': inquiry_focus,
+            'conclusion': f"{self.perspective} interpretation of {inquiry_focus}",
+            'confidence': 0.7
+        }
+    
+    async def assess_confidence(
+        self,
+        interpretation: Dict[str, Any],
+        beliefs: List[PhilosophicalMemoryItem]
+    ) -> float:
+        """Assess confidence in interpretation."""
+        base_confidence = 0.6
+        
+        # Boost for more supporting beliefs
+        belief_boost = min(len(beliefs) * 0.05, 0.3)
+        
+        return base_confidence + belief_boost
+    
+    async def generate_insights(
+        self,
+        interpretation: Dict[str, Any],
+        beliefs: List[PhilosophicalMemoryItem]
+    ) -> List[Dict[str, Any]]:
+        """Generate insights from interpretation."""
+        return [{
+            'content': f"Insight from {self.perspective} perspective",
+            'confidence': 0.6,
+            'type': 'perspectival'
+        }]
+    
+    def get_commitments(self) -> Dict[str, Any]:
+        """Get methodological commitments of this perspective."""
+        return self.commitments
+    
+    def identify_limitations(self, inquiry_focus: str) -> List[str]:
+        """Identify limitations of this perspective for the inquiry."""
+        return [f"Limited by {self.perspective} methodological constraints"]
+    
+    def _load_perspective_commitments(self, perspective: str) -> Dict[str, Any]:
+        """Load methodological commitments for perspective."""
+        commitments_map = {
+            'analytical': {'logical_rigor': True, 'conceptual_clarity': True},
+            'phenomenological': {'experiential_focus': True, 'descriptive_method': True},
+            'pragmatist': {'practical_consequences': True, 'experimental_method': True},
+            'critical': {'power_analysis': True, 'social_critique': True}
+        }
+        
+        return commitments_map.get(perspective, {'general_inquiry': True})
+    
+    def _is_relevant_to_perspective(self, belief: PhilosophicalMemoryItem) -> bool:
+        """Check if belief is relevant to this perspective."""
+        # Simplified relevance check
+        return True  # For now, consider all beliefs potentially relevant
+
+class PhilosophicalQueryProcessor:
+    """Process philosophical queries with semantic enhancement."""
+    
+    def __init__(self, llm_processor: LLMSemanticProcessor):
+        self.llm_processor = llm_processor
+    
+    async def process_philosophical_query(
+        self,
+        query: str,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Process philosophical query with semantic analysis."""
+        # Create philosophical context
+        phil_context = PhilosophicalContext(
+            domain=context.get('domain', 'general'),
+            inquiry_type='query_processing'
+        )
+        
+        # Analyze query semantically
+        query_analysis = await self.llm_processor.analyze_statement(query, phil_context)
+        
+        # Generate NARS-compatible queries
+        nars_queries = self._generate_nars_queries(query, query_analysis)
+        
+        # Create enhanced query
+        enhanced_query = self._enhance_query_formulation(query, query_analysis)
+        
+        return {
+            'original_query': query,
+            'enhanced_query': enhanced_query,
+            'nars_queries': nars_queries,
+            'semantic_analysis': query_analysis,
+            'query_type': self._classify_query_type(query),
+            'philosophical_context': phil_context
+        }
+    
+    def _generate_nars_queries(
+        self,
+        query: str,
+        analysis: SemanticAnalysis
+    ) -> List[str]:
+        """Generate NARS-compatible queries from philosophical query."""
+        nars_queries = []
+        
+        # Convert concepts to NARS queries
+        for concept in analysis.primary_concepts:
+            # Generate existence query
+            nars_queries.append(f"<{concept.term} --> ?what>?")
+            # Generate property query
+            nars_queries.append(f"<?what --> {concept.term}>?")
+        
+        # Add general query
+        if '?' in query:
+            # Transform question into NARS format
+            simplified_query = query.replace('?', '').strip()
+            nars_queries.append(f"<{simplified_query} --> ?truth>?")
+        
+        return nars_queries[:5]  # Limit to 5 queries
+    
+    def _enhance_query_formulation(
+        self,
+        query: str,
+        analysis: SemanticAnalysis
+    ) -> str:
+        """Enhance query formulation with semantic understanding."""
+        enhanced = query
+        
+        # Add philosophical context
+        if analysis.philosophical_categorization:
+            primary_category = max(
+                analysis.philosophical_categorization.items(),
+                key=lambda x: x[1]
+            )[0]
+            enhanced = f"From a {primary_category} perspective: {enhanced}"
+        
+        return enhanced
+    
+    def _classify_query_type(self, query: str) -> str:
+        """Classify type of philosophical query."""
+        query_lower = query.lower()
+        
+        if 'what is' in query_lower or 'define' in query_lower:
+            return 'definitional'
+        elif 'why' in query_lower or 'explain' in query_lower:
+            return 'explanatory'
+        elif 'should' in query_lower or 'ought' in query_lower:
+            return 'normative'
+        elif 'true' in query_lower or 'false' in query_lower:
+            return 'truth_conditional'
+        else:
+            return 'general_inquiry'
+
+class ContextualReasoningIntegrator:
+    """Integrate contextual information into reasoning results."""
+    
+    async def integrate_context(
+        self,
+        nars_results: List[Dict[str, Any]],
+        context: Dict[str, Any],
+        processed_query: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Integrate philosophical context into NARS reasoning results."""
+        integrated_results = {
+            'raw_nars_results': nars_results,
+            'contextual_enhancement': {},
+            'philosophical_interpretation': {},
+            'confidence_adjustments': {}
+        }
+        
+        # Enhance with philosophical context
+        domain = context.get('domain', 'general')
+        integrated_results['contextual_enhancement']['domain'] = domain
+        
+        # Adjust confidence based on domain reliability
+        domain_reliability = self._get_domain_reliability(domain)
+        
+        for result in nars_results:
+            original_confidence = result.get('nars_confidence', 0.5)
+            adjusted_confidence = original_confidence * domain_reliability
+            result['adjusted_confidence'] = adjusted_confidence
+        
+        return integrated_results
+    
+    def _get_domain_reliability(self, domain: str) -> float:
+        """Get reliability factor for philosophical domain."""
+        domain_reliability = {
+            'logic': 0.9,
+            'mathematics': 0.95,
+            'ethics': 0.6,
+            'aesthetics': 0.5,
+            'metaphysics': 0.7,
+            'epistemology': 0.8
+        }
+        
+        return domain_reliability.get(domain.lower(), 0.7)
+
+class ReasoningResultInterpreter:
+    """Interpret NARS reasoning results philosophically."""
+    
+    async def interpret_reasoning_results(
+        self,
+        contextualized_results: Dict[str, Any],
+        original_query: str,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Interpret reasoning results with philosophical sophistication."""
+        raw_results = contextualized_results.get('raw_nars_results', [])
+        
+        # Extract conclusions
+        conclusions = []
+        for result in raw_results:
+            if 'answer' in result:
+                conclusion = {
+                    'content': result['answer'].get('term', 'No conclusion'),
+                    'confidence': result.get('adjusted_confidence', 0.5),
+                    'evidence': [result['query']],
+                    'reasoning_type': result.get('reasoning_type', 'nars')
+                }
+                conclusions.append(conclusion)
+        
+        # Generate philosophical interpretation
+        philosophical_interpretation = await self._generate_philosophical_interpretation(
+            conclusions, original_query, context
+        )
+        
+        # Assess overall reliability
+        overall_reliability = self._assess_overall_reliability(conclusions)
+        
+        return {
+            'conclusions': conclusions,
+            'philosophical_interpretation': philosophical_interpretation,
+            'overall_reliability': overall_reliability,
+            'supporting_evidence': [c['evidence'] for c in conclusions],
+            'reasoning_chains': self._construct_reasoning_chains(raw_results)
+        }
+    
+    async def _generate_philosophical_interpretation(
+        self,
+        conclusions: List[Dict[str, Any]],
+        query: str,
+        context: Dict[str, Any]
+    ) -> str:
+        """Generate philosophical interpretation of conclusions."""
+        if not conclusions:
+            return "No clear philosophical conclusion can be drawn from the available evidence."
+        
+        # Find highest confidence conclusion
+        best_conclusion = max(conclusions, key=lambda c: c['confidence'])
+        
+        interpretation = f"The philosophical analysis suggests that {best_conclusion['content']} "
+        interpretation += f"with {best_conclusion['confidence']:.2f} confidence. "
+        
+        # Add contextual qualification
+        domain = context.get('domain', 'general')
+        interpretation += f"This conclusion is offered within the context of {domain} "
+        interpretation += "and should be understood as provisional and open to revision."
+        
+        return interpretation
+    
+    def _assess_overall_reliability(self, conclusions: List[Dict[str, Any]]) -> float:
+        """Assess overall reliability of reasoning results."""
+        if not conclusions:
+            return 0.2
+        
+        confidences = [c['confidence'] for c in conclusions]
+        return float(np.mean(confidences))
+    
+    def _construct_reasoning_chains(
+        self,
+        raw_results: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """Construct reasoning chains from raw results."""
+        chains = []
+        
+        for result in raw_results:
+            chain = {
+                'premise': result.get('query', 'Unknown premise'),
+                'conclusion': result.get('answer', {}).get('term', 'Unknown conclusion'),
+                'inference_type': result.get('reasoning_type', 'nars'),
+                'strength': result.get('nars_confidence', 0.5)
+            }
+            chains.append(chain)
+        
+        return chains
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Additional Helper Methods for Insight Synthesis
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Implementation stubs for the remaining methods referenced in EnhancedInsightSynthesis
+class EnhancedInsightSynthesis:
+    
+    async def _enhance_insight_substance(
+        self,
+        raw_insight: Dict[str, Any],
+        inquiry_focus: str,
+        perspectives: List[str]
+    ) -> Dict[str, Any]:
+        """Enhance insight with philosophical substance."""
+        enhanced = raw_insight.copy()
+        
+        # Add philosophical rigor
+        content = enhanced.get('content', '')
+        enhanced['content'] = f"Philosophical analysis reveals: {content}"
+        
+        # Add implications
+        enhanced['implications'] = [
+            f"This insight has implications for understanding {inquiry_focus}",
+            "Further philosophical investigation is warranted"
+        ]
+        
+        # Add evidence enhancement
+        enhanced['evidence'] = enhanced.get('evidence', []) + [
+            f"Supported by {len(perspectives)} philosophical perspectives"
+        ]
+        
+        return enhanced
+    
+    async def _generate_meta_reflection(
+        self,
+        insight: Dict[str, Any],
+        synthesis_result: 'SynthesisResult'
+    ) -> str:
+        """Generate meta-philosophical reflection on insight."""
+        reflection = f"This insight emerges from {synthesis_result.type} synthesis "
+        reflection += f"with {synthesis_result.synthesis_confidence:.2f} confidence. "
+        reflection += "It represents a provisional philosophical understanding "
+        reflection += "subject to revision through further inquiry."
+        
+        return reflection
+    
+    async def _generate_insight_revision_conditions(
+        self,
+        insight: Dict[str, Any]
+    ) -> List[str]:
+        """Generate revision conditions for philosophical insight."""
+        return [
+            "Discovery of contradictory evidence or arguments",
+            "Development of more sophisticated analytical frameworks",
+            "Changes in underlying philosophical assumptions",
+            "Emergence of novel philosophical perspectives"
+        ]
+    
+    def _identify_epistemic_virtues(self, insight: Dict[str, Any]) -> List[str]:
+        """Identify epistemic virtues displayed in insight."""
+        virtues = ['intellectual_humility']  # Default virtue
+        
+        confidence = insight.get('confidence', 0.5)
+        if confidence < 0.8:
+            virtues.append('appropriate_tentativeness')
+        
+        if 'evidence' in insight and len(insight['evidence']) > 2:
+            virtues.append('evidence_based_reasoning')
+        
+        return virtues
+    
+    async def _assess_insight_quality(self, insight: SubstantiveInsight) -> float:
+        """Assess philosophical quality of insight."""
+        quality_score = 0.5  # Base quality
+        
+        # Boost for high confidence
+        quality_score += insight.confidence * 0.3
+        
+        # Boost for multiple supporting perspectives
+        quality_score += len(insight.supporting_perspectives) * 0.1
+        
+        # Boost for epistemic virtues
+        quality_score += len(insight.epistemic_virtues) * 0.05
+        
+        # Boost for practical implications
+        quality_score += len(insight.practical_implications) * 0.05
+        
+        return min(quality_score, 1.0)
+    
+    async def _calculate_insight_similarity(
+        self,
+        insight1: Dict[str, Any],
+        insight2: Dict[str, Any]
+    ) -> float:
+        """Calculate similarity between two insights."""
+        # Simple content-based similarity
+        content1 = insight1.get('content', '').lower()
+        content2 = insight2.get('content', '').lower()
+        
+        if content1 and content2:
+            words1 = set(content1.split())
+            words2 = set(content2.split())
+            
+            intersection = len(words1 & words2)
+            union = len(words1 | words2)
+            
+            return intersection / union if union > 0 else 0.0
+        
+        return 0.0
+    
+    async def _generate_hegelian_synthesis(
+        self,
+        thesis: Dict[str, Any],
+        antithesis: Dict[str, Any],
+        inquiry_focus: str
+    ) -> str:
+        """Generate Hegelian dialectical synthesis."""
+        synthesis = f"Dialectical synthesis regarding {inquiry_focus}: "
+        synthesis += f"While {thesis} and {antithesis} appear contradictory, "
+        synthesis += "a higher-order unity can be achieved by recognizing that "
+        synthesis += "both perspectives capture partial truths that can be "
+        synthesis += "integrated through a more comprehensive understanding."
+        
+        return synthesis
+    
+    async def _identify_complementary_relations(
+        self,
+        analyses: List[PerspectivalAnalysis]
+    ) -> List[Dict[str, Any]]:
+        """Identify complementary relations between perspectives."""
+        relations = []
+        
+        for i, analysis1 in enumerate(analyses):
+            for analysis2 in analyses[i+1:]:
+                # Check for complementarity
+                if self._are_complementary(analysis1, analysis2):
+                    relations.append({
+                        'perspective1': analysis1.perspective,
+                        'perspective2': analysis2.perspective,
+                        'complementarity_type': 'methodological',
+                        'strength': 0.7
+                    })
+        
+        return relations
+    
+    def _are_complementary(
+        self,
+        analysis1: PerspectivalAnalysis,
+        analysis2: PerspectivalAnalysis
+    ) -> bool:
+        """Check if two analyses are complementary."""
+        # Simplified complementarity check
+        complementary_pairs = [
+            ('analytical', 'continental'),
+            ('empirical', 'rationalist'),
+            ('reductive', 'holistic')
+        ]
+        
+        for pair1, pair2 in complementary_pairs:
+            if ((pair1 in analysis1.perspective.lower() and pair2 in analysis2.perspective.lower()) or
+                (pair2 in analysis1.perspective.lower() and pair1 in analysis2.perspective.lower())):
+                return True
+        
+        return False
+    
+    async def _create_complementary_insight(
+        self,
+        relation: Dict[str, Any],
+        inquiry_focus: str
+    ) -> Dict[str, Any]:
+        """Create insight from complementary relation."""
+        return {
+            'content': f"Complementary integration of {relation['perspective1']} and {relation['perspective2']} perspectives on {inquiry_focus}",
+            'type': 'complementary',
+            'confidence': relation.get('strength', 0.6),
+            'evidence': [f"Complementarity between {relation['perspective1']} and {relation['perspective2']}"],
+            'implications': [f"Suggests need for multi-perspectival approach to {inquiry_focus}"]
+        }
+    
+    async def _count_agreements(
+        self,
+        analyses: List[PerspectivalAnalysis]
+    ) -> List[Dict[str, Any]]:
+        """Count agreements between analyses."""
+        agreements = []
+        
+        for i, analysis1 in enumerate(analyses):
+            for analysis2 in analyses[i+1:]:
+                agreement_areas = await self._identify_agreement_areas(analysis1, analysis2)
+                agreements.extend(agreement_areas)
+        
+        return agreements
+    
+    async def _calculate_perspective_diversity(
+        self,
+        analyses: List[PerspectivalAnalysis]
+    ) -> float:
+        """Calculate diversity of perspectives."""
+        if len(analyses) <= 1:
+            return 0.0
+        
+        # Simple diversity measure based on unique methodological commitments
+        all_commitments = set()
+        for analysis in analyses:
+            all_commitments.update(analysis.methodological_commitments.keys())
+        
+        # More unique commitments = higher diversity
+        return min(len(all_commitments) / (len(analyses) * 3), 1.0)
+    
+    async def _count_complementary_pairs(
+        self,
+        analyses: List[PerspectivalAnalysis]
+    ) -> int:
+        """Count complementary pairs of perspectives."""
+        count = 0
+        
+        for i, analysis1 in enumerate(analyses):
+            for analysis2 in analyses[i+1:]:
+                if self._are_complementary(analysis1, analysis2):
+                    count += 1
+        
+        return count
+    
+    async def _create_convergent_insight(
+        self,
+        agreement: Dict[str, Any],
+        inquiry_focus: str
+    ) -> Dict[str, Any]:
+        """Create insight from convergent agreement."""
+        return {
+            'content': f"Convergent insight: {agreement['content']}",
+            'type': 'convergent',
+            'confidence': agreement.get('strength', 0.7),
+            'evidence': agreement.get('supporting_insights', []),
+            'implications': [f"Strong cross-perspectival support for this understanding of {inquiry_focus}"]
+        }
+    
+    def _calculate_emergence_confidence(
+        self,
+        patterns: List[Dict[str, Any]]
+    ) -> float:
+        """Calculate confidence in emergent synthesis."""
+        if not patterns:
+            return 0.3
+        
+        novelty_scores = [p.get('novelty_score', 0.5) for p in patterns]
+        return float(np.mean(novelty_scores))
+    
+    def _calculate_complementarity_confidence(
+        self,
+        relations: List[Dict[str, Any]]
+    ) -> float:
+        """Calculate confidence in complementary synthesis."""
+        if not relations:
+            return 0.3
+        
+        strength_scores = [r.get('strength', 0.5) for r in relations]
+        return float(np.mean(strength_scores))
+
+# Final export statement for the enhanced module
+__all__ = [
+    'PhilosophicalContext',
+    'PhilosophicalConcept', 
+    'SemanticAnalysis',
+    'SubstantiveInsight',
+    'PhilosophicalMemoryItem',
+    'LLMSemanticProcessor',
+    'EnhancedNARSMemory',
+    'EnhancedInsightSynthesis',
+    'PhilosophicalNARSReasoning',
+    'PerspectivalAnalysis',
+    'DialecticalTension',
+    'SynthesisResult'
+]

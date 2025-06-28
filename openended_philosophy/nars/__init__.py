@@ -14,12 +14,15 @@ philosophical framework, providing:
 from .nars_manager import NARSManager
 from .nars_memory import NARSMemory
 from .nars_reasoning import NARSReasoning
-from .truth_functions import Truth, TruthValue
+from .truth_functions import Truth
+from .types import MemoryItem, ReasoningResult, TruthValue
 
 __all__ = [
     "NARSManager",
     "NARSMemory", 
     "NARSReasoning",
     "Truth",
-    "TruthValue"
+    "TruthValue",
+    "MemoryItem",
+    "ReasoningResult"
 ]

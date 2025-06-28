@@ -12,8 +12,8 @@ from typing import Any
 
 import numpy as np
 
-from .nars_memory import MemoryItem
-from .truth_functions import Truth, TruthValue
+from .truth_functions import Truth
+from .types import MemoryItem, TruthValue
 
 logger = logging.getLogger(__name__)
 

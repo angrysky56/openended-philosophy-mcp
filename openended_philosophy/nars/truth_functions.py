@@ -6,46 +6,9 @@ Implements NARS truth value operations and uncertainty calculations
 based on Non-Axiomatic Logic (NAL) principles.
 """
 
-from dataclasses import dataclass
-
 import numpy as np
 
-
-@dataclass
-class TruthValue:
-    """
-    Represents a NARS truth value with frequency and confidence.
-
-    In NARS, truth is represented as (frequency, confidence) where:
-    - frequency: degree of positive evidence (0-1)
-    - confidence: degree of evidential support (0-1)
-    """
-    frequency: float
-    confidence: float
-
-    def __post_init__(self):
-        """Validate truth values are in valid range."""
-        self.frequency = float(np.clip(self.frequency, 0.0, 1.0))
-        self.confidence = float(np.clip(self.confidence, 0.0, 1.0))
-
-    @property
-    def expectation(self) -> float:
-        """Calculate expectation value for decision making."""
-        return self.confidence * (self.frequency - 0.5) + 0.5
-
-    @property
-    def uncertainty(self) -> float:
-        """Calculate epistemic uncertainty."""
-        return 1.0 - self.confidence
-
-    def to_dict(self) -> dict:
-        """Convert to dictionary format."""
-        return {
-            "frequency": self.frequency,
-            "confidence": self.confidence,
-            "expectation": self.expectation,
-            "uncertainty": self.uncertainty
-        }
+from .types import TruthValue
 
 
 class Truth:
