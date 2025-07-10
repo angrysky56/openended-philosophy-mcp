@@ -162,8 +162,7 @@ meta_analysis = await operations.analyze_own_reasoning_process(
 Run the comprehensive test suite:
 
 ```bash
-cd /home/ty/Repositories/ai_workspace/openended-philosophy-mcp
-python test_lv_nars_integration.py
+uv run python tests/test_lv_nars_integration.py
 ```
 
 Tests cover:

@@ -16,6 +16,584 @@
       "last_used": 1751108577.460415,
       "usefulness": 0,
       "semantic_context": {}
+    },
+    "('artificial memory', 'eternal')": {
+      "term": "artificial memory",
+      "truth": {
+        "frequency": 0.2666666666666666,
+        "confidence": 0.9,
+        "expectation": 0.2899999999999999,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "logical",
+      "last_used": 1751109872.609802,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_concept', 'eternal')": {
+      "term": "concept_concept",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.9,
+        "expectation": 0.95,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751109879.048949,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_concept --> domain_philosophy_of_language', 'eternal')": {
+      "term": "concept_concept --> domain_philosophy_of_language",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109879.049236,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_analysis', 'eternal')": {
+      "term": "concept_analysis",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.9,
+        "expectation": 0.95,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751109879.049505,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_analysis --> domain_philosophy_of_language', 'eternal')": {
+      "term": "concept_analysis --> domain_philosophy_of_language",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109879.049758,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_argument', 'eternal')": {
+      "term": "concept_argument",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.9,
+        "expectation": 0.95,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751109879.05,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_argument --> domain_philosophy_of_language', 'eternal')": {
+      "term": "concept_argument --> domain_philosophy_of_language",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109879.050246,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_theory', 'eternal')": {
+      "term": "concept_theory",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.9,
+        "expectation": 0.95,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "logical",
+      "last_used": 1751109879.050494,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_theory --> domain_philosophy_of_language', 'eternal')": {
+      "term": "concept_theory --> domain_philosophy_of_language",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "logical",
+      "last_used": 1751109879.050726,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_problem', 'eternal')": {
+      "term": "concept_problem",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.9,
+        "expectation": 0.95,
+        "uncertainty": 0.09999999999999998
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751109879.050957,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('concept_problem --> domain_philosophy_of_language', 'eternal')": {
+      "term": "concept_problem --> domain_philosophy_of_language",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109879.051188,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten', '1751109894.779799')": {
+      "term": "phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.8,
+        "expectation": 0.9,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109894.779799",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109894.780313,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_materialist', 'eternal')": {
+      "term": "phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_materialist",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109894.780678,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_phenomenological', 'eternal')": {
+      "term": "phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_phenomenological",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109894.781052,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_pragmatist', 'eternal')": {
+      "term": "phenomenon_AI systems autonomously building and maintaining knowledge networks like Zettelkasten <-> perspective_pragmatist",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109894.781441,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('hypothesis_3337', '1751109902.481565')": {
+      "term": "hypothesis_3337",
+      "truth": {
+        "frequency": 0.5239999999999999,
+        "confidence": 0.625,
+        "expectation": 0.5149999999999999,
+        "uncertainty": 0.375
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109902.481565",
+      "philosophical_category": null,
+      "last_used": 1751109902.482052,
+      "usefulness": 1,
+      "semantic_context": {}
+    },
+    "('evidence_0_2824', '1751109902.48222')": {
+      "term": "evidence_0_2824",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109902.48222",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109902.482557,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('evidence_1_6879', '1751109902.482588')": {
+      "term": "evidence_1_6879",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109902.482588",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109902.482862,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('evidence_2_3334', '1751109902.482888')": {
+      "term": "evidence_2_3334",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109902.482888",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109902.483138,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('evidence_3_3320', '1751109902.483161')": {
+      "term": "evidence_3_3320",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751109902.483161",
+      "philosophical_category": "epistemological",
+      "last_used": 1751109902.483396,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_Artificial Intelligence', '1751162239.10067')": {
+      "term": "phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 1.0,
+        "confidence": 0.8,
+        "expectation": 0.9,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.10067",
+      "philosophical_category": null,
+      "last_used": 1751162239.101168,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_Artificial Intelligence <-> perspective_materialist', 'eternal')": {
+      "term": "phenomenon_Artificial Intelligence <-> perspective_materialist",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751162239.101457,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_Artificial Intelligence <-> perspective_phenomenological', 'eternal')": {
+      "term": "phenomenon_Artificial Intelligence <-> perspective_phenomenological",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751162239.101709,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('phenomenon_Artificial Intelligence <-> perspective_pragmatist', 'eternal')": {
+      "term": "phenomenon_Artificial Intelligence <-> perspective_pragmatist",
+      "truth": {
+        "frequency": 0.8,
+        "confidence": 0.7,
+        "expectation": 0.71,
+        "uncertainty": 0.30000000000000004
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": null,
+      "last_used": 1751162239.101981,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_0_Artificial Intelligence', '1751162239.106818')": {
+      "term": "insight_0_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.6400000000000001,
+        "confidence": 0.8,
+        "expectation": 0.6120000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.106818",
+      "philosophical_category": null,
+      "last_used": 1751162239.107116,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_0_Artificial Intelligence --> phenomenon_Artificial Intelligence', 'eternal')": {
+      "term": "insight_0_Artificial Intelligence --> phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.9,
+        "confidence": 0.8,
+        "expectation": 0.8200000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751162239.107389,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_1_Artificial Intelligence', '1751162239.107414')": {
+      "term": "insight_1_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.6400000000000001,
+        "confidence": 0.8,
+        "expectation": 0.6120000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.107414",
+      "philosophical_category": null,
+      "last_used": 1751162239.107649,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_1_Artificial Intelligence --> phenomenon_Artificial Intelligence', 'eternal')": {
+      "term": "insight_1_Artificial Intelligence --> phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.9,
+        "confidence": 0.8,
+        "expectation": 0.8200000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751162239.107888,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_2_Artificial Intelligence', '1751162239.10791')": {
+      "term": "insight_2_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.6400000000000001,
+        "confidence": 0.8,
+        "expectation": 0.6120000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.10791",
+      "philosophical_category": null,
+      "last_used": 1751162239.10812,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_2_Artificial Intelligence --> phenomenon_Artificial Intelligence', 'eternal')": {
+      "term": "insight_2_Artificial Intelligence --> phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.9,
+        "confidence": 0.8,
+        "expectation": 0.8200000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751162239.108359,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_3_Artificial Intelligence', '1751162239.108387')": {
+      "term": "insight_3_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.5599999999999999,
+        "confidence": 0.8,
+        "expectation": 0.5479999999999999,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.108387",
+      "philosophical_category": null,
+      "last_used": 1751162239.108597,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_3_Artificial Intelligence --> phenomenon_Artificial Intelligence', 'eternal')": {
+      "term": "insight_3_Artificial Intelligence --> phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.9,
+        "confidence": 0.8,
+        "expectation": 0.8200000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751162239.108829,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_4_Artificial Intelligence', '1751162239.108851')": {
+      "term": "insight_4_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.5599999999999999,
+        "confidence": 0.8,
+        "expectation": 0.5479999999999999,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "1751162239.108851",
+      "philosophical_category": null,
+      "last_used": 1751162239.109058,
+      "usefulness": 0,
+      "semantic_context": {}
+    },
+    "('insight_4_Artificial Intelligence --> phenomenon_Artificial Intelligence', 'eternal')": {
+      "term": "insight_4_Artificial Intelligence --> phenomenon_Artificial Intelligence",
+      "truth": {
+        "frequency": 0.9,
+        "confidence": 0.8,
+        "expectation": 0.8200000000000001,
+        "uncertainty": 0.19999999999999996
+      },
+      "stamp": [
+        1
+      ],
+      "occurrence_time": "eternal",
+      "philosophical_category": "epistemological",
+      "last_used": 1751162239.109286,
+      "usefulness": 0,
+      "semantic_context": {}
     }
   },
   "current_time": 1,

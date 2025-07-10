@@ -42,6 +42,27 @@ P(insight|evidence) = Confidence × (1 - Uncertainty_Propagation)
 - Unknown unknown estimation
 - Revision trigger identification
 
+### Quiick Start
+```bash
+{
+  "mcpServers": {
+    "openended-philosophy": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/path/to/openended-philosophy-mcp",
+        "run",
+        "openended-philosophy-server"
+      ],
+      "env": {
+        "PYTHONPATH": "/path/to/openended-philosophy-mcp",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
 ### System Architecture
 
 ```
@@ -79,40 +100,18 @@ P(insight|evidence) = Confidence × (1 - Uncertainty_Propagation)
 
 ## Installation
 
-```bash
-git clone https://github.com/angrysky56/openended-philosophy-mcp
-cd openended-philosophy-mcp
-./setup.sh
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/angrysky56/openended-philosophy-mcp
+    cd openended-philosophy-mcp
+    ```
 
-The setup script will:
-1. Install Python dependencies via uv
-2. Download required NLTK data
-3. Check for ONA (OpenNARS for Applications)
-4. Provide configuration instructions
-=======
+2.  **Install dependencies with uv:**
+    ```bash
+    uv sync
+    ```
 
-Via Claude Desktop or other MCP client config json-
-Adapt the paths to your own:
-
-```json
-{
-  "mcpServers": {
-    "openended-philosophy": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
-        "run",
-        "openended-philosophy-server"
-      ],
-      "env": {
-        "PYTHONPATH": "/home/ty/Repositories/ai_workspace/openended-philosophy-mcp",
-        "LOG_LEVEL": "INFO"
-      }
-    }
-  }
-}
+    This will install all required Python packages, including `ona` (OpenNARS for Applications).
 ```
 
 ### For Direct Usage (without MCP client)
@@ -153,7 +152,7 @@ If you want to run the philosophy server directly using uv:
 
 2. Run the MCP server:
    ```bash
-   python -m openended_philosophy_mcp
+   python -m openended_philosophy.server
    ```
 
 The server will start and listen for MCP protocol messages on stdin/stdout. You can interact with it programmatically or integrate it with other MCP-compatible tools.
@@ -238,22 +237,13 @@ This server embodies its own philosophical commitments:
 
 ## NARS Configuration & Setup
 
-### Flexible Installation Support
+### Installation Support
 
-The server now supports multiple ONA installation methods:
+The server now exclusively supports `pip`-installed ONA (OpenNARS for Applications).
 
-1. **pip-installed ONA** (Recommended)
-   ```bash
-   uv add ona
-   ```
-
-2. **Local executable** via environment variable
-   ```bash
-   # Set in .env file:
-   ONA_PATH=/path/to/your/NAR
-   ```
-
-3. **Automatic detection** in common locations
+```bash
+uv add ona
+```
 
 ### Configuration via Environment Variables
 
@@ -263,7 +253,6 @@ cp .env.example .env
 ```
 
 Key configuration options:
-- `ONA_PATH`: Path to NAR executable (optional if pip-installed)
 - `NARS_MEMORY_SIZE`: Concept memory size (default: 1000)
 - `NARS_INFERENCE_STEPS`: Inference depth (default: 50)
 - `NARS_SILENT_MODE`: Suppress ONA output (default: true)
@@ -273,11 +262,7 @@ Key configuration options:
 
 Verify your installation:
 ```bash
-# Run comprehensive test suite
-./test_nars_integration.py
-
-# Or with uv
-uv run python test_nars_integration.py
+uv run python tests/test_nars_integration.py
 ```
 
 ### Process Management
@@ -304,3 +289,23 @@ We welcome contributions that:
 ## License
 
 MIT License - In the spirit of open-ended inquiry
+
+## Project Status: Towards Functional AI Philosophical Reasoning
+
+This project is a highly promising **research platform or advanced prototype** for AI philosophical reasoning. It lays a strong architectural and conceptual groundwork for computational philosophy.
+
+**Strengths & Progress:**
+
+*   **Robust NARS Integration:** The `NARSManager` provides a reliable interface to the NARS engine, crucial for non-axiomatic reasoning.
+*   **Modular Design:** Clear separation of concerns (e.g., `core`, `nars`, `llm_semantic_processor`) enhances maintainability and extensibility.
+*   **Conceptual Graphing (`networkx`):** Effective use of `networkx` for representing coherence landscapes and conceptual relationships provides structured, machine-readable data for AI processing.
+*   **Philosophically Informed Prompts:** The `LLMSemanticProcessor` demonstrates a good understanding of philosophical concepts in its prompt crafting.
+
+**Current Limitations & Path to "Functional and Useful":**
+
+To evolve into a truly "functional and useful tool" for independent, deep, and novel philosophical reasoning, the following areas require significant development:
+
+*   **Depth of NLP:** Current semantic similarity metrics are simplistic. Achieving nuanced philosophical reasoning demands more advanced NLP (e.g., contextual embeddings, fine-tuned models) to understand subtle semantic differences.
+*   **Transparency of Synthesis:** While `FallibilisticInference` performs complex synthesis, the AI needs to understand *how* insights are synthesized to truly reason philosophically, rather than just receiving a result. This implies making the synthesis process more transparent and controllable by the AI.
+*   **Explicit AI Interaction with Graphs:** The AI needs explicit tools or APIs to actively query, manipulate, and reason over the `networkx` graphs, moving beyond them being merely data structures.
+*   **Emergent Philosophical Insight:** The ultimate goal is for the AI to generate novel philosophical insights or arguments that extend beyond its programmed rules or NARS's current capabilities. This is the most challenging aspect and represents the frontier of this project.

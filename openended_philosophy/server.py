@@ -468,6 +468,81 @@ class OpenEndedPhilosophyServer:
                         },
                         "required": ["analysis_result", "analysis_type"]
                     }
+                ),
+                Tool(
+                    name="get_coherence_graph",
+                    description=(
+                        "Retrieves the current coherence landscape graph in Node-Link JSON format. "
+                        "This allows for external analysis and visualization of the conceptual topology."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                ),
+                Tool(
+                    name="get_graph_node_attributes",
+                    description=(
+                        "Retrieves all attributes for a specific node in the coherence landscape graph."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "node_id": {
+                                "type": "string",
+                                "description": "The ID of the node to retrieve attributes for."
+                            }
+                        },
+                        "required": ["node_id"]
+                    }
+                ),
+                Tool(
+                    name="get_graph_neighbors",
+                    description=(
+                        "Retrieves a list of neighbors (connected nodes) for a given node in the coherence landscape graph."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "node_id": {
+                                "type": "string",
+                                "description": "The ID of the node to retrieve neighbors for."
+                            }
+                        },
+                        "required": ["node_id"]
+                    }
+                ),
+                Tool(
+                    name="get_graph_shortest_path",
+                    description=(
+                        "Finds the shortest path between two nodes in the coherence landscape graph."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "source_node": {
+                                "type": "string",
+                                "description": "The ID of the source node."
+                            },
+                            "target_node": {
+                                "type": "string",
+                                "description": "The ID of the target node."
+                            }
+                        },
+                        "required": ["source_node", "target_node"]
+                    }
+                ),
+                Tool(
+                    name="get_graph_connected_components",
+                    description=(
+                        "Identifies and returns the connected components (subgraphs) within the coherence landscape graph."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
                 )
             ]
 
@@ -503,6 +578,17 @@ class OpenEndedPhilosophyServer:
                         return await self.operations.test_philosophical_hypothesis(**arguments)
                     elif name == "recursive_self_analysis":
                         return await self.operations.recursive_self_analysis(**arguments)
+                    elif name == "get_coherence_graph":
+                        return self.coherence_landscape.get_topology_graph_json()
+                    elif name == "get_graph_node_attributes":
+                        return self.coherence_landscape.get_node_attributes(arguments["node_id"])
+                    elif name == "get_graph_neighbors":
+                        return {"neighbors": self.coherence_landscape.get_neighbors(arguments["node_id"])}
+                    elif name == "get_graph_shortest_path":
+                        path = self.coherence_landscape.get_shortest_path(arguments["source_node"], arguments["target_node"])
+                        return {"path": path if path is not None else []}
+                    elif name == "get_graph_connected_components":
+                        return {"components": self.coherence_landscape.get_connected_components()}
                     else:
                         raise ValueError(f"Unknown philosophical operation: {name}")
 
@@ -614,10 +700,8 @@ class OpenEndedPhilosophyServer:
         finally:
             logger.info("Beginning philosophical server shutdown")
 
-            # Wait for active operations to complete (with timeout)
-            if self._active_operations:
-                logger.info(f"Waiting for {len(self._active_operations)} active operations to complete")
-                await asyncio.sleep(2.0)  # Grace period
+            # Wait for active operations to complete gracefully
+            await self._wait_for_active_operations(timeout=5.0) # Give operations 5 seconds to finish
 
             # Cleanup NARS
             if self._nars_initialized:
@@ -630,6 +714,19 @@ class OpenEndedPhilosophyServer:
                     logger.error(f"Error during NARS shutdown: {e}")
 
             cleanup_processes()
+
+    async def _wait_for_active_operations(self, timeout: float) -> None:
+        """
+        Waits for active operations to complete within a given timeout.
+        """
+        start_time = asyncio.get_event_loop().time()
+        while self._active_operations and (asyncio.get_event_loop().time() - start_time < timeout):
+            logger.info(f"Waiting for {len(self._active_operations)} active operations to complete...")
+            await asyncio.sleep(0.1) # Check frequently
+        if self._active_operations:
+            logger.warning(f"Timeout reached. {len(self._active_operations)} operations still active.")
+        else:
+            logger.info("All active operations completed.")
 
     async def _monitor_operations(self) -> None:
         """Background monitoring of active operations."""

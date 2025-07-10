@@ -2,11 +2,15 @@
 
 This guide provides comprehensive instructions for installing and configuring NARS (Non-Axiomatic Reasoning System) using ONA (OpenNARS for Applications) for the OpenEnded Philosophy MCP Server.
 
-## Installation Methods
+## Installation Guide
 
-### Method 1: Python Package (Recommended)
+This guide provides comprehensive instructions for installing and configuring NARS (Non-Axiomatic Reasoning System) using ONA (OpenNARS for Applications) for the OpenEnded Philosophy MCP Server.
 
-The simplest method is to install ONA as a Python package:
+## Installation
+
+### Python Package (Recommended)
+
+The simplest and only supported method is to install ONA as a Python package:
 
 ```bash
 # Using uv (recommended)
@@ -17,31 +21,6 @@ pip install ona
 ```
 
 This method automatically handles dependencies and places the NAR executable in your Python environment.
-
-### Method 2: Build from Source
-
-For the latest features or custom modifications:
-
-```bash
-# Clone the repository
-git clone https://github.com/opennars/OpenNARS-for-Applications.git
-cd OpenNARS-for-Applications
-
-# Build with default settings
-./build.sh
-
-# The NAR executable will be in the current directory
-```
-
-### Method 3: Use Existing Installation
-
-If you already have ONA/NARS-GPT installed:
-
-1. Copy `.env.example` to `.env`
-2. Set the `ONA_PATH` to your NAR executable:
-   ```bash
-   ONA_PATH=/path/to/your/NAR
-   ```
 
 ## Configuration
 
@@ -79,28 +58,18 @@ Example interpretations:
 After installation, verify ONA is working:
 
 ```bash
-# Check if ONA is accessible
 uv run python -c "from openended_philosophy.nars import NARSManager; print('NARS integration ready')"
-
-# Test the server
-uv run openended-philosophy-server
 ```
 
 ## Troubleshooting
 
 ### ONA Not Found
 
-If you see "ONA executable not found", check:
+If you encounter a `FileNotFoundError` related to the ONA executable, ensure that the `ona` Python package is correctly installed in your environment. You can try reinstalling it:
 
-1. **Environment variable**: Is `ONA_PATH` set correctly in `.env`?
-2. **File permissions**: Is the NAR executable marked as executable?
-   ```bash
-   chmod +x /path/to/NAR
-   ```
-3. **Path exists**: Does the file actually exist?
-   ```bash
-   ls -la /path/to/NAR
-   ```
+```bash
+uv pip install ona --force-reinstall
+```
 
 ### Process Management Issues
 

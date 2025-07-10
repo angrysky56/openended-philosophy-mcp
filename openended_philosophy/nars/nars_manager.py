@@ -36,18 +36,14 @@ class NARSManager:
     across different deployment environments.
     """
 
-    def __init__(self, ona_path: Path | None = None):
+    def __init__(self):
         """
-        Initializes the NARS manager with flexible path resolution.
-
-        Args:
-            ona_path: Optional explicit path to ONA executable. If None,
-                     uses environment variable or auto-detection.
+        Initializes the NARS manager, relying on the pip-installed `ona` package.
         """
         # Load environment variables
         load_dotenv()
 
-        self.ona_path = ona_path or self._resolve_ona_path()
+        self.ona_path = self._get_ona_executable_path()
         self.process: subprocess.Popen | None = None
         self.process_lock = asyncio.Lock()
         self._shutdown_initiated = False
@@ -68,79 +64,33 @@ class NARSManager:
                     f"inference_steps={self.inference_steps}, "
                     f"silent_mode={self.silent_mode}")
 
-    def _resolve_ona_path(self) -> Path:
+    def _get_ona_executable_path(self) -> Path:
         """
-        Resolves ONA path using multiple strategies.
-
-        Resolution order:
-        1. Environment variable ONA_PATH
-        2. pip-installed ONA command
-        3. Local project installations
-        4. Common installation locations
+        Finds the ONA executable from the installed `ona` package.
         """
-        # Strategy 1: Environment variable
-        env_path = os.getenv("ONA_PATH")
-        if env_path:
-            path = Path(env_path)
-            if path.exists() and path.is_file():
-                logger.info(f"Using ONA from environment variable: {path}")
-                return path
-            else:
-                logger.warning(f"ONA_PATH environment variable set but file not found: {env_path}")
-
-        # Strategy 2: Check for pip-installed ONA
         try:
             import ona
-            # Try to find the installed ONA executable
-            ona_module_path = Path(ona.__file__).parent
-            possible_paths = [
-                ona_module_path / "NAR" / "NARexe",  # The actual executable name
-                ona_module_path / "NAR",
-                ona_module_path / "bin" / "NAR",
-                ona_module_path.parent / "bin" / "NAR",
-            ]
-            for path in possible_paths:
-                if path.exists() and (path.is_file() if path.name in ["NAR", "NARexe"] else False):
-                    logger.info(f"Using pip-installed ONA: {path}")
-                    return path
+            # The executable is typically in a 'NAR' subdirectory of the package
+            package_path = Path(ona.__file__).parent
+            ona_executable = package_path / "NAR" / "NAR"
+            if ona_executable.exists() and ona_executable.is_file():
+                logger.info(f"Found ONA executable at: {ona_executable}")
+                return ona_executable
+            else:
+                 # For some installations, it might be named NARexe
+                ona_executable = package_path / "NAR" / "NARexe"
+                if ona_executable.exists() and ona_executable.is_file():
+                    logger.info(f"Found ONA executable at: {ona_executable}")
+                    return ona_executable
         except ImportError:
-            logger.debug("ONA not installed via pip")
+            logger.error("The 'ona' package is not installed. Please install it using 'pip install ona'")
+            raise
+        except Exception as e:
+            logger.error(f"An unexpected error occurred while finding the ONA executable: {e}")
+            raise
 
-        # Strategy 3: Check command availability in PATH
-        try:
-            result = subprocess.run(["which", "NAR"], capture_output=True, text=True)
-            if result.returncode == 0 and result.stdout.strip():
-                path = Path(result.stdout.strip())
-                logger.info(f"Using ONA from PATH: {path}")
-                return path
-        except Exception:
-            pass
-
-        # Strategy 4: Common project locations
-        project_root = Path(__file__).parent.parent.parent
-        common_locations = [
-            project_root / "OpenNARS-for-Applications" / "NAR",
-            project_root / "ona" / "NAR",
-            project_root / "NARS" / "NAR",
-            Path.home() / "OpenNARS-for-Applications" / "NAR",
-            Path("/usr/local/bin/NAR"),
-            Path("/opt/ona/NAR"),
-        ]
-
-        for path in common_locations:
-            if path.exists() and path.is_file():
-                logger.info(f"Found ONA at common location: {path}")
-                return path
-
-        # If all strategies fail, provide helpful error message
-        error_msg = (
-            "ONA executable not found. Please install ONA using one of these methods:\n"
-            "1. Install via pip: pip install ona\n"
-            "2. Set ONA_PATH environment variable to your NAR executable\n"
-            "3. Place NAR executable in your PATH\n"
-            "4. Clone OpenNARS-for-Applications in the project directory"
-        )
-        raise FileNotFoundError(error_msg)
+        raise FileNotFoundError("Could not find the ONA executable within the 'ona' package. "
+                                "Please ensure the package is installed correctly.")
 
     def _signal_handler(self, signum: int, frame: Any) -> None:
         """Handles OS signals for graceful shutdown."""

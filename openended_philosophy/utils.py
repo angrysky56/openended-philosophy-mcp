@@ -15,6 +15,19 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from sentence_transformers import SentenceTransformer, util
+
+# Initialize a SentenceTransformer model for semantic similarity
+# Using a small, fast model suitable for general purpose embeddings
+# This model will be loaded once when the module is imported
+try:
+    _EMBEDDING_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+    _EMBEDDING_MODEL_LOADED = True
+    logging.getLogger(__name__).info("SentenceTransformer model 'all-MiniLM-L6-v2' loaded successfully.")
+except Exception as e:
+    _EMBEDDING_MODEL = None
+    _EMBEDDING_MODEL_LOADED = False
+    logging.getLogger(__name__).error(f"Failed to load SentenceTransformer model: {e}. Embedding similarity will be unavailable.")
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -126,6 +139,7 @@ def semantic_similarity(
     - jaccard: Intersection over union of features
     - cosine: Cosine similarity of feature vectors
     - wittgenstein: Family resemblance calculation
+    - embedding: Cosine similarity of sentence embeddings
 
     Args:
         concept1: First concept representation
@@ -141,8 +155,36 @@ def semantic_similarity(
         return _cosine_similarity(concept1, concept2)
     elif method == "wittgenstein":
         return _family_resemblance(concept1, concept2)
+    elif method == "embedding":
+        return _embedding_similarity(concept1, concept2)
     else:
         raise ValueError(f"Unknown similarity method: {method}")
+
+def _embedding_similarity(c1: dict[str, Any], c2: dict[str, Any]) -> float:
+    """
+    Calculate semantic similarity using sentence embeddings.
+
+    Requires the _EMBEDDING_MODEL to be loaded.
+    Extracts text content from 'content' or 'features' fields of the concepts.
+    """
+    if not _EMBEDDING_MODEL_LOADED or _EMBEDDING_MODEL is None:
+        logging.getLogger(__name__).warning("Embedding model not loaded. Cannot perform embedding similarity.")
+        return 0.0
+
+    text1 = c1.get('content') or " ".join(c1.get('features', []))
+    text2 = c2.get('content') or " ".join(c2.get('features', []))
+
+    if not text1 or not text2:
+        return 0.0
+
+    try:
+        embeddings1 = _EMBEDDING_MODEL.encode(text1, convert_to_tensor=True)
+        embeddings2 = _EMBEDDING_MODEL.encode(text2, convert_to_tensor=True)
+        cosine_score = util.cos_sim(embeddings1, embeddings2).item()
+        return (cosine_score + 1) / 2  # Normalize to [0, 1]
+    except Exception as e:
+        logging.getLogger(__name__).error(f"Error calculating embedding similarity: {e}")
+        return 0.0
 
 def _jaccard_similarity(c1: dict[str, Any], c2: dict[str, Any]) -> float:
     """Calculate Jaccard similarity."""

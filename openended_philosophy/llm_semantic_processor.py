@@ -1,8 +1,6 @@
 import logging
 from typing import Any, Literal
-
-# Note: In MCP architecture, LLM capabilities are provided by the client (e.g., Claude Desktop)
-# This processor structures prompts and responses for the MCP client to process
+from jinja2 import Environment, FileSystemLoader
 
 logger = logging.getLogger(__name__)
 
@@ -26,63 +24,20 @@ class LLMSemanticProcessor:
         # In MCP, the client handles LLM interactions
         logger.info("LLMSemanticProcessor initialized for MCP client processing")
 
+        # Initialize Jinja2 environment to load templates from the 'prompts' directory
+        self.env = Environment(loader=FileSystemLoader('prompts'))
+
     def _craft_llm_prompt(self, task_type: Literal["interpret_concept_in_game", "generate_insight", "generate_usage_patterns", "assess_alignment", "evaluate_criteria", "assess_resonance", "synthesize_analysis", "identify_contradictions", "generate_meta_insights"], **kwargs: Any) -> str:
         """
         Crafts a detailed, philosophically-informed prompt for the LLM based on the task type.
         """
-        prompt_templates = {
-            "interpret_concept_in_game": (
-                "Given the concept '{concept}' and the language game '{language_game}' "
-                "with its grammatical rules '{rules}' and typical uses '{typical_uses}', "
-                "provide a nuanced interpretation of its meaning. Focus on how its meaning "
-                "emerges from its use within this specific practice. "
-                "Also, identify its primary sense, key connotations, and semantic stability. "
-                "Provide the output as a JSON object with keys: 'primary_sense', 'connotations', 'semantic_stability', 'confidence'."
-            ),
-            "generate_insight": (
-                "Based on the phenomenon '{phenomenon}' and the philosophical perspective '{perspective}', "
-                "generate a key insight. Consider the core commitments of '{perspective}' and provide "
-                "a concise, philosophically rich statement. "
-                "Provide the output as a JSON object with keys: 'insight_content', 'confidence'."
-            ),
-            "generate_usage_patterns": (
-                "For the expression '{expression}' within the '{language_game}' language game, "
-                "identify typical usage patterns and their associated contexts and frequencies. "
-                "Provide the output as a JSON array of objects, each with keys: 'pattern', 'frequency', 'contexts'."
-            ),
-            "assess_alignment": (
-                "Given the provisional meaning '{meaning}' and a list of philosophical commitments {commitments}, "
-                "assess the degree to which the meaning aligns with each commitment. "
-                "Provide the output as a JSON object where keys are the commitments and values are alignment scores (0.0-1.0)."
-            ),
-            "evaluate_criteria": (
-                "Evaluate the meaning '{meaning}' against the following philosophical criteria {criteria}. "
-                "Provide a score (0.0-1.0) for each criterion. "
-                "Provide the output as a JSON object where keys are the criteria and values are evaluation scores."
-            ),
-            "assess_resonance": (
-                "Assess the resonance of the meaning '{meaning}' with the following conceptual priorities {priorities}. "
-                "Provide a score (0.0-1.0) for each priority. "
-                "Provide the output as a JSON object where keys are the priorities and values are resonance scores."
-            ),
-            "synthesize_analysis": (
-                "Synthesize the following philosophical analyses from different perspectives {analyses} "
-                "into a coherent summary. Identify common themes, emergent insights, and overall conceptual coherence. "
-                "Provide the output as a JSON object with keys: 'summary', 'common_themes', 'emergent_insights', 'overall_coherence_score', 'confidence'."
-            ),
-            "identify_contradictions": (
-                "Analyze the following philosophical insights {insights} and identify any significant contradictions or tensions between them. "
-                "For each contradiction, describe its nature and the insights involved. "
-                "Provide the output as a JSON array of objects, each with keys: 'description', 'involved_insights'."
-            ),
-            "generate_meta_insights": (
-                "Given the primary insights {primary_insights} and identified contradictions {contradictions} "
-                "from a philosophical analysis of '{phenomenon}', generate meta-level insights about the overall analysis. "
-                "Consider the epistemic implications, strengths, and limitations of the analytical process itself. "
-                "Provide the output as a JSON array of strings."
-            )
-        }
-        prompt = prompt_templates.get(task_type, "Perform a general philosophical analysis.").format(**kwargs)
+        template_name = f"{task_type}.md"
+        try:
+            template = self.env.get_template(template_name)
+            prompt = template.render(**kwargs)
+        except Exception as e:
+            logger.error(f"Error loading or rendering template {template_name}: {e}")
+            prompt = f"Perform a general philosophical analysis based on: {kwargs}"
         return prompt
 
     def _get_expected_response_format(self, task_type: str) -> dict[str, Any]:

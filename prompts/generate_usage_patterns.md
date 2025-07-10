@@ -1,0 +1,1 @@
+For the expression '{{ expression }}' within the '{{ language_game }}' language game, identify typical usage patterns and their associated contexts and frequencies. Provide the output as a JSON array of objects, each with keys: 'pattern', 'frequency', 'contexts'.

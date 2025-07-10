@@ -1,0 +1,1 @@
+Given the provisional meaning '{{ meaning }}' and a list of philosophical commitments {{ commitments }}, assess the degree to which the meaning aligns with each commitment. Provide the output as a JSON object where keys are the commitments and values are alignment scores (0.0-1.0).

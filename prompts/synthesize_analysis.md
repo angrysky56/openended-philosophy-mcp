@@ -1,0 +1,1 @@
+Synthesize the following philosophical analyses from different perspectives {{ analyses }} into a coherent summary. Identify common themes, emergent insights, and overall conceptual coherence. Provide the output as a JSON object with keys: 'summary', 'common_themes', 'emergent_insights', 'overall_coherence_score', 'confidence'.

@@ -1,0 +1,1 @@
+Assess the resonance of the meaning '{{ meaning }}' with the following conceptual priorities {{ priorities }}. Provide a score (0.0-1.0) for each priority. Provide the output as a JSON object where keys are the priorities and values are resonance scores.

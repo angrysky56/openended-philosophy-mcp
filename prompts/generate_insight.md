@@ -1,0 +1,1 @@
+Based on the phenomenon '{{ phenomenon }}' and the philosophical perspective '{{ perspective }}', generate a key insight. Consider the core commitments of '{{ perspective }}' and provide a concise, philosophically rich statement. Provide the output as a JSON object with keys: 'insight_content', 'confidence'.

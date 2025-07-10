@@ -1,0 +1,1 @@
+Given the primary insights {{ primary_insights }} and identified contradictions {{ contradictions }} from a philosophical analysis of '{{ phenomenon }}', generate meta-level insights about the overall analysis. Consider the epistemic implications, strengths, and limitations of the analytical process itself. Provide the output as a JSON array of strings.

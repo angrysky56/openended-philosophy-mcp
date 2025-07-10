@@ -1,0 +1,1 @@
+Evaluate the meaning '{{ meaning }}' against the following philosophical criteria {{ criteria }}. Provide a score (0.0-1.0) for each criterion. Provide the output as a JSON object where keys are the criteria and values are evaluation scores.

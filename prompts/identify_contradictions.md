@@ -1,0 +1,1 @@
+Analyze the following philosophical insights {{ insights }} and identify any significant contradictions or tensions between them. For each contradiction, describe its nature and the insights involved. Provide the output as a JSON array of objects, each with keys: 'description', 'involved_insights'.
